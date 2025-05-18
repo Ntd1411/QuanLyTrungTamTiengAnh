@@ -1,2 +1,2 @@
 # QuanLyTrungTamTiengAnh
-Web quản ly trung tâm tiếng anh
+Web quản lý trung tâm tiếng anh
