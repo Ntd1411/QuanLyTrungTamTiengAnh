@@ -259,3 +259,180 @@ footer p {
         cursor: pointer;
     }
 }
+
+/* ======================Login=============================== */
+    .login {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      margin: 50px auto;
+    }
+
+    .login .body h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .login .block {
+      margin-bottom: 20px;
+    }
+
+    .login .block h2 {
+      font-size: 12px;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .login .block input[type="text"],
+    .login .block input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .login .remember {
+      margin-bottom: 15px;
+    }
+
+    .login .remember input[type="checkbox"] {
+      margin-right: 6px;
+    }
+
+    .login a {
+      display: block;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .login a:hover {
+      text-decoration: underline;
+    }
+
+    .login button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login button[type="submit"]:hover {
+      background-color: #eb6b6b;
+    }
+
+    /* ====================== register ====================== */
+    
+
+    .register {
+      background-color: #fff;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .register .body h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .register-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .register-block {
+      flex: 1 1 45%;
+    }
+
+    .register-role h2,
+    .register-block h2 {
+      font-size: 15px;
+      color: #444;
+    }
+
+    .register-block input {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .register-role {
+        display: flex;
+        align-items: center;
+      margin-top: 10px;
+      gap: 10px;
+      flex: 1 1 100%;
+    }
+    
+    .register-role~label,
+    .register-role label
+     {
+       
+      padding-left: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .register-role input[type="checkbox"] {
+      margin-right: 6px;
+    }
+
+    .register button[type="submit"] {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .register button[type="submit"]:hover {
+      background-color: #eb6b6b;
+    }
+
+    .register .block {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .register a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .register a:hover {
+      text-decoration: underline;
+    }
+
+
+    @media (max-width: 600px) {
+      .register-block {
+        flex: 1 1 100%;
+      }
+    }
+
