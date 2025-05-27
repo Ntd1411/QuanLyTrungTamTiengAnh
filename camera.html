@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Học Viện Kỹ Thuật Mật Mã - ACTVN</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Header với ảnh */
+header {
+    background-color: #fff;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 3px solid #333;
+}
+
+header img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: 10px;
+}
+
+/* Menu đa cấp */
+nav {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    position: relative;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+.menu > li {
+    position: relative;
+}
+
+.menu a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.menu a:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Menu cấp 2 */
+.menu .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #34495e;
+    min-width: 200px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.menu li:hover .submenu {
+    display: block;
+}
+
+.submenu li {
+    width: 100%;
+}
+
+.submenu a {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 20px;
+}
+
+/* Menu cấp 3 */
+.submenu .sub-submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #2c3e50;
+    min-width: 180px;
+    display: none;
+}
+
+.submenu li:hover .sub-submenu {
+    display: block;
+}
+
+/* Phần nội dung chính */
+.main-content {
+    display: flex;
+    min-height: 500px;
+    background-color: #fff;
+}
+
+/* Cột trái - Quảng cáo */
+.sidebar-left {
+    flex: 1;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-right: 3px solid #bdc3c7;
+}
+
+/* Cột giữa - Nội dung chính */
+.content {
+    flex: 3;
+    background-color: #fff;
+    padding: 30px;
+    line-height: 1.6;
+}
+
+/* Cột phải - Quảng cáo */
+.sidebar-right {
+    flex: 1;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-left: 3px solid #bdc3c7;
+}
+
+/* Styling cho quảng cáo */
+.ad-banner {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+.ad-banner:hover {
+    transform: translateY(-5px);
+}
+
+.ad-banner img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.ad-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.ad-link:hover {
+    text-decoration: underline;
+}
+
+/* Styling cho nội dung chính */
+.content h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.content h2 {
+    color: #34495e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.content p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #ecf0f1;
+    padding: 30px;
+    text-align: center;
+}
+
+footer h3 {
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        width: 95%;
+    }
+    
+    .menu {
+        flex-direction: column;
+    }
+    
+    .menu a {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .submenu {
+        position: static;
+        display: none;
+        background-color: #34495e;
+    }
+    
+    .menu li:hover .submenu {
+        display: block;
+    }
+    
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .sidebar-left, .sidebar-right {
+        border: none;
+        border-top: 3px solid #bdc3c7;
+        border-bottom: 3px solid #bdc3c7;
+    }
+}
+
+/* Hiệu ứng hover cho menu mobile */
+@media (max-width: 768px) {
+    .menu li {
+        cursor: pointer;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Header với ảnh -->
+    <header>
+        <img src="https://actvn.edu.vn/News/GetImage/28418" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="#home">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#about">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="#history">Lịch Sử Thành Lập</a></li>
+                    <li><a href="#mission">Tầm Nhìn Sứ Mệnh</a></li>
+                    <li><a href="#leadership">Ban Lãnh Đạo</a>
+                        <ul class="sub-submenu">
+                            <li><a href="#rector">Ban Giám Hiệu</a></li>
+                            <li><a href="#departments">Các Khoa Phòng</a></li>
+                            <li><a href="#council">Hội Đồng Khoa Học</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#education">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="#undergraduate">Đại Học</a>
+                        <ul class="sub-submenu">
+                            <li><a href="#cryptography">An Toàn Thông Tin</a></li>
+                            <li><a href="#cyber-security">An ninh mạng</a></li>
+                            <li><a href="#it-security">Bảo mật hệ thống</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#graduate">Thạc Sĩ</a></li>
+                    <li><a href="#phd">Tiến Sĩ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#research">Nghiên Cứu</a>
+                <ul class="submenu">
+                    <li><a href="#projects">Dự Án Nghiên Cứu</a></li>
+                    <li><a href="#publications">Công Bố Khoa Học</a></li>
+                    <li><a href="#labs">Phòng Thí Nghiệm</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#admissions">Tuyển Sinh</a>
+                <ul class="submenu">
+                    <li><a href="#undergraduate-admissions">Tuyển Sinh Đại Học</a></li>
+                    <li><a href="#graduate-admissions">Tuyển Sinh Sau Đại Học</a></li>
+                    <li><a href="#international">Sinh Viên Quốc Tế</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#news">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Tin Học Thuật</a></li>
+                    <li><a href="#student-news">Tin Sinh Viên</a></li>
+                    <li><a href="#events">Sự Kiện</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#contact">Liên Hệ</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Nội dung chính chia 3 cột -->
+    <div class="main-content">
+        <!-- Cột trái - Thông báo & Sự kiện -->
+        <aside class="sidebar-left">
+            <div class="ad-banner">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/%E1%BA%A2Nh%201.jpg" alt="Thông báo tuyển sinh">
+                <a href="#admissions2025" class="ad-link">
+                    <strong>TUYỂN SINH 2025</strong><br>
+                    Học viện Kỹ thuật Mật mã
+                </a>
+            </div>
+            
+            <div class="ad-banner" style="background: linear-gradient(45deg, #27ae60, #2ecc71);">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/AT1.png" alt="Học bổng">
+                <a href="#scholarship" class="ad-link">
+                    <strong>HỌC BỔNG 2025</strong><br>
+                    Dành cho sinh viên xuất sắc
+                </a>
+            </div>
+
+            <div class="ad-banner" style="background: linear-gradient(45deg, #f39c12, #e67e22);">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/%E1%BA%A2nh%202.jpg" alt="Hội thảo khoa học">
+                <a href="#conference" class="ad-link">
+                    <strong>HỘI THẢO QUỐC TẾ</strong><br>
+                    An toàn thông tin 2025
+                </a>
+            </div>
+        </aside>
+
+        <!-- Cột giữa - Nội dung chính -->
+        <main class="content">
+            <h1>Chào Mừng Đến Với Học Viện Kỹ Thuật Mật Mã</h1>
+            
+            <p>Học viện Kỹ thuật Mật mã là cơ sở đào tạo hàng đầu trong lĩnh vực an toàn thông tin và bảo mật mạng tại Việt Nam. Với sự phát triển mạnh mẽ của công nghệ thông tin, nhu cầu về chuyên gia an toàn thông tin ngày càng cao.</p>
+            
+            <h2>Chương Trình Đào Tạo Chất Lượng Cao</h2>
+            <p>Học viện cung cấp các chương trình đào tạo từ cử nhân đến tiến sĩ trong các lĩnh vực: Kỹ thuật mật mã, An toàn thông tin, An ninh mạng, Bảo mật hệ thống. Chương trình học được thiết kế theo chuẩn quốc tế với sự tham gia của các chuyên gia hàng đầu.</p>
+            
+            <h2>Nghiên Cứu Khoa Học Tiên Tiến</h2>
+            <p>Học viện có các phòng thí nghiệm hiện đại và đội ngũ giảng viên giàu kinh nghiệm nghiên cứu. Các đề tài nghiên cứu tập trung vào blockchain, trí tuệ nhân tạo an toàn, IoT security, và các công nghệ bảo mật mới nhất.</p>
+            
+            <h2>Hợp Tác Quốc Tế</h2>
+            <p>Học viện có quan hệ hợp tác với nhiều trường đại học và tổ chức nghiên cứu hàng đầu thế giới. Sinh viên có cơ hội tham gia các chương trình trao đổi, thực tập tại các công ty công nghệ lớn và tham dự các hội thảo quốc tế.</p>
+            
+            <p>Hãy gia nhập cộng đồng Học viện Kỹ thuật Mật mã để trở thành chuyên gia an toàn thông tin hàng đầu, góp phần bảo vệ không gian mạng quốc gia.</p>
+        </main>
+
+        <!-- Cột phải - Liên kết hữu ích -->
+        <aside class="sidebar-right">
+            <div class="ad-banner" style="background: linear-gradient(45deg, #9b59b6, #8e44ad);">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/%E1%BA%A2nh%203.jpg" alt="Thư viện điện tử">
+                <a href="#library" class="ad-link">
+                    <strong>THƯ VIỆN ĐIỆN TỬ</strong><br>
+                    Tài liệu học tập online
+                </a>
+            </div>
+            
+            <div class="ad-banner" style="background: linear-gradient(45deg, #34495e, #2c3e50);">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/AT3.png" alt="Học trực tuyến">
+                <a href="#elearning" class="ad-link">
+                    <strong>HỌC TRỰC TUYẾN</strong><br>
+                    LMS System
+                </a>
+            </div>
+
+            <div class="ad-banner" style="background: linear-gradient(45deg, #e67e22, #d35400);">
+                <img src="https://actvn.edu.vn/Images/Uploadimages/2025/T5/AT7.png" alt="Tuyển dụng">
+                <a href="#career" class="ad-link">
+                    <strong>CƠ HỘI VIỆC LÀM</strong><br>
+                    Kết nối doanh nghiệp
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
+        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
+        <p>Điện thoại: (024) 3854 2211 | Fax: (024) 3854 2344</p>
+        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+    </footer>
+</body>
+</html>
