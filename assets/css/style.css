@@ -20,6 +20,8 @@ header {
     text-align: center;
     padding: 20px;
     border-bottom: 3px solid #333;
+    width: 100%;
+    height: auto;
 }
 
 header img {
@@ -60,6 +62,7 @@ nav {
 
 /* Menu cấp 2 */
 .menu .submenu {
+    list-style: none;
     position: absolute;
     top: 100%;
     left: 0;
@@ -86,6 +89,7 @@ nav {
 
 /* Menu cấp 3 */
 .submenu .sub-submenu {
+    list-style: none;
     position: absolute;
     top: 0;
     left: 100%;
