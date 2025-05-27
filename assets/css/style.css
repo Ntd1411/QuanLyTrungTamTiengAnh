@@ -18,15 +18,14 @@ body {
 header {
     background-color: #fff;
     text-align: center;
-    padding: 20px;
     border-bottom: 3px solid #333;
 }
 
 header img {
-    max-width: 100%;
+    min-width: 100%;
     height: auto;
-    max-height: 200px;
-    border-radius: 10px;
+    object-fit: cover;
+    max-height: 250px;
 }
 
 /* Menu đa cấp */
