@@ -1,8 +1,8 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    --primary-color: #E4312A;
 }
 
 body {
@@ -11,7 +11,7 @@ body {
     width: 90%;
     max-width: 1200px;
     margin: auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Header với ảnh */
@@ -30,10 +30,12 @@ header img {
     max-height: 250px;
 }
 
-/* Menu đa cấp */
+/* Menu*/
 nav {
-    background: linear-gradient(135deg, #2c3e50, #3498db);
-    position: relative;
+    background: var(--primary-color);
+    position: sticky;
+    top: 0px;
+    z-index: 1;
 }
 
 .menu {
@@ -42,7 +44,7 @@ nav {
     justify-content: center;
 }
 
-.menu > li {
+.menu>li {
     position: relative;
 }
 
@@ -52,11 +54,13 @@ nav {
     color: white;
     text-decoration: none;
     transition: background-color 0.3s;
-    border-right: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .menu a:hover {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #d9e62a;
+    font-weight: 700;
 }
 
 /* Menu cấp 2 */
@@ -69,7 +73,12 @@ nav {
     min-width: 200px;
     display: none;
     z-index: 1000;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.menu .submenu a:hover {
+    background-color: var(--primary-color);
+    font-weight: 700;
 }
 
 .menu li:hover .submenu {
@@ -81,9 +90,14 @@ nav {
 }
 
 .submenu a {
+    background-color: var(--primary-color);
     border-right: none;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding: 12px 20px;
+}
+
+.submenu a:hover {
+    color: #d9e62a;
 }
 
 /* Menu cấp 3 */
@@ -140,7 +154,7 @@ nav {
     margin-bottom: 20px;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
 }
 
@@ -187,7 +201,7 @@ nav {
 
 /* Footer */
 footer {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
+    background: var(--primary-color);
     color: #ecf0f1;
     padding: 30px;
     text-align: center;
@@ -195,7 +209,7 @@ footer {
 
 footer h3 {
     margin-bottom: 10px;
-    color: #3498db;
+    color: #d9e62a;
 }
 
 footer p {
@@ -207,31 +221,32 @@ footer p {
     body {
         width: 95%;
     }
-    
+
     .menu {
         flex-direction: column;
     }
-    
+
     .menu a {
         border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
-    
+
     .submenu {
         position: static;
         display: none;
         background-color: #34495e;
     }
-    
+
     .menu li:hover .submenu {
         display: block;
     }
-    
+
     .main-content {
         flex-direction: column;
     }
-    
-    .sidebar-left, .sidebar-right {
+
+    .sidebar-left,
+    .sidebar-right {
         border: none;
         border-top: 3px solid #bdc3c7;
         border-bottom: 3px solid #bdc3c7;
