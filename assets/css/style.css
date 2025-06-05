@@ -332,10 +332,10 @@ footer p {
       background-color: #eb6b6b;
     }
 
-    /* ====================== register ====================== */
+    /* ====================== signup ====================== */
     
 
-    .register {
+    .signup {
       background-color: #fff;
       margin: 50px auto;
       padding: 30px;
@@ -345,29 +345,29 @@ footer p {
       width: 100%;
     }
 
-    .register .body h1 {
+    .signup .body h1 {
       text-align: center;
       margin-bottom: 25px;
       color: #333;
     }
 
-    .register-form {
+    .signup-form {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
     }
 
-    .register-block {
+    .signup-block {
       flex: 1 1 45%;
     }
 
-    .register-role h2,
-    .register-block h2 {
+    .signup-role h2,
+    .signup-block h2 {
       font-size: 15px;
       color: #444;
     }
 
-    .register-block input {
+    .signup-block input {
       width: 100%;
       padding: 10px;
       font-size: 14px;
@@ -376,7 +376,7 @@ footer p {
       box-sizing: border-box;
     }
 
-    .register-role {
+    .signup-role {
         display: flex;
         align-items: center;
       margin-top: 10px;
@@ -384,8 +384,8 @@ footer p {
       flex: 1 1 100%;
     }
     
-    .register-role~label,
-    .register-role label
+    .signup-role~label,
+    .signup-role label
      {
        
       padding-left: 10px;
@@ -393,11 +393,11 @@ footer p {
       color: #333;
     }
 
-    .register-role input[type="checkbox"] {
+    .signup-role input[type="checkbox"] {
       margin-right: 6px;
     }
 
-    .register button[type="submit"] {
+    .signup button[type="submit"] {
       margin-top: 20px;
       width: 100%;
       padding: 12px;
@@ -409,29 +409,29 @@ footer p {
       cursor: pointer;
     }
 
-    .register button[type="submit"]:hover {
+    .signup button[type="submit"]:hover {
       background-color: #eb6b6b;
     }
 
-    .register .block {
+    .signup .block {
         display: flex;
         align-items: center;
         gap: 5px;
     }
 
-        .register a {
+        .signup a {
       color: var(--primary-color);
       text-decoration: none;
       font-size: 14px;
     }
 
-    .register a:hover {
+    .signup a:hover {
       text-decoration: underline;
     }
 
 
     @media (max-width: 600px) {
-      .register-block {
+      .signup-block {
         flex: 1 1 100%;
       }
     }
