@@ -369,7 +369,9 @@ footer p {
 }
 
 /* ====================== signup ====================== */
-
+#signup {
+  margin: 0 auto;
+}
 
 .signup {
   background-color: #fff;
