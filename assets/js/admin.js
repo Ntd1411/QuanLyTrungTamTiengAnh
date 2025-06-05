@@ -1,0 +1,260 @@
+
+// Fake data storage using localStorage
+let classes = JSON.parse(localStorage.getItem('classes')) || [];
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let students = JSON.parse(localStorage.getItem('students')) || [];
+let parents = JSON.parse(localStorage.getItem('parents')) || [];
+let promotions = JSON.parse(localStorage.getItem('promotions')) || [];
+
+// Show section
+function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+}
+
+// Manage Classes
+function addClass() {
+    const name = document.getElementById('class-name').value;
+    const year = document.getElementById('class-year').value;
+    const teacher = document.getElementById('class-teacher').value;
+    if (name && year && teacher) {
+        classes.push({ id: Date.now(), name, year, teacher, status: 'active' });
+        localStorage.setItem('classes', JSON.stringify(classes));
+        updateClassTable();
+        updateSelectOptions();
+    }
+}
+
+function closeClass() {
+    const selectedClass = document.querySelector('#class-table-body tr.selected');
+    if (selectedClass) {
+        const id = selectedClass.dataset.id;
+        const classData = classes.find(c => c.id == id);
+        classData.status = 'closed';
+        localStorage.setItem('classes', JSON.stringify(classes));
+        updateClassTable();
+    }
+}
+
+function updateClassTable() {
+    const tbody = document.getElementById('class-table-body');
+    tbody.innerHTML = '';
+    classes.forEach(cls => {
+        const row = document.createElement('tr');
+        row.dataset.id = cls.id;
+        row.innerHTML = `
+          <td>${cls.name}</td>
+          <td>${cls.year}</td>
+          <td>${cls.teacher}</td>
+          <td>${cls.status}</td>
+          <td><button onclick="selectClass(${cls.id})">Chọn</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function selectClass(id) {
+    document.querySelectorAll('#class-table-body tr').forEach(row => {
+        row.classList.remove('selected');
+    });
+    document.querySelector(`#class-table-body tr[data-id="${id}"]`).classList.add('selected');
+}
+
+// Manage Teachers
+function addTeacher() {
+    const name = document.getElementById('teacher-name').value;
+    const phone = document.getElementById('teacher-phone').value;
+    if (name && phone) {
+        teachers.push({ id: Date.now(), name, phone, classes: [] });
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        updateTeacherTable();
+        updateSelectOptions();
+    }
+}
+
+function updateTeacherTable() {
+    const tbody = document.getElementById('teacher-table-body');
+    tbody.innerHTML = '';
+    teachers.forEach(teacher => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${teacher.name}</td>
+          <td>${teacher.phone}</td>
+          <td>${teacher.classes.join(', ') || 'Chưa có lớp'}</td>
+          <td><button onclick="editTeacher(${teacher.id})">Sửa</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Manage Students
+function addStudent() {
+    const name = document.getElementById('student-name').value;
+    const classId = document.getElementById('student-class').value;
+    const parentId = document.getElementById('student-parent').value;
+    if (name && classId && parentId) {
+        students.push({ id: Date.now(), name, classId, parentId, attended: 0, absent: 0 });
+        localStorage.setItem('students', JSON.stringify(students));
+        updateStudentTable();
+    }
+}
+
+function updateStudentTable() {
+    const tbody = document.getElementById('student-table-body');
+    tbody.innerHTML = '';
+    students.forEach(student => {
+        const cls = classes.find(c => c.id == student.classId);
+        const parent = parents.find(p => p.id == student.parentId);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${cls ? cls.name : 'Không có'}</td>
+          <td>${parent ? parent.name : 'Không có'}</td>
+          <td>${student.attended}</td>
+          <td>${student.absent}</td>
+          <td><button onclick="editStudent(${student.id})">Sửa</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Manage Parents
+function addParent() {
+    const name = document.getElementById('parent-name').value;
+    const phone = document.getElementById('parent-phone').value;
+    const zalo = document.getElementById('parent-zalo').value;
+    if (name && phone && zalo) {
+        parents.push({ id: Date.now(), name, phone, zalo, unpaid: 0 });
+        localStorage.setItem('parents', JSON.stringify(parents));
+        updateParentTable();
+        updateSelectOptions();
+    }
+}
+
+function updateParentTable() {
+    const tbody = document.getElementById('parent-table-body');
+    tbody.innerHTML = '';
+    parents.forEach(parent => {
+        const children = students.filter(s => s.parentId == parent.id).map(s => s.name).join(', ');
+        const row = document.createElement('tr');
+        row.dataset.id = parent.id;
+        row.innerHTML = `
+          <td>${parent.name}</td>
+          <td>${parent.phone}</td>
+          <td>${parent.zalo}</td>
+          <td>${children || 'Chưa có'}</td>
+          <td>${parent.unpaid} VNĐ</td>
+          <td><button onclick="selectParent(${parent.id})">Chọn</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function selectParent(id) {
+    document.querySelectorAll('#parent-table-body tr').forEach(row => {
+        row.classList.remove('selected');
+    });
+    document.querySelector(`#parent-table-body tr[data-id="${id}"]`).classList.add('selected');
+}
+
+function sendNotification() {
+    const parentId = document.querySelector('#parent-table-body tr.selected')?.dataset.id;
+    if (parentId) {
+        const parent = parents.find(p => p.id == parentId);
+        console.log(`Gửi thông báo tới ${parent.name} qua Zalo: ${parent.zalo}`);
+        // Thay bằng API Zalo/Facebook thực tế
+    }
+}
+
+// Statistics
+function loadStatistics() {
+    const month = document.getElementById('stats-month').value;
+    let totalExpected = 0;
+    let totalCollected = 0;
+    let studentsIncreased = 0;
+    let studentsDecreased = 0;
+
+    students.forEach(student => {
+        totalExpected += student.attended * 100000; // Giả sử 100k/buổi
+        totalCollected += (student.attended * 100000) - (parents.find(p => p.id == student.parentId)?.unpaid || 0);
+    });
+
+    document.getElementById('total-expected').textContent = totalExpected;
+    document.getElementById('total-collected').textContent = totalCollected;
+    document.getElementById('students-increased').textContent = studentsIncreased;
+    document.getElementById('students-decreased').textContent = studentsDecreased;
+}
+
+// Promotions
+function addPromotion() {
+    const content = document.getElementById('promo-content').value;
+    if (content) {
+        promotions.push({ id: Date.now(), content });
+        localStorage.setItem('promotions', JSON.stringify(promotions));
+        updatePromoList();
+        showPopup(content);
+    }
+}
+
+function updatePromoList() {
+    const promoList = document.getElementById('promo-list');
+    promoList.innerHTML = '';
+    promotions.forEach(promo => {
+        const div = document.createElement('div');
+        div.textContent = promo.content;
+        div.style.padding = '10px';
+        div.style.borderBottom = '1px solid #d1d5db';
+        promoList.appendChild(div);
+    });
+}
+
+function showPopup(content) {
+    document.getElementById('popup-content').textContent = content;
+    document.getElementById('popup').style.display = 'block';
+    document.getElementById('popup-overlay').style.display = 'block';
+}
+
+function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+    document.getElementById('popup-overlay').style.display = 'none';
+}
+
+// Update select options
+function updateSelectOptions() {
+    const classSelect = document.getElementById('student-class');
+    const teacherSelect = document.getElementById('class-teacher');
+    const parentSelect = document.getElementById('student-parent');
+
+    classSelect.innerHTML = '<option value="">Chọn lớp</option>';
+    teacherSelect.innerHTML = '<option value="">Chọn giáo viên</option>';
+    parentSelect.innerHTML = '<option value="">Chọn phụ huynh</option>';
+
+    classes.forEach(cls => {
+        classSelect.innerHTML += `<option value="${cls.id}">${cls.name} (${cls.year})</option>`;
+    });
+    teachers.forEach(teacher => {
+        teacherSelect.innerHTML += `<option value="${teacher.name}">${teacher.name}</option>`;
+    });
+    parents.forEach(parent => {
+        parentSelect.innerHTML += `<option value="${parent.id}">${parent.name}</option>`;
+    });
+}
+
+// Dummy edit functions (to be implemented)
+function editTeacher(id) {
+    alert('Chức năng sửa giáo viên chưa được triển khai.');
+}
+
+function editStudent(id) {
+    alert('Chức năng sửa học sinh chưa được triển khai.');
+}
+
+// Initial load
+updateClassTable();
+updateTeacherTable();
+updateStudentTable();
+updateParentTable();
+updatePromoList();
+updateSelectOptions();
