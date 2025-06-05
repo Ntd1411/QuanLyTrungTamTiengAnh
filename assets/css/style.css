@@ -172,14 +172,13 @@ nav {
 
 /* Styling cho quảng cáo */
 .ad-banner {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
+  background: linear-gradient(45deg, #c8ff00);
+  position: sticky;
+  top: 55px;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
-  text-align: center;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s;
 }
 
 .ad-banner:hover {
@@ -304,6 +303,7 @@ footer p {
   margin-bottom: 50px;
   color: #333;
 }
+
 .login .body h1 {
   text-align: center;
   margin-bottom: 50px;
@@ -313,6 +313,7 @@ footer p {
 .login .block {
   margin-bottom: 20px;
 }
+
 .login .block {
   margin-bottom: 20px;
 }
