@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Admin</title>
+</head>
+<body>
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+    <ul class="menu">
+      <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
+      <li>
+        <a href="#about">Giới Thiệu</a>
+        <ul class="submenu">
+          <li><a href="#teachers">Đội Ngũ Giảng Viên</a></li>
+          <li><a href="#questions">Câu Hỏi Thường Gặp (FAQ)</a></li>
+          <li><a href="#contact">Liên Hệ</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#education">Đào Tạo</a>
+        <ul class="submenu">
+          <li>
+            <a href="#ielts">IELTS</a>
+            <ul class="sub-submenu">
+              <li><a href="#beginner">5.0-6.5 IELTS</a></li>
+              <li><a href="#intermediate">6.5-7.5 IELTS</a></li>
+              <li><a href="#advanced">7.5+ IELTS</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#graduate">TOEIC</a>
+            <ul class="sub-submenu">
+              <li><a href="#beginner">550-650 TOEIC</a></li>
+              <li><a href="#intermediate">650-800 TOEIC</a></li>
+              <li><a href="#advanced">800+ TOEIC</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#library">Thư Viện</a>
+        <ul class="submenu">
+          <li><a href="#ielts-library">IELTS</a></li>
+          <li><a href="#toeic-library">TOEIC</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#news">Tin Tức</a>
+        <ul class="submenu">
+          <li><a href="#academic-news">Sự Kiện</a></li>
+          <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#admin">Quản Lý</a>
+        <ul class="submenu">
+          <li><a href="#manage-classes" onclick="showSection('manage-classes')">Quản Lý Lớp Học</a></li>
+          <li><a href="#manage-teachers" onclick="showSection('manage-teachers')">Quản Lý Giáo Viên</a></li>
+          <li><a href="#manage-students" onclick="showSection('manage-students')">Quản Lý Học Sinh</a></li>
+          <li><a href="#manage-parents" onclick="showSection('manage-parents')">Quản Lý Phụ Huynh</a></li>
+          <li><a href="#statistics" onclick="showSection('statistics')">Thống Kê</a></li>
+          <li><a href="#promotions" onclick="showSection('promotions')">Quản Lý Quảng Cáo</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#login">Tài Khoản</a>
+        <ul class="submenu">
+          <li><a href="">Đăng Xuất</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+    <!-- Main Content -->
+  <div class="main-content-log">
+    <!-- Home Section -->
+    <div id="home" class="content-section active">
+      <h2 class="text-2xl font-bold mb-4">Chào mừng đến với Admin Dashboard</h2>
+      <p>Chọn một mục từ menu để bắt đầu quản lý trung tâm tiếng Anh.</p>
+    </div>
+
+    <!-- Manage Classes -->
+    <div id="manage-classes" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Quản Lý Lớp Học</h2>
+      <div class="form-group">
+        <label>Tên lớp (VD: Lớp 3.1):</label>
+        <input type="text" id="class-name" class="border p-2 rounded w-full" placeholder="Nhập tên lớp">
+      </div>
+      <div class="form-group">
+        <label>Năm học:</label>
+        <input type="number" id="class-year" class="border p-2 rounded w-full" placeholder="VD: 2023">
+      </div>
+      <div class="form-group">
+        <label>Giáo viên phụ trách:</label>
+        <select id="class-teacher" class="border p-2 rounded w-full">
+          <option value="">Chọn giáo viên</option>
+        </select>
+      </div>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="addClass()">Thêm lớp</button>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="closeClass()">Đóng lớp</button>
+      <table id="class-table" class="w-full mt-4 border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border p-2">Tên lớp</th>
+            <th class="border p-2">Năm học</th>
+            <th class="border p-2">Giáo viên</th>
+            <th class="border p-2">Trạng thái</th>
+            <th class="border p-2">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="class-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Manage Teachers -->
+    <div id="manage-teachers" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Quản Lý Giáo Viên</h2>
+      <div class="form-group">
+        <label>Tên giáo viên:</label>
+        <input type="text" id="teacher-name" class="border p-2 rounded w-full" placeholder="Nhập tên giáo viên">
+      </div>
+      <div class="form-group">
+        <label>Số điện thoại:</label>
+        <input type="text" id="teacher-phone" class="border p-2 rounded w-full" placeholder="Nhập số điện thoại">
+      </div>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="addTeacher()">Thêm giáo viên</button>
+      <table id="teacher-table" class="w-full mt-4 border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border p-2">Tên giáo viên</th>
+            <th class="border p-2">Số điện thoại</th>
+            <th class="border p-2">Lớp phụ trách</th>
+            <th class="border p-2">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="teacher-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Manage Students -->
+    <div id="manage-students" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Quản Lý Học Sinh</h2>
+      <div class="form-group">
+        <label>Tên học sinh:</label>
+        <input type="text" id="student-name" class="border p-2 rounded w-full" placeholder="Nhập tên học sinh">
+      </div>
+      <div class="form-group">
+        <label>Lớp:</label>
+        <select id="student-class" class="border p-2 rounded w-full">
+          <option value="">Chọn lớp</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Phụ huynh:</label>
+        <select id="student-parent" class="border p-2 rounded w-full">
+          <option value="">Chọn phụ huynh</option>
+        </select>
+      </div>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="addStudent()">Thêm học sinh</button>
+      <table id="student-table" class="w-full mt-4 border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border p-2">Tên học sinh</th>
+            <th class="border p-2">Lớp</th>
+            <th class="border p-2">Phụ huynh</th>
+            <th class="border p-2">Số buổi học</th>
+            <th class="border p-2">Số buổi nghỉ</th>
+            <th class="border p-2">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="student-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Manage Parents -->
+    <div id="manage-parents" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Quản Lý Phụ Huynh</h2>
+      <div class="form-group">
+        <label>Tên phụ huynh:</label>
+        <input type="text" id="parent-name" class="border p-2 rounded w-full" placeholder="Nhập tên phụ huynh">
+      </div>
+      <div class="form-group">
+        <label>Số điện thoại:</label>
+        <input type="text" id="parent-phone" class="border p-2 rounded w-full" placeholder="Nhập số điện thoại">
+      </div>
+      <div class="form-group">
+        <label>Zalo ID:</label>
+        <input type="text" id="parent-zalo" class="border p-2 rounded w-full" placeholder="Nhập Zalo ID">
+      </div>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="addParent()">Thêm phụ huynh</button>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="sendNotification()">Gửi thông báo</button>
+      <table id="parent-table" class="w-full mt-4 border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border p-2">Tên phụ huynh</th>
+            <th class="border p-2">Số điện thoại</th>
+            <th class="border p-2">Zalo ID</th>
+            <th class="border p-2">Con</th>
+            <th class="border p-2">Số tiền chưa đóng</th>
+            <th class="border p-2">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="parent-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Statistics -->
+    <div id="statistics" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Thống Kê</h2>
+      <div class="form-group">
+        <label>Chọn khoảng thời gian:</label>
+        <input type="month" id="stats-month" class="border p-2 rounded">
+        <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="loadStatistics()">Xem thống kê</button>
+      </div>
+      <div id="stats-results">
+        <p>Tổng tiền dự kiến: <span id="total-expected">0</span> VNĐ</p>
+        <p>Tổng tiền đã thu: <span id="total-collected">0</span> VNĐ</p>
+        <p>Số học sinh tăng: <span id="students-increased">0</span></p>
+        <p>Số học sinh giảm: <span id="students-decreased">0</span></p>
+      </div>
+    </div>
+
+    <!-- Promotions -->
+    <div id="promotions" class="content-section">
+      <h2 class="text-2xl font-bold mb-4">Quản Lý Quảng Cáo</h2>
+      <div class="form-group">
+        <label>Nội dung quảng cáo:</label>
+        <textarea id="promo-content" class="border p-2 rounded w-full" placeholder="Nhập nội dung quảng cáo"></textarea>
+      </div>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="addPromotion()">Thêm quảng cáo</button>
+      <div id="promo-list" class="mt-4"></div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+      <h3 class="text-xl font-bold mb-2">Quảng cáo lớp mới</h3>
+      <p id="popup-content"></p>
+      <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2" onclick="closePopup()">Đóng</button>
+    </div>
+  </div>
+
+</body>
+</html>
