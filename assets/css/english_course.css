@@ -10,6 +10,7 @@ body {
     width: 80%;
     margin: 0 auto;
     padding: 20px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* === HEADER STYLES === */
@@ -294,4 +295,20 @@ footer {
     .feature {
         width: 80%;
     }
+}
+
+/* Hiệu ứng nảy lên khi hover cho benefits, feature, info-item */
+.benefits li,
+.feature,
+.info-item,
+.testimonial-item {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+}
+
+.benefits li:hover,
+.feature:hover,
+.info-item:hover,
+.testimonial-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(200,35,51,0.12);
 }
