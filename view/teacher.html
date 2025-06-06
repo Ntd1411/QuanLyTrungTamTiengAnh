@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/teacher.css">
+    <title>Teacher Dashboard - Trung tâm Tiếng Anh</title>
+</head>
+
+<body>
+    <!-- Header với ảnh -->
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu ngang -->
+    <nav>
+        <ul class="menu">
+            <li><a href="#home-teacher" onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
+            <li><a href="#my-classes" onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
+            <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
+            <li><a href="#notifications" onclick="showElement('notifications'); return false;">Thông Báo</a></li>
+            <li>
+                <a href="#account">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
+                    <li><a href="./index.html">Đăng Xuất</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content-teacher">
+        <!-- Home Section -->
+        <div id="home-teacher" class="element active">
+            <h2>Chào mừng, <span id="teacher-name">Giáo viên</span></h2>
+            <div class="dashboard-summary">
+                <div class="summary-card">
+                    <h3>Tổng số lớp</h3>
+                    <p id="total-classes">0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Tổng số học sinh</h3>
+                    <p id="total-students">0</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Buổi dạy tháng này</h3>
+                    <p id="monthly-sessions">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Classes Section -->
+        <div id="my-classes" class="element">
+            <h2>Lớp Dạy Của Tôi</h2>
+            <div class="classes-container">
+                <!-- Danh sách lớp sẽ được thêm vào đây bằng JavaScript -->
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <div id="attendance" class="element">
+            <h2>Điểm Danh</h2>
+            <div class="attendance-form">
+                <div class="form-group">
+                    <label>Chọn lớp:</label>
+                    <select id="class-select">
+                        <option value="">Chọn lớp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ngày:</label>
+                    <input type="date" id="attendance-date">
+                </div>
+                <div class="attendance-list">
+                    <!-- Danh sách điểm danh sẽ được thêm vào đây -->
+                </div>
+                <button onclick="submitAttendance()">Lưu điểm danh</button>
+            </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notifications" class="element">
+            <h2>Gửi Thông Báo</h2>
+            <div class="notification-form">
+                <div class="form-group">
+                    <label>Chọn lớp:</label>
+                    <select id="notification-class">
+                        <option value="">Chọn lớp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Loại thông báo:</label>
+                    <select id="notification-type">
+                        <option value="homework">Bài tập về nhà</option>
+                        <option value="cancel">Nghỉ học</option>
+                        <option value="exam">Kiểm tra</option>
+                        <option value="other">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nội dung:</label>
+                    <textarea id="notification-content" rows="4"></textarea>
+                </div>
+                <div class="notification-options">
+                    <label><input type="checkbox" id="notify-zalo"> Gửi qua Zalo</label>
+                    <label><input type="checkbox" id="notify-sms"> Gửi qua SMS</label>
+                </div>
+                <button onclick="sendNotification()">Gửi thông báo</button>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="element">
+            <h2>Thông Tin Cá Nhân</h2>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label>Họ và tên:</label>
+                    <input type="text" id="profile-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="profile-email" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại:</label>
+                    <input type="tel" id="profile-phone">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới:</label>
+                    <input type="password" id="profile-new-password">
+                </div>
+                <button onclick="updateProfile()">Cập nhật thông tin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
+        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
+        <p>Điện thoại: (024) 3854 2211 | Fax: (024) 3854 2344</p>
+        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/teacher.js"></script>
+</body>
+
+</html>
