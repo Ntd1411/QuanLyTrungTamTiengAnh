@@ -1,38 +1,34 @@
 function showElement(id) {
-    // Store previous scroll position
-    const previousScroll = window.pageYOffset;
-
-    // Hide all elements first
+    // Fade out tất cả elements
     document.querySelectorAll('.element').forEach(element => {
-        element.classList.remove('active');
+        element.style.opacity = '0';
+        element.style.visibility = 'hidden';
+        setTimeout(() => {
+            element.classList.remove('active');
+        }, 300);
     });
 
+    // Hiển thị element được chọn
     const targetElement = document.getElementById(id);
     if (targetElement) {
-        // For home section
-        if (id === 'home') {
+        setTimeout(() => {
             targetElement.classList.add('active');
+            targetElement.style.visibility = 'visible';
+            
+            // Force reflow
+            void targetElement.offsetWidth;
+            
+            // Fade in
+            targetElement.style.opacity = '1';
+            
+            // Scroll với offset để tránh bị che bởi nav
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const offset = 20; // Khoảng cách thêm
+            
             window.scrollTo({
-                top: 0,
+                top: Math.max(0, targetElement.offsetTop - navHeight - offset),
                 behavior: 'smooth'
             });
-            return;
-        }
-
-        // For other sections
-        // Add active class first to make element visible
-        targetElement.classList.add('active');
-
-        // Wait for element to be visible
-        requestAnimationFrame(() => {
-            const headerOffset = 50;
-            const elementPosition = targetElement.getBoundingClientRect().top;
-            const offsetPosition = previousScroll + elementPosition - headerOffset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        });
+        }, 300);
     }
 }

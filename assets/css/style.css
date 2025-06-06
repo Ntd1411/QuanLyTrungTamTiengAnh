@@ -27,12 +27,39 @@ body {
 /* ======== thay đổi ================== */
 .element {
   display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  padding-top: 20px;  /* Thêm padding phía trên */
+  margin-top: -20px;  /* Bù trừ padding để căn chỉnh khoảng cách */
+  visibility: hidden;
+}
+
+.element h2 {
+  margin-top: 0;  /* Loại bỏ margin mặc định của h2 */
+  padding-top: 10px;  /* Thêm padding nhỏ cho h2 */
 }
 
 .element.active {
   display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
+/* Animation Effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.element {
+  animation: fadeIn 0.5s ease-out;
+}
 
 /* Header với ảnh */
 header {
@@ -55,7 +82,7 @@ nav {
   background: var(--primary-color);
   position: sticky;
   top: 0px;
-  z-index: 1;
+  z-index: 1000;  /* Tăng z-index cho nav */
 }
 
 .menu {
