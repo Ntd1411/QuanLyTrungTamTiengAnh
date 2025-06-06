@@ -18,7 +18,7 @@
     <!-- Menu ngang -->
     <nav>
         <ul class="menu">
-            <li><a href="#home-admin" onclick="showElement('home-admin')">Trang Chủ</a></li>
+            <li><a href="#home-admin" onclick="showElement('home-admin'); return false;">Trang Chủ</a></li>
             <li><a href="#manage-classes" onclick="showElement('manage-classes'); return false;">Lớp Học</a></li>
             <li><a href="#manage-teachers" onclick="showElement('manage-teachers'); return false;">Giáo Viên</a></li>
             <li><a href="#manage-students" onclick="showElement('manage-students'); return false;">Học Sinh</a></li>
@@ -27,8 +27,10 @@
             <li><a href="#promotions" onclick="showElement('promotions'); return false;">Quảng Cáo</a></li>
 
             <li>
-                <a href="#login">Tài Khoản</a>
+                <a href="#account">Tài Khoản</a>
                 <ul class="submenu">
+                    <li><a href="#account-info" onclick="showElement('account-info'); return false;">Thông tin tài khoản</a>
+                    </li>
                     <li><a href="./index.html">Đăng Xuất</a></li>
                 </ul>
             </li>
@@ -168,7 +170,7 @@
                     <button onclick="addParent()">Thêm phụ huynh</button>
                     <button onclick="sendNotification()">Gửi thông báo</button>
                 </div>
-               <div class="table-container">
+                <div class="table-container">
                     <table id="parent-table">
                         <thead>
                             <tr>
@@ -182,7 +184,7 @@
                         </thead>
                         <tbody id="parent-table-body"></tbody>
                     </table>
-               </div>
+                </div>
             </div>
 
             <!-- Statistics -->
@@ -210,6 +212,37 @@
                 </div>
                 <button onclick="addPromotion()">Thêm quảng cáo</button>
                 <div id="promo-list"></div>
+            </div>
+
+            <!-- Add Account Info Section -->
+            <div id="account-info" class="element">
+                <h2>Thông Tin Tài Khoản</h2>
+                <div class="admin-profile">
+                    <div class="admin-header">
+                        <div class="admin-avatar">
+                            <img src="../assets/img/admin-avatar.png" alt="Admin Avatar">
+                        </div>
+                        <div class="admin-info">
+                            <h3>Admin</h3>
+                            <p>Quản trị viên hệ thống</p>
+                            <p>Email: admin@example.com</p>
+                        </div>
+                    </div>
+                    <div class="admin-stats">
+                        <div class="stat-box">
+                            <h4>Tổng số lớp</h4>
+                            <p id="total-classes-count">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Tổng số giáo viên</h4>
+                            <p id="total-teachers-count">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Tổng số học sinh</h4>
+                            <p id="total-students-count">0</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Popup -->

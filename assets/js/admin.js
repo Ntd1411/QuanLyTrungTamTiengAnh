@@ -1,4 +1,3 @@
-
 // Fake data storage using localStorage
 let classes = JSON.parse(localStorage.getItem('classes')) || [];
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
@@ -251,6 +250,34 @@ function editStudent(id) {
     alert('Chức năng sửa học sinh chưa được triển khai.');
 }
 
+// Delete functions
+function deleteClass(id) {
+    if (confirm('Bạn có chắc muốn xóa lớp này?')) {
+        classes = classes.filter(c => c.id != id);
+        localStorage.setItem('classes', JSON.stringify(classes));
+        updateClassTable();
+        updateSelectOptions();
+        updateAdminStats();
+    }
+}
+
+function deleteTeacher(id) {
+    if (confirm('Bạn có chắc muốn xóa giáo viên này?')) {
+        teachers = teachers.filter(t => t.id != id);
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        updateTeacherTable();
+        updateSelectOptions();
+        updateAdminStats();
+    }
+}
+
+// Update admin stats
+function updateAdminStats() {
+    document.getElementById('total-classes-count').textContent = classes.length;
+    document.getElementById('total-teachers-count').textContent = teachers.length;
+    document.getElementById('total-students-count').textContent = students.length;
+}
+
 // Initial load
 updateClassTable();
 updateTeacherTable();
@@ -258,3 +285,8 @@ updateStudentTable();
 updateParentTable();
 updatePromoList();
 updateSelectOptions();
+
+// Initialize admin stats
+document.addEventListener('DOMContentLoaded', function() {
+    updateAdminStats();
+});
