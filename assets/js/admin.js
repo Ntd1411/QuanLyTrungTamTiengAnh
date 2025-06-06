@@ -48,7 +48,12 @@ function updateClassTable() {
           <td>${cls.year}</td>
           <td>${cls.teacher}</td>
           <td>${cls.status}</td>
-          <td><button onclick="selectClass(${cls.id})">Chọn</button></td>
+          <td>
+            <div class="table-actions">
+              <button onclick="selectClass(${cls.id})">Chọn</button>
+              <button class="btn-delete" onclick="deleteClass(${cls.id})">Xóa</button>
+            </div>
+          </td>
         `;
         tbody.appendChild(row);
     });
@@ -82,7 +87,12 @@ function updateTeacherTable() {
           <td>${teacher.name}</td>
           <td>${teacher.phone}</td>
           <td>${teacher.classes.join(', ') || 'Chưa có lớp'}</td>
-          <td><button onclick="editTeacher(${teacher.id})">Sửa</button></td>
+          <td>
+            <div class="table-actions">
+              <button onclick="editTeacher(${teacher.id})">Sửa</button>
+              <button class="btn-delete" onclick="deleteTeacher(${teacher.id})">Xóa</button>
+            </div>
+          </td>
         `;
         tbody.appendChild(row);
     });
@@ -113,7 +123,12 @@ function updateStudentTable() {
           <td>${parent ? parent.name : 'Không có'}</td>
           <td>${student.attended}</td>
           <td>${student.absent}</td>
-          <td><button onclick="editStudent(${student.id})">Sửa</button></td>
+          <td>
+            <div class="table-actions">
+              <button onclick="editStudent(${student.id})">Sửa</button>
+              <button class="btn-delete" onclick="deleteStudent(${student.id})">Xóa</button>
+            </div>
+          </td>
         `;
         tbody.appendChild(row);
     });
@@ -145,17 +160,15 @@ function updateParentTable() {
           <td>${parent.zalo}</td>
           <td>${children || 'Chưa có'}</td>
           <td>${parent.unpaid} VNĐ</td>
-          <td><button onclick="selectParent(${parent.id})">Chọn</button></td>
+          <td>
+            <div class="table-actions">
+              <button onclick="selectParent(${parent.id})">Chọn</button>
+              <button class="btn-delete" onclick="deleteParent(${parent.id})">Xóa</button>
+            </div>
+          </td>
         `;
         tbody.appendChild(row);
     });
-}
-
-function selectParent(id) {
-    document.querySelectorAll('#parent-table-body tr').forEach(row => {
-        row.classList.remove('selected');
-    });
-    document.querySelector(`#parent-table-body tr[data-id="${id}"]`).classList.add('selected');
 }
 
 function sendNotification() {
