@@ -29,54 +29,11 @@ header .container {
     align-items: center;
 }
 
-.logo img {
-    height: 50px;
-}
-
-/* Menu styles (Assuming you have your own CSS for the menu)
-   *  Adjust this part to fit your existing menu CSS
-*/
-/* Example - adapt to your menu structure */
-.menu {
-    list-style: none;
-    display: flex;
-}
-
-.menu li {
-    margin-left: 20px;
-}
-
-.menu a {
-    text-decoration: none;
-    color: #fff; /* Màu trắng cho chữ trong menu */
-    font-weight: 500;
-    padding: 5px 10px; /* Add padding for better click area */
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.menu a:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Slight opacity on hover */
-}
-
-/* Submenu Style */
-.submenu {
-    list-style: none;
-    padding-top: 10px;
-}
-
-.submenu li a {
-    color: #fff;
-}
-.sub-submenu li a {
-    color: #fff;
-}
-
 /* === Hero Section Styles === */
 #hero {
     background: linear-gradient(rgba(200, 35, 51, 0.7), rgba(200, 35, 51, 0.7)), url('hero-bg.jpg') center/cover no-repeat; /*  Tông đỏ đậm hơn với độ trong suốt, Thay 'hero-bg.jpg' bằng ảnh background */
     color: #fff;
-    padding: 100px 0;
+    padding: 50px 0;
     text-align: center;
 }
 
