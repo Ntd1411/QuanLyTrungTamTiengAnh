@@ -1,0 +1,155 @@
+/* Reset mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Patrick Hand', cursive;
+    background: linear-gradient(135deg, #ffdde1, #eeafaf);
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+h1, h2, h3 {
+    color: #ff6f61;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5em;
+    text-shadow: 2px 2px #fff;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.2em;
+    color: #555;
+}
+
+.section {
+    padding: 40px 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#hero {
+    background: linear-gradient(135deg, #ffdde1, #c7e9f1);
+    padding: 50px 0;
+    text-align: center;
+    border-radius: 15px;
+}
+
+.hero-image-wrapper {
+    margin-top: 20px;
+}
+
+.hero-image {
+    max-width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #ff6f61;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 1.2em;
+    margin-top: 20px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #e65b50;
+    transform: scale(1.1);
+}
+
+.benefits, .features, .info-grid {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.benefits li, .feature, .info-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feature i, .info-item i {
+    font-size: 2em;
+    color: #ff6f61;
+    margin-bottom: 10px;
+}
+
+.testimonial-item {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info p {
+    font-size: 1.2em;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.contact-info i {
+    color: #ff6f61;
+    margin-right: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background: #ffdde1;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+/* Hiệu ứng nảy lên khi hover cho benefits, feature, info-item */
+.benefits li,
+.feature,
+.info-item,
+.testimonial-item {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+}
+
+.benefits li:hover,
+.feature:hover,
+.info-item:hover,
+.testimonial-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(200,35,51,0.12);
+}
