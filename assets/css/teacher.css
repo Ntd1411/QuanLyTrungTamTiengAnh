@@ -150,6 +150,61 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Schedule Styles */
+.schedule-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.schedule-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.schedule-table-container {
+    overflow-x: auto;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.schedule-table th,
+.schedule-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    text-align: center;
+}
+
+.schedule-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.schedule-class {
+    background: #e3f2fd;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.schedule-class .class-name {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.schedule-class .class-time {
+    font-size: 0.85rem;
+    color: #666;
+}
+
 /* Buttons */
 button {
     background-color: var(--primary-color);

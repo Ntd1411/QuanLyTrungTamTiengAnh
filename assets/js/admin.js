@@ -18,11 +18,29 @@ function addClass() {
     const name = document.getElementById('class-name').value;
     const year = document.getElementById('class-year').value;
     const teacher = document.getElementById('class-teacher').value;
-    if (name && year && teacher) {
-        classes.push({ id: Date.now(), name, year, teacher, status: 'active' });
+    const startDate = document.getElementById('class-start-date').value;
+    const endDate = document.getElementById('class-end-date').value;
+    const time = document.getElementById('class-time').value;
+    const room = document.getElementById('class-room').value;
+
+    if (name && year && teacher && startDate && endDate && time && room) {
+        classes.push({ 
+            id: Date.now(), 
+            name, 
+            year, 
+            teacher, 
+            startDate,
+            endDate,
+            time,
+            room,
+            status: 'active' 
+        });
         localStorage.setItem('classes', JSON.stringify(classes));
         updateClassTable();
         updateSelectOptions();
+        document.getElementById('class-form').reset();
+    } else {
+        alert('Vui lòng điền đầy đủ thông tin lớp học');
     }
 }
 
@@ -44,16 +62,20 @@ function updateClassTable() {
         const row = document.createElement('tr');
         row.dataset.id = cls.id;
         row.innerHTML = `
-          <td>${cls.name}</td>
-          <td>${cls.year}</td>
-          <td>${cls.teacher}</td>
-          <td>${cls.status}</td>
-          <td>
-            <div class="table-actions">
-              <button onclick="selectClass(${cls.id})">Sửa</button>
-              <button class="btn-delete" onclick="deleteClass(${cls.id})">Xóa</button>
-            </div>
-          </td>
+            <td>${cls.name}</td>
+            <td>${cls.year}</td>
+            <td>${cls.teacher}</td>
+            <td>${new Date(cls.startDate).toLocaleDateString('vi-VN')}</td>
+            <td>${new Date(cls.endDate).toLocaleDateString('vi-VN')}</td>
+            <td>${cls.time}</td>
+            <td>${cls.room}</td>
+            <td>${cls.status}</td>
+            <td>
+                <div class="table-actions">
+                    <button onclick="selectClass(${cls.id})">Sửa</button>
+                    <button class="btn-delete" onclick="deleteClass(${cls.id})">Xóa</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(row);
     });
@@ -93,6 +115,7 @@ function addTeacher() {
         localStorage.setItem('teachers', JSON.stringify(teachers));
         updateTeacherTable();
         updateSelectOptions();
+        updateHomeDashboard();
     } else {
         alert('Vui lòng điền đầy đủ thông tin giáo viên');
     }
@@ -154,6 +177,7 @@ function updateTeacherInfo(id) {
 
         localStorage.setItem('teachers', JSON.stringify(teachers));
         updateTeacherTable();
+        updateHomeDashboard();
 
         // Reset form and button
         document.getElementById('teacher-form').reset();
@@ -235,14 +259,39 @@ function updateStudentTable() {
 
 // Manage Parents
 function addParent() {
-    const name = document.getElementById('parent-name').value;
+    const fullName = document.getElementById('parent-fullname').value;
+    const username = document.getElementById('parent-username').value;
+    const password = document.getElementById('parent-password').value;
+    const gender = document.getElementById('parent-gender').value;
+    const email = document.getElementById('parent-email').value;
     const phone = document.getElementById('parent-phone').value;
+    const birthdate = document.getElementById('parent-birthdate').value;
     const zalo = document.getElementById('parent-zalo').value;
-    if (name && phone && zalo) {
-        parents.push({ id: Date.now(), name, phone, zalo, unpaid: 0 });
+
+    if (fullName && username && password && gender && email && phone && birthdate) {
+        const newParent = {
+            id: Date.now(),
+            fullName,
+            username,
+            password,
+            gender,
+            email,
+            phone,
+            birthdate,
+            zalo,
+            unpaid: 0
+        };
+        
+        parents.push(newParent);
         localStorage.setItem('parents', JSON.stringify(parents));
+        
+        document.getElementById('parent-form').reset();
         updateParentTable();
         updateSelectOptions();
+        
+        alert('Thêm phụ huynh thành công!');
+    } else {
+        alert('Vui lòng điền đầy đủ thông tin phụ huynh');
     }
 }
 
@@ -254,28 +303,61 @@ function updateParentTable() {
         const row = document.createElement('tr');
         row.dataset.id = parent.id;
         row.innerHTML = `
-          <td>${parent.name}</td>
-          <td>${parent.phone}</td>
-          <td>${parent.zalo}</td>
-          <td>${children || 'Chưa có'}</td>
-          <td>${parent.unpaid} VNĐ</td>
-          <td>
-            <div class="table-actions">
-              <button onclick="selectParent(${parent.id})">Chọn</button>
-              <button class="btn-delete" onclick="deleteParent(${parent.id})">Xóa</button>
-            </div>
-          </td>
+            <td>${parent.fullName}</td>
+            <td>${parent.username}</td>
+            <td>${parent.gender}</td>
+            <td>${parent.email}</td>
+            <td>${parent.phone}</td>
+            <td>${new Date(parent.birthdate).toLocaleDateString('vi-VN')}</td>
+            <td>${parent.zalo || 'Chưa có'}</td>
+            <td>${children || 'Chưa có'}</td>
+            <td>${parent.unpaid.toLocaleString('vi-VN')} VNĐ</td>
+            <td>
+                <div class="table-actions">
+                    <button onclick="editParent(${parent.id})">Sửa</button>
+                    <button class="btn-delete" onclick="deleteParent(${parent.id})">Xóa</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(row);
     });
 }
 
-function sendNotification() {
-    const parentId = document.querySelector('#parent-table-body tr.selected')?.dataset.id;
-    if (parentId) {
-        const parent = parents.find(p => p.id == parentId);
-        console.log(`Gửi thông báo tới ${parent.name} qua Zalo: ${parent.zalo}`);
-        // Thay bằng API Zalo/Facebook thực tế
+function editParent(id) {
+    const parent = parents.find(p => p.id === id);
+    if (parent) {
+        document.getElementById('parent-fullname').value = parent.fullName;
+        document.getElementById('parent-username').value = parent.username;
+        document.getElementById('parent-gender').value = parent.gender;
+        document.getElementById('parent-email').value = parent.email;
+        document.getElementById('parent-phone').value = parent.phone;
+        document.getElementById('parent-birthdate').value = parent.birthdate;
+        document.getElementById('parent-zalo').value = parent.zalo || '';
+        
+        const addButton = document.querySelector('button[onclick="addParent()"]');
+        addButton.textContent = 'Cập nhật';
+        addButton.onclick = () => updateParentInfo(id);
+    }
+}
+
+function updateParentInfo(id) {
+    const parent = parents.find(p => p.id === id);
+    if (parent) {
+        parent.fullName = document.getElementById('parent-fullname').value;
+        parent.username = document.getElementById('parent-username').value;
+        parent.gender = document.getElementById('parent-gender').value;
+        parent.email = document.getElementById('parent-email').value;
+        parent.phone = document.getElementById('parent-phone').value;
+        parent.birthdate = document.getElementById('parent-birthdate').value;
+        parent.zalo = document.getElementById('parent-zalo').value;
+
+        localStorage.setItem('parents', JSON.stringify(parents));
+        updateParentTable();
+        
+        document.getElementById('parent-form').reset();
+        const addButton = document.querySelector('button[onclick="updateParentInfo(' + id + ')"]');
+        addButton.textContent = 'Thêm phụ huynh';
+        addButton.onclick = addParent;
     }
 }
 
@@ -386,6 +468,13 @@ function updateAdminStats() {
     document.getElementById('total-students-count').textContent = students.length;
 }
 
+function updateHomeDashboard() {
+    document.getElementById('home-teachers-count').textContent = teachers.length;
+    document.getElementById('home-students-count').textContent = students.length;
+    document.getElementById('home-classes-count').textContent = classes.length;
+    document.getElementById('home-parents-count').textContent = parents.length;
+}
+
 // Initial load
 updateClassTable();
 updateTeacherTable();
@@ -393,6 +482,12 @@ updateStudentTable();
 updateParentTable();
 updatePromoList();
 updateSelectOptions();
+
+// Modify the existing DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    updateAdminStats();
+    updateHomeDashboard();
+});
 
 // Initialize admin stats
 document.addEventListener('DOMContentLoaded', function() {

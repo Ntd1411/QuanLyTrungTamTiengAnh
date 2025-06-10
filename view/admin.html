@@ -44,29 +44,97 @@
             <!-- Home Section -->
             <div id="home-admin" class="element active">
                 <h2>Chào mừng đến với Admin Dashboard</h2>
-                <p>Chọn một mục từ menu để bắt đầu quản lý trung tâm tiếng Anh.</p>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👨‍🏫</div>
+                        <div class="stat-info">
+                            <h3>Giáo viên</h3>
+                            <p id="home-teachers-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👨‍🎓</div>
+                        <div class="stat-info">
+                            <h3>Học sinh</h3>
+                            <p id="home-students-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-info">
+                            <h3>Lớp học</h3>
+                            <p id="home-classes-count">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Phụ huynh</h3>
+                            <p id="home-parents-count">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <h3>Thao tác nhanh</h3>
+                    <div class="action-buttons">
+                        <button onclick="showElement('manage-classes')">Thêm lớp mới</button>
+                        <button onclick="showElement('manage-teachers')">Thêm giáo viên</button>
+                        <button onclick="showElement('manage-students')">Thêm học sinh</button>
+                        <button onclick="showElement('manage-parents')">Thêm phụ huynh</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Manage Classes -->
             <div id="manage-classes" class="element">
                 <h2>Quản Lý Lớp Học</h2>
-                <div class="form-group">
-                    <label>Tên lớp (VD: Lớp 3.1):</label>
-                    <input type="text" id="class-name" placeholder="Nhập tên lớp">
-                </div>
-                <div class="form-group">
-                    <label>Năm học:</label>
-                    <input type="number" id="class-year" placeholder="VD: 2023">
-                </div>
-                <div class="form-group">
-                    <label>Giáo viên phụ trách:</label>
-                    <select id="class-teacher">
-                        <option value="">Chọn giáo viên</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button onclick="addClass()">Thêm lớp</button>
-                </div>
+                <form id="class-form" class="class-form">
+                    <div class="form-group">
+                        <label>Tên lớp (VD: Lớp 3.1):</label>
+                        <input type="text" id="class-name" placeholder="Nhập tên lớp">
+                    </div>
+                    <div class="form-group">
+                        <label>Năm học:</label>
+                        <input type="number" id="class-year" placeholder="VD: 2023">
+                    </div>
+                    <div class="form-group">
+                        <label>Giáo viên phụ trách:</label>
+                        <select id="class-teacher">
+                            <option value="">Chọn giáo viên</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày bắt đầu:</label>
+                        <input type="date" id="class-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày kết thúc:</label>
+                        <input type="date" id="class-end-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giờ học:</label>
+                        <select id="class-time" required>
+                            <option value="">Chọn giờ học</option>
+                            <option value="18:00-19:30">18:00-19:30</option>
+                            <option value="19:45-21:15">19:45-21:15</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phòng học:</label>
+                        <select id="class-room" required>
+                            <option value="">Chọn phòng học</option>
+                            <option value="P201">P201</option>
+                            <option value="P202">P202</option>
+                            <option value="P203">P203</option>
+                            <option value="P204">P204</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="document.getElementById('class-form').reset()">Làm mới</button>
+                        <button type="button" onclick="addClass()">Thêm lớp</button>
+                    </div>
+                </form>
+
                 <div class="table-container">
                     <table id="class-table">
                         <thead>
@@ -74,6 +142,10 @@
                                 <th>Tên lớp</th>
                                 <th>Năm học</th>
                                 <th>Giáo viên</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Giờ học</th>
+                                <th>Phòng học</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
@@ -223,32 +295,63 @@
             <!-- Manage Parents -->
             <div id="manage-parents" class="element">
                 <h2>Quản Lý Phụ Huynh</h2>
-                <div class="form-group">
-                    <label>Tên phụ huynh:</label>
-                    <input type="text" id="parent-name" placeholder="Nhập tên phụ huynh">
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại:</label>
-                    <input type="text" id="parent-phone" placeholder="Nhập số điện thoại">
-                </div>
-                <div class="form-group">
-                    <label>Zalo ID:</label>
-                    <input type="text" id="parent-zalo" placeholder="Nhập Zalo ID">
-                </div>
-                <div class="form-actions">
-                    <button onclick="addParent()">Thêm phụ huynh</button>
-                    <button onclick="sendNotification()">Gửi thông báo</button>
-                </div>
+                <form id="parent-form" class="parent-form">
+                    <div class="form-group">
+                        <label>Họ và tên:</label>
+                        <input type="text" id="parent-fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên đăng nhập:</label>
+                        <input type="text" id="parent-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu:</label>
+                        <input type="password" id="parent-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính:</label>
+                        <select id="parent-gender" required>
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="parent-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại:</label>
+                        <input type="tel" id="parent-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày sinh:</label>
+                        <input type="date" id="parent-birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Zalo ID:</label>
+                        <input type="text" id="parent-zalo" placeholder="Nhập Zalo ID">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>
+                        <button type="button" onclick="addParent()">Thêm phụ huynh</button>
+                    </div>
+                </form>
+
                 <div class="table-container">
                     <table id="parent-table">
                         <thead>
                             <tr>
-                                <th>Tên phụ huynh</th>
+                                <th>Họ và tên</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
                                 <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
                                 <th>Zalo ID</th>
                                 <th>Con</th>
                                 <th>Số tiền chưa đóng</th>
-                                <th>Hành động</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="parent-table-body"></tbody>

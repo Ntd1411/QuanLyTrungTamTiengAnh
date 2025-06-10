@@ -450,6 +450,26 @@ footer p {
   box-sizing: border-box;
 }
 
+.signup-block select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 1em;
+}
+
+
+
 .signup-role {
   display: flex;
   align-items: center;
@@ -509,7 +529,6 @@ footer p {
   }
 }
 
-
 /* =============error ===================== */
 .error-message {
   color: #ff0000;
@@ -521,4 +540,58 @@ footer p {
 input.error {
   border-color: #ff0000 !important;
   outline: none;
+}
+
+/* Styles for gender selection */
+.gender-options {
+    display: flex;
+    gap: 2rem;
+    padding: 0.5rem 0;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.gender-option input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.gender-option input[type="radio"]:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.gender-option input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    background: white;
+    border-radius: 50%;
+}
+
+.gender-option label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.gender-option:hover input[type="radio"] {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(228, 49, 42, 0.1);
 }

@@ -26,11 +26,23 @@ let teacherData = {
     ]
 };
 
+// Schedule data structure
+let schedule = [
+    {
+        time: "18:00-19:30",
+        monday: { className: "Lớp 3.1", room: "P201" },
+        wednesday: { className: "Lớp 3.1", room: "P201" },
+        friday: { className: "Lớp 3.1", room: "P201" }
+    },
+    // Add more time slots as needed
+];
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     loadTeacherDashboard();
     loadClassSelect();
     loadTeacherProfile();
+    viewSchedule(); // Load initial schedule
 });
 
 // Load dashboard data
@@ -150,6 +162,38 @@ function updateProfile() {
     teacherData.phone = newPhone;
     console.log('Profile updated:', { newPhone, newPassword });
     alert('Thông tin đã được cập nhật');
+}
+
+// View schedule
+function viewSchedule() {
+    const weekInput = document.getElementById('schedule-week').value;
+    const scheduleBody = document.getElementById('schedule-body');
+    scheduleBody.innerHTML = '';
+
+    schedule.forEach(slot => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${slot.time}</td>
+            <td>${formatClassCell(slot.monday)}</td>
+            <td>${formatClassCell(slot.tuesday)}</td>
+            <td>${formatClassCell(slot.wednesday)}</td>
+            <td>${formatClassCell(slot.thursday)}</td>
+            <td>${formatClassCell(slot.friday)}</td>
+            <td>${formatClassCell(slot.saturday)}</td>
+            <td>${formatClassCell(slot.sunday)}</td>
+        `;
+        scheduleBody.appendChild(row);
+    });
+}
+
+function formatClassCell(classInfo) {
+    if (!classInfo) return '';
+    return `
+        <div class="schedule-class">
+            <div class="class-name">${classInfo.className}</div>
+            <div class="class-room">Phòng: ${classInfo.room}</div>
+        </div>
+    `;
 }
 
 // Event listeners
