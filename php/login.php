@@ -6,94 +6,82 @@ header('Content-Type: application/json');
 // Initialize the session
 session_start();
 
-// Debug POST data
-error_log("Raw POST data: " . file_get_contents('php://input'));
-error_log("$_POST contents: " . print_r($_POST, true));
+// Proper debug logging
+$postData = file_get_contents('php://input');
+error_log("Raw POST data: " . $postData);
+error_log("POST contents: " . json_encode($_POST));
 
 // Include config file
 require_once "config.php";
 
 // Check database connection
 if (!$conn) {
-    error_log("Database connection failed");
+    error_log("Database connection failed: " . mysqli_connect_error());
     die(json_encode(['success' => false, 'error' => 'Lỗi kết nối database']));
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate POST data
-    if (!isset($_POST['username']) || !isset($_POST['password'])) {
-        error_log("Missing username or password");
+    if (empty($_POST['username']) || empty($_POST['password'])) {
         die(json_encode(['success' => false, 'error' => 'Thiếu thông tin đăng nhập']));
     }
 
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = $_POST['password'];
-
-    // Debug query
-    error_log("Attempting login for username: " . $username);
+    $username = mysqli_real_escape_string($conn, trim($_POST['username']));
+    $password = trim($_POST['password']);
     
-    // SQL query based on user tables
-    $sql = "SELECT id, username, password, role FROM users WHERE username = ?";
+    // Check in each table
+    $tables = ['admin', 'teachers', 'students', 'parents'];
+    $found = false;
     
-    if ($stmt = mysqli_prepare($conn, $sql)) {
-        mysqli_stmt_bind_param($stmt, "s", $username);
-        
-        if (!mysqli_stmt_execute($stmt)) {
-            error_log("Query execution failed: " . mysqli_error($conn));
-            die(json_encode(['success' => false, 'error' => 'Lỗi truy vấn database']));
-        }
-
-        mysqli_stmt_store_result($stmt);
-        
-        if (mysqli_stmt_num_rows($stmt) == 1) {
-            mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $role);
+    foreach ($tables as $table) {
+        $sql = "SELECT * FROM $table WHERE Username = ?";
+        if ($stmt = mysqli_prepare($conn, $sql)) {
+            mysqli_stmt_bind_param($stmt, "s", $username);
             
-            if (mysqli_stmt_fetch($stmt)) {
-                if (password_verify($password, $hashed_password)) {
-                    // Store data in session variables
-                    $_SESSION["loggedin"] = true;
-                    $_SESSION["id"] = $id;
-                    $_SESSION["username"] = $username;
-                    $_SESSION["role"] = $role;
-                    
-                    // Return success response with redirect URL
-                    $redirect_url = '';
-                    switch($role) {
-                        case "admin":
-                            $redirect_url = '../view/admin.html';
-                            break;
-                        case "teacher": 
-                            $redirect_url = '../view/teacher.html';
-                            break;
-                        case "student":
-                            $redirect_url = '../view/student.html';
-                            break;
-                        case "parent":
-                            $redirect_url = '../view/parent.html';
-                            break;
-                        default:
-                            $redirect_url = '../view/index.html';
-                            break;
+            if (mysqli_stmt_execute($stmt)) {
+                $result = mysqli_stmt_get_result($stmt);
+                
+                if ($row = mysqli_fetch_assoc($result)) {
+                    // Use password_verify instead of direct comparison
+                    if (password_verify($password, $row['Password'])) {
+                        $_SESSION["loggedin"] = true;
+                        $_SESSION["id"] = $row[ucfirst($table) . 'ID'];
+                        $_SESSION["username"] = $row['Username'];
+                        $_SESSION["role"] = rtrim($table, 's');
+                        
+                        $redirect_url = "../view/" . rtrim($table, 's') . ".html";
+                        
+                        error_log("Login successful for user: " . $username . " in table: " . $table);
+
+                        header("Location: ../view/admin.html");
+                        
+                        echo json_encode([
+                            'success' => true,
+                            'redirect' => $redirect_url,
+                            'role' => rtrim($table, 's')
+                        ]);
+                        
+                        mysqli_stmt_close($stmt);
+                        mysqli_close($conn);
+                        exit;
                     }
-                    echo json_encode([
-                        'success' => true,
-                        'redirect' => $redirect_url,
-                        'role' => $role
-                    ]);
-                    exit;
-                } else {
-                    $login_err = "Sai tên đăng nhập hoặc mật khẩu.";
+                    error_log("Password verification failed for user: " . $username . " in table: " . $table);
+                    $found = true;
+                    break;
                 }
             }
-        } else {
-            $login_err = "Sai tên đăng nhập hoặc mật khẩu.";
+            mysqli_stmt_close($stmt);
         }
-    } else {
-        error_log("Query preparation failed: " . mysqli_error($conn));
-        die(json_encode(['success' => false, 'error' => 'Lỗi chuẩn bị truy vấn']));
     }
     
     mysqli_close($conn);
+    
+    if ($found) {
+        echo json_encode(['success' => false, 'error' => 'Sai mật khẩu']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Tài khoản không tồn tại']);
+    }
+    exit;
 } else {
     die(json_encode(['success' => false, 'error' => 'Phương thức không hợp lệ']));
 }
