@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập - KEC</title>
+    <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="./index.html">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#about">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="./teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
+                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+                    <li><a href="#contact">Liên Hệ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#education">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
+                    <li><a href="#ielts">IELTS</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#toeic">TOEIC</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#library">Thư viện</a>
+                <ul class="submenu">
+                    <li><a href="#ielts-library">IELTS</a></li>
+                    <li><a href="#toeic-library">TOEIC</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#news">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Sự Kiện</a></li>
+                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#login">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="./login.html">Đăng Nhập</a></li>
+                    <li><a href="./signup.html">Đăng Ký</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="login">
+        <div class="body">
+            <h1>Đăng nhập</h1>
+            <form action="/login" method="post">
+                <!-- ...form đăng nhập... -->
+                <div class="block">
+                    <h2>Tài khoản</h2>
+                    <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản" required>
+                </div>
+
+                <div class="block">
+                    <h2>Mật khẩu</h2>
+                    <input type="password" title="Mật khẩu" name="password" placeholder="Mật khẩu" required>
+                </div>
+
+                <div class="remember">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Ghi nhớ đăng nhập</label>
+                </div>
+
+                <a href="#">Quên mật khẩu?</a>
+
+                <button type="submit">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
