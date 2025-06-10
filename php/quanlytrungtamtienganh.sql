@@ -9,7 +9,7 @@
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = "+07:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -26,6 +26,8 @@ SET time_zone = "+00:00";
 --
 -- Cấu trúc bảng cho bảng `admin`
 --
+
+CREATE DATABASE `quanlytrungtamtienganh`;
 
 CREATE TABLE `admin` (
   `AdminID` int(11) NOT NULL,
