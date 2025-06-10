@@ -27,7 +27,10 @@ SET time_zone = "+07:00";
 -- Cấu trúc bảng cho bảng `admin`
 --
 
+-- Tạo và sử dụng database
+DROP DATABASE IF EXISTS `quanlytrungtamtienganh`;
 CREATE DATABASE `quanlytrungtamtienganh`;
+USE `quanlytrungtamtienganh`;
 
 CREATE TABLE `admin` (
   `AdminID` int(11) NOT NULL,
