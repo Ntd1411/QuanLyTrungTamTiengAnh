@@ -20,6 +20,7 @@
     <nav>
         <ul class="menu">
             <li><a href="#home-teacher" onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
+            <li><a href="#schedule" onclick="showElement('schedule'); return false;">Lịch Dạy</a></li>
             <li><a href="#my-classes" onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
             <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
             <li><a href="#notifications" onclick="showElement('notifications'); return false;">Thông Báo</a></li>
@@ -50,6 +51,39 @@
                 <div class="summary-card">
                     <h3>Buổi dạy tháng này</h3>
                     <p id="monthly-sessions">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div id="schedule" class="element">
+            <h2>Lịch Dạy</h2>
+            <div class="schedule-container">
+                <div class="schedule-header">
+                    <div class="form-group">
+                        <label>Xem theo tuần:</label>
+                        <input type="week" id="schedule-week">
+                    </div>
+                    <button onclick="viewSchedule()">Xem lịch</button>
+                </div>
+                <div class="schedule-table-container">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Thứ 2</th>
+                                <th>Thứ 3</th>
+                                <th>Thứ 4</th>
+                                <th>Thứ 5</th>
+                                <th>Thứ 6</th>
+                                <th>Thứ 7</th>
+                                <th>Chủ nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body">
+                            <!-- Schedule will be populated by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

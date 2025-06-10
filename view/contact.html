@@ -1,0 +1,117 @@
+<!--     <div id="map">
+          <iframe
+            height=100%
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2948095185634!2d105.7940398148199!3d20.98081639478946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acc508f938fd%3A0x883e474806a2d1f2!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBt4bqtdCBtw6M!5e0!3m2!1svi!2s!4v1655088456301!5m2!1svi!2s"
+            style="border: 0"
+            width=100%
+          ></iframe>
+      </div>-->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+        <!-- Header với ảnh -->
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="#home" onclick="showElement('home'); return false;">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#about">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="#teacher_info" onclick="showElement('teacher_info'); return false;">Đội Ngũ Giảng
+                            Viên</a></li>
+                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+                    <li><a href="#contact">Liên Hệ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#education">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
+                    <li><a href="#ielts">IELTS</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#toeic">TOEIC</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#library">Thư viện</a>
+                <ul class="submenu">
+                    <li><a href="#ielts-library">IELTS</a></li>
+                    <li><a href="#toeic-library">TOEIC</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#news">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Sự Kiện</a></li>
+                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#login">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="#login" onclick="showElement('login'); return false;">Đăng Nhập</a></li>
+                    <li><a href="#signup" onclick="showElement('signup'); return false;">Đăng Ký</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <link rel="stylesheet" href="../assets/css/contact.css">
+        <h1>Liên hệ với chúng tôi</h1>
+
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name">Họ và tên:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Nội dung:</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Gửi liên hệ</button>
+            </div>
+        </form>
+
+        <h2>Vị trí của chúng tôi</h2>
+        <div id="map">
+          <iframe
+            height=100%
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2948095185634!2d105.7940398148199!3d20.98081639478946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acc508f938fd%3A0x883e474806a2d1f2!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBt4bqtdCBtw6M!5e0!3m2!1svi!2s!4v1655088456301!5m2!1svi!2s"
+            style="border: 0"
+            width=100%
+          ></iframe>
+      </div>
+    </div>
+    <script src="../assets/js/contact.js"></script>
+</body>
+</html>
