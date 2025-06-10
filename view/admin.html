@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
+    <link rel="icon" href="../assets/icon/logo_ver3.png">
 </head>
 
 <body>
@@ -63,9 +64,8 @@
                         <option value="">Chọn giáo viên</option>
                     </select>
                 </div>
-                <div class="button-container">
+                <div class="form-actions">
                     <button onclick="addClass()">Thêm lớp</button>
-                    <button onclick="closeClass()">Đóng lớp</button>
                 </div>
                 <div class="table-container">
                     <table id="class-table">
@@ -83,28 +83,65 @@
                 </div>
             </div>
 
-            <!-- Manage Teachers -->
+            <!-- Manage Teachers Section -->
             <div id="manage-teachers" class="element">
                 <h2>Quản Lý Giáo Viên</h2>
-                <div class="form-group">
-                    <label>Tên giáo viên:</label>
-                    <input type="text" id="teacher-name" placeholder="Nhập tên giáo viên">
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại:</label>
-                    <input type="text" id="teacher-phone" placeholder="Nhập số điện thoại">
-                </div>
-                <div class="button-container">
-                    <button onclick="addTeacher()">Thêm giáo viên</button>
-                </div>
+                <form id="teacher-form" class="teacher-form">
+                    <div class="form-group">
+                        <label>Họ và tên:</label>
+                        <input type="text" id="teacher-fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên đăng nhập:</label>
+                        <input type="text" id="teacher-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu:</label>
+                        <input type="password" id="teacher-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính:</label>
+                        <select id="teacher-gender" required>
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="teacher-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại:</label>
+                        <input type="tel" id="teacher-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày sinh:</label>
+                        <input type="date" id="teacher-birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Lương (VNĐ):</label>
+                        <input type="number" id="teacher-salary" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="document.getElementById('teacher-form').reset()">Làm mới</button>
+                        <button type="button" onclick="addTeacher()">Thêm giáo viên</button>
+                    </div>
+                </form>
+
                 <div class="table-container">
-                    <table id="teacher-table">
+                    <table id="teacher-table" class="teacher-table">
                         <thead>
                             <tr>
-                                <th>Tên giáo viên</th>
+                                <th>Họ và tên</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
                                 <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>Lương</th>
                                 <th>Lớp phụ trách</th>
-                                <th>Hành động</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="teacher-table-body"></tbody>
@@ -115,35 +152,67 @@
             <!-- Manage Students -->
             <div id="manage-students" class="element">
                 <h2>Quản Lý Học Sinh</h2>
-                <div class="form-group">
-                    <label>Tên học sinh:</label>
-                    <input type="text" id="student-name" placeholder="Nhập tên học sinh">
-                </div>
-                <div class="form-group">
-                    <label>Lớp:</label>
-                    <select id="student-class">
-                        <option value="">Chọn lớp</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Phụ huynh:</label>
-                    <select id="student-parent">
-                        <option value="">Chọn phụ huynh</option>
-                    </select>
-                </div>
-                <div class="button-container">
-                    <button onclick="addStudent()">Thêm học sinh</button>
-                </div>
+                <form id="student-form" class="student-form">
+                    <div class="form-group">
+                        <label>Họ và tên:</label>
+                        <input type="text" id="student-fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên đăng nhập:</label>
+                        <input type="text" id="student-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu:</label>
+                        <input type="password" id="student-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính:</label>
+                        <select id="student-gender" required>
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="student-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại:</label>
+                        <input type="tel" id="student-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày sinh:</label>
+                        <input type="date" id="student-birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Lớp:</label>
+                        <select id="student-class" required>
+                            <option value="">Chọn lớp</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" onclick="document.getElementById('student-form').reset()">Làm mới</button>
+                        <button type="button" onclick="addStudent()">Thêm học sinh</button>
+                    </div>
+                </form>
+
                 <div class="table-container">
                     <table id="student-table">
                         <thead>
                             <tr>
-                                <th>Tên học sinh</th>
+                                <th>Họ và tên</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
                                 <th>Lớp</th>
                                 <th>Phụ huynh</th>
                                 <th>Số buổi học</th>
                                 <th>Số buổi nghỉ</th>
-                                <th>Hành động</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="student-table-body"></tbody>
@@ -166,7 +235,7 @@
                     <label>Zalo ID:</label>
                     <input type="text" id="parent-zalo" placeholder="Nhập Zalo ID">
                 </div>
-                <div class="button-container">
+                <div class="form-actions">
                     <button onclick="addParent()">Thêm phụ huynh</button>
                     <button onclick="sendNotification()">Gửi thông báo</button>
                 </div>

@@ -50,7 +50,7 @@ function updateClassTable() {
           <td>${cls.status}</td>
           <td>
             <div class="table-actions">
-              <button onclick="selectClass(${cls.id})">Chọn</button>
+              <button onclick="selectClass(${cls.id})">Sửa</button>
               <button class="btn-delete" onclick="deleteClass(${cls.id})">Xóa</button>
             </div>
           </td>
@@ -68,13 +68,33 @@ function selectClass(id) {
 
 // Manage Teachers
 function addTeacher() {
-    const name = document.getElementById('teacher-name').value;
+    const fullName = document.getElementById('teacher-fullname').value;
+    const username = document.getElementById('teacher-username').value;
+    const password = document.getElementById('teacher-password').value;
+    const gender = document.getElementById('teacher-gender').value;
+    const email = document.getElementById('teacher-email').value;
     const phone = document.getElementById('teacher-phone').value;
-    if (name && phone) {
-        teachers.push({ id: Date.now(), name, phone, classes: [] });
+    const birthdate = document.getElementById('teacher-birthdate').value;
+    const salary = document.getElementById('teacher-salary').value;
+
+    if (fullName && username && password && gender && email && phone && birthdate && salary) {
+        teachers.push({
+            id: Date.now(),
+            fullName,
+            username,
+            password,
+            gender,
+            email,
+            phone,
+            birthdate,
+            salary: parseFloat(salary),
+            classes: []
+        });
         localStorage.setItem('teachers', JSON.stringify(teachers));
         updateTeacherTable();
         updateSelectOptions();
+    } else {
+        alert('Vui lòng điền đầy đủ thông tin giáo viên');
     }
 }
 
@@ -84,29 +104,103 @@ function updateTeacherTable() {
     teachers.forEach(teacher => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${teacher.name}</td>
-          <td>${teacher.phone}</td>
-          <td>${teacher.classes.join(', ') || 'Chưa có lớp'}</td>
-          <td>
-            <div class="table-actions">
-              <button onclick="editTeacher(${teacher.id})">Sửa</button>
-              <button class="btn-delete" onclick="deleteTeacher(${teacher.id})">Xóa</button>
-            </div>
-          </td>
+            <td>${teacher.fullName}</td>
+            <td>${teacher.username}</td>
+            <td>${teacher.gender}</td>
+            <td>${teacher.email}</td>
+            <td>${teacher.phone}</td>
+            <td>${new Date(teacher.birthdate).toLocaleDateString('vi-VN')}</td>
+            <td>${teacher.salary.toLocaleString('vi-VN')} VNĐ</td>
+            <td>${teacher.classes.join(', ') || 'Chưa có lớp'}</td>
+            <td>
+                <div class="table-actions">
+                    <button onclick="editTeacher(${teacher.id})">Sửa</button>
+                    <button class="btn-delete" onclick="deleteTeacher(${teacher.id})">Xóa</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(row);
     });
 }
 
+function editTeacher(id) {
+    const teacher = teachers.find(t => t.id === id);
+    if (teacher) {
+        document.getElementById('teacher-fullname').value = teacher.fullName;
+        document.getElementById('teacher-username').value = teacher.username;
+        document.getElementById('teacher-gender').value = teacher.gender;
+        document.getElementById('teacher-email').value = teacher.email;
+        document.getElementById('teacher-phone').value = teacher.phone;
+        document.getElementById('teacher-birthdate').value = teacher.birthdate;
+        document.getElementById('teacher-salary').value = teacher.salary;
+        
+        // Change button action to update
+        const addButton = document.querySelector('button[onclick="addTeacher()"]');
+        addButton.textContent = 'Cập nhật';
+        addButton.onclick = () => updateTeacherInfo(id);
+    }
+}
+
+function updateTeacherInfo(id) {
+    const teacher = teachers.find(t => t.id === id);
+    if (teacher) {
+        teacher.fullName = document.getElementById('teacher-fullname').value;
+        teacher.username = document.getElementById('teacher-username').value;
+        teacher.gender = document.getElementById('teacher-gender').value;
+        teacher.email = document.getElementById('teacher-email').value;
+        teacher.phone = document.getElementById('teacher-phone').value;
+        teacher.birthdate = document.getElementById('teacher-birthdate').value;
+        teacher.salary = parseFloat(document.getElementById('teacher-salary').value);
+
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        updateTeacherTable();
+
+        // Reset form and button
+        document.getElementById('teacher-form').reset();
+        const addButton = document.querySelector('button[onclick="updateTeacherInfo(' + id + ')"]');
+        addButton.textContent = 'Thêm giáo viên';
+        addButton.onclick = addTeacher;
+    }
+}
+
 // Manage Students
 function addStudent() {
-    const name = document.getElementById('student-name').value;
+    const fullName = document.getElementById('student-fullname').value;
+    const username = document.getElementById('student-username').value;
+    const password = document.getElementById('student-password').value;
+    const gender = document.getElementById('student-gender').value;
+    const email = document.getElementById('student-email').value;
+    const phone = document.getElementById('student-phone').value;
+    const birthdate = document.getElementById('student-birthdate').value;
     const classId = document.getElementById('student-class').value;
     const parentId = document.getElementById('student-parent').value;
-    if (name && classId && parentId) {
-        students.push({ id: Date.now(), name, classId, parentId, attended: 0, absent: 0 });
+
+    if (fullName && username && password && gender && email && phone && birthdate && classId && parentId) {
+        const newStudent = {
+            id: Date.now(),
+            fullName,
+            username,
+            password,
+            gender,
+            email,
+            phone,
+            birthdate,
+            classId,
+            parentId,
+            attended: 0,
+            absent: 0
+        };
+        
+        students.push(newStudent);
         localStorage.setItem('students', JSON.stringify(students));
+        
+        document.getElementById('student-form').reset();
         updateStudentTable();
+        updateAdminStats();
+        
+        alert('Thêm học sinh thành công!');
+    } else {
+        alert('Vui lòng điền đầy đủ thông tin học sinh');
     }
 }
 
@@ -118,17 +212,22 @@ function updateStudentTable() {
         const parent = parents.find(p => p.id == student.parentId);
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${student.name}</td>
-          <td>${cls ? cls.name : 'Không có'}</td>
-          <td>${parent ? parent.name : 'Không có'}</td>
-          <td>${student.attended}</td>
-          <td>${student.absent}</td>
-          <td>
-            <div class="table-actions">
-              <button onclick="editStudent(${student.id})">Sửa</button>
-              <button class="btn-delete" onclick="deleteStudent(${student.id})">Xóa</button>
-            </div>
-          </td>
+            <td>${student.fullName}</td>
+            <td>${student.username}</td>
+            <td>${student.gender}</td>
+            <td>${student.email}</td>
+            <td>${student.phone}</td>
+            <td>${new Date(student.birthdate).toLocaleDateString('vi-VN')}</td>
+            <td>${cls ? cls.name : 'Không có'}</td>
+            <td>${parent ? parent.name : 'Không có'}</td>
+            <td>${student.attended}</td>
+            <td>${student.absent}</td>
+            <td>
+                <div class="table-actions">
+                    <button onclick="editStudent(${student.id})">Sửa</button>
+                    <button class="btn-delete" onclick="deleteStudent(${student.id})">Xóa</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(row);
     });
@@ -255,10 +354,6 @@ function updateSelectOptions() {
 }
 
 // Dummy edit functions (to be implemented)
-function editTeacher(id) {
-    alert('Chức năng sửa giáo viên chưa được triển khai.');
-}
-
 function editStudent(id) {
     alert('Chức năng sửa học sinh chưa được triển khai.');
 }
