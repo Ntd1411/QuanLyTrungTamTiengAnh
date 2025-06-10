@@ -23,7 +23,7 @@ function showElement(id) {
             
             // Scroll với offset để tránh bị che bởi nav
             const navHeight = document.querySelector('nav').offsetHeight;
-            const offset = 20; // Khoảng cách thêm
+            const offset = 0; // Khoảng cách thêm
             
             window.scrollTo({
                 top: Math.max(0, targetElement.offsetTop - navHeight - offset),

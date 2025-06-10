@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <nav>
         <ul class="menu">
@@ -69,7 +71,7 @@
             </li>
         </ul>
     </nav>
-    
+
     <section id="hero">
         <div class="container">
             <h1>Khóa học TOEIC 800+</h1>
@@ -162,32 +164,94 @@
         </div>
     </section>
 
-    <section id="lien-he">
-        <div class="container">
-            <h2>Liên hệ với chúng tôi</h2>
-            <div class="contact-info">
-                <p><i class="fas fa-phone"></i> 0123 456 789</p>
-                <p><i class="fas fa-envelope"></i> info@toeicpro.vn</p>
-                <p><i class="fab fa-facebook"></i> facebook.com/toeicpro</p>
-            </div>
-        </div>
-    </section>
-
     <section id="dang-ky">
-        <div class="container">
-            <h2>Đăng ký ngay</h2>
-            <p>Vui lòng liên hệ với chúng tôi để được tư vấn và hỗ trợ đăng ký.</p>
-            <br><br>
-            <a href="#lien-he" class="button">Liên hệ ngay</a>
+        <div class="form-container">
+            <p class="form-intro">Nếu bạn muốn được tư vấn đăng kí khóa học, hãy để lại thông tin theo form dưới đây,
+                KEC sẽ liên hệ lại bạn để trao đổi chi tiết!</p>
+
+            <!-- Thêm id="registration-form" và novalidate -->
+            <form action="#" method="POST" id="registration-form" novalidate>
+                <div class="form-grid">
+                    <!-- Họ và tên -->
+                    <div class="form-group">
+                        <label for="fullname">Họ và tên <span class="required">*</span></label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Họ và Tên học viên">
+                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                        <small class="error-message"></small>
+                    </div>
+
+                    <!-- Năm sinh -->
+                    <div class="form-group">
+                        <label for="birthyear">Năm sinh <span class="required">*</span></label>
+                        <input type="text" id="birthyear" name="birthyear" placeholder="Năm sinh của học viên">
+                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                        <small class="error-message"></small>
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="Số điện thoại phụ huynh">
+                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                        <small class="error-message"></small>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Nhập email phụ huynh">
+                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                        <small class="error-message"></small>
+                    </div>
+
+                    <!-- Khoá học quan tâm -->
+                    <div class="form-group full-width">
+                        <label for="course">Khoá học quan tâm <span class="required">*</span></label>
+                        <select id="course" name="course">
+                            <option value="" disabled selected>---</option>
+                            <option value="khoa-hoc-1">Khóa học Tiếng Anh cho trẻ em</option>
+                            <option value="khoa-hoc-2">Khóa học IELTS</option>
+                            <option value="khoa-hoc-3">Khóa học TOEIC</option>
+                        </select>
+                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                        <small class="error-message"></small>
+                    </div>
+
+                    <!-- Nội dung cần hỗ trợ -->
+                    <div class="form-group full-width">
+                        <label for="message">Nội dung cần hỗ trợ</label>
+                        <textarea id="message" name="message" rows="4"
+                            placeholder="Vui lòng để lại lời nhắn nếu có"></textarea>
+                    </div>
+
+                    <!-- Nút Gửi -->
+                    <div class="form-group full-width">
+                        <button type="submit" class="submit-btn">Gửi thông tin</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
 
     <footer>
-        <div class="container">
-            <p>© 2025 TOEIC Pro. All rights reserved.</p>
-        </div>
+        <section id="lien-he">
+            <div class="container">
+                <h2>Liên hệ với chúng tôi</h2>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i><strong> Điện thoại:</strong> 9876 543 210 | 0123 456 789</p>
+                    <p><i class="fas fa-envelope"></i><strong> Email:</strong> contact@actvn.edu.vn |
+                        <strong>Website:</strong> www.actvn.edu.vn
+                    </p>
+                    <p><i class="fas fa-address"></i>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì,
+                        Hà Nội</p>
+                    <p><i class="fab fa-copyright"></i>2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+                </div>
+            </div>
+        </section>
     </footer>
 
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT_ID.js" crossorigin="anonymous"></script>
+    <script src="../assets/js/all_english_courses.js"></script>
 </body>
+
 </html>
