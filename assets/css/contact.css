@@ -1,0 +1,221 @@
+/* Reset hoặc định nghĩa cơ bản */
+/* Sử dụng các quy tắc từ style.css cho body và global reset nếu có */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  --primary-color: #E4312A; /* Định nghĩa lại biến primary-color nếu cần, hoặc để nó được định nghĩa ở cấp cao hơn */
+}
+
+body {
+  font-family: Arial, sans-serif; /* Giữ font từ style.css */
+  background-color: #f0f0f0; /* Giữ màu nền từ style.css */
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Giữ shadow từ style.css */
+}
+
+/* ======== thay đổi ================== */
+/* Các lớp element cho hiệu ứng chung (nếu được sử dụng trên trang liên hệ) */
+.element {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  padding-top: 20px;
+  margin-top: -20px;
+  visibility: hidden;
+}
+
+.element h2 {
+  margin-top: 0;
+  padding-top: 10px;
+}
+
+.element.active {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Animation Effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.element {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Header, Nav, Footer và Sidebar:
+   Các phần này thường được định nghĩa trong style.css chung.
+   Nếu trang liên hệ của bạn sử dụng cấu trúc Header, Nav, Footer,
+   thì không cần lặp lại các quy tắc này ở đây.
+   Chỉ cần đảm bảo file contact.html liên kết đúng với style.css
+   hoặc các quy tắc này được đặt ở một file CSS chung.
+   Tôi sẽ bỏ qua chúng ở đây để tránh trùng lặp.
+*/
+
+/* ======================Login & Signup (Nếu trang liên hệ không phải là trang đăng nhập/đăng ký) ======================
+   Nếu trang liên hệ không chứa form login/signup, bạn nên xóa các phần này khỏi contact.css
+   để giữ cho file CSS liên quan đến liên hệ được gọn gàng.
+   Tôi sẽ bỏ qua chúng ở đây để tránh trùng lặp và giữ contact.css chỉ cho phần liên hệ.
+*/
+
+/* =============error =====================
+   Nếu bạn có thông báo lỗi cho form liên hệ, có thể giữ lại phần này.
+*/
+.error-message {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+input.error {
+  border-color: #ff0000 !important;
+  outline: none;
+}
+
+/* =======================================
+   CSS CHO FORM LIÊN HỆ VÀ BẢN ĐỒ
+   ======================================= */
+
+/* Container chính bao bọc nội dung của form liên hệ */
+.container {
+    max-width: 800px; /* Chiều rộng tối đa vừa phải */
+    margin: 40px auto; /* Căn giữa và tạo khoảng cách trên dưới */
+    background: #ffffff;
+    padding: 30px 40px; /* Padding lớn hơn cho nội dung */
+    border-radius: 12px; /* Góc bo tròn hơn */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1); /* Bóng đổ mềm mại hơn */
+    animation: fadeIn 0.8s ease-out; /* Hiệu ứng mờ dần khi tải trang */
+}
+
+/* Tiêu đề */
+.container h1, .container h2 { /* Chỉ định rõ cho h1, h2 trong container để tránh xung đột */
+    color: #2c3e50; /* Màu tiêu đề đậm hơn, sang trọng hơn */
+    text-align: center;
+    margin-bottom: 30px; /* Khoảng cách dưới tiêu đề */
+    font-weight: 700; /* Đậm hơn */
+    font-size: 2.2em; /* Kích thước lớn hơn cho H1 */
+}
+
+.container h2 {
+    font-size: 1.8em; /* Kích thước cho H2 */
+    margin-top: 40px; /* Khoảng cách trên cho H2 */
+}
+
+/* Nhóm form (label và input/textarea) */
+.form-group {
+    margin-bottom: 20px; /* Tăng khoảng cách giữa các nhóm */
+    display: flex; /* Sử dụng flexbox để căn chỉnh label và input */
+    flex-direction: column; /* Xếp label và input theo cột */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px; /* Khoảng cách giữa label và input */
+    font-weight: 600; /* Đậm vừa phải */
+    color: #555;
+    font-size: 1.1em; /* Kích thước chữ label lớn hơn */
+}
+
+/* Input và textarea */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng có sẵn */
+    padding: 12px 15px; /* Padding lớn hơn */
+    border: 1px solid #ced4da; /* Viền màu nhẹ */
+    border-radius: 8px; /* Bo tròn các góc input */
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng chiều rộng tổng thể */
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color); /* Sử dụng primary-color từ style.css khi focus */
+    box-shadow: 0 0 0 3px rgba(228, 49, 42, 0.25); /* Bóng đổ với primary-color */
+    outline: none; /* Loại bỏ viền outline mặc định */
+}
+
+.form-group textarea {
+    min-height: 120px; /* Chiều cao tối thiểu của textarea */
+    resize: vertical; /* Chỉ cho phép kéo dãn theo chiều dọc */
+}
+
+/* Nút gửi */
+.form-group button[type="submit"] {
+    background-color: var(--primary-color); /* Sử dụng primary-color từ style.css */
+    color: white;
+    padding: 14px 25px; /* Padding lớn hơn cho nút */
+    border: none;
+    border-radius: 8px; /* Bo tròn nút */
+    cursor: pointer;
+    font-size: 1.1em; /* Kích thước chữ nút */
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng hover và click */
+    letter-spacing: 0.5px; /* Khoảng cách chữ */
+}
+
+.form-group button[type="submit"]:hover {
+    background-color: #b30000; /* Một màu đỏ đậm hơn khi hover, gần với primary-color */
+    transform: translateY(-2px); /* Nút nhấc nhẹ lên khi hover */
+}
+
+.form-group button[type="submit"]:active {
+    transform: translateY(0); /* Nút trở về vị trí ban đầu khi click */
+}
+
+/* Phần bản đồ */
+#map {
+    height: 450px; /* Tăng chiều cao bản đồ */
+    width: 100%;
+    border-radius: 12px; /* Bo tròn góc bản đồ */
+    margin-top: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Bóng đổ cho bản đồ */
+    overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài border-radius */
+}
+
+/* Responsive cơ bản cho màn hình nhỏ hơn */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px auto;
+        padding: 20px 25px;
+    }
+
+    .container h1 {
+        font-size: 1.8em;
+    }
+
+    .container h2 {
+        font-size: 1.5em;
+    }
+
+    .form-group label {
+        font-size: 1em;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group button {
+        padding: 10px 12px;
+        font-size: 0.95em;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%; /* Giảm chiều cao bản đồ trên di động */
+    }
+}
