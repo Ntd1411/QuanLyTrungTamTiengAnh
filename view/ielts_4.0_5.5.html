@@ -59,7 +59,7 @@
                 <a href="#" onclick="event.preventDefault()">Tin Tức</a>
                 <ul class="submenu">
                     <li><a href="#academic-news">Sự Kiện</a></li>
-                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                    <li><a href="../view/student_intro.html">Học Viên Xuất Sắc</a></li>
                 </ul>
             </li>
             <li>
@@ -72,183 +72,188 @@
         </ul>
     </nav>
 
-    <section id="hero">
-        <div class="container">
-            <h1>Khóa học IELTS 4.0 - 5.5</h1>
-            <p>Xây Dựng Nền Tảng, Tiến Tới IELTS 5.5!</p>
-            <a href="#dang-ky" class="button">Đăng ký ngay</a>
-            <div class="hero-image-wrapper">
-                <img src="../assets/img/5.5_illustration.png" alt="Ảnh minh họa khóa học IELTS 4.0-5.5"
-                    class="hero-image">
-            </div>
-        </div>
-    </section>
-
-    <section id="gioi-thieu">
-        <div class="container">
-            <h2>Người có chứng chỉ IELTS 4.0-5.5 có thể làm được gì?</h2>
-            <ul class="benefits">
-                <li><i class="fas fa-graduation-cap"></i> Đáp ứng yêu cầu cơ bản của một số trường đại học</li>
-                <li><i class="fas fa-briefcase"></i> Cơ hội làm việc tại các công ty yêu cầu tiếng Anh cơ bản</li>
-                <li><i class="fas fa-comments"></i> Giao tiếp cơ bản trong môi trường học tập hoặc làm việc</li>
-            </ul>
-        </div>
-    </section>
-
-    <section id="chi-tiet">
-        <div class="container">
-            <h2>Tại sao nên chọn khóa học IELTS của chúng tôi?</h2>
-            <div class="features">
-                <div class="feature">
-                    <i class="fas fa-user-graduate"></i>
-                    <h3>Lộ trình học tập nền tảng</h3>
-                    <p>Thiết kế cho người có mục tiêu IELTS 4.0-5.5, tập trung xây dựng kỹ năng cơ bản.</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <h3>Giảng viên hướng dẫn tận tình</h3>
-                    <p>Đội ngũ giáo viên hỗ trợ học viên từ cấp độ thấp.</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-book"></i>
-                    <h3>Tài liệu dễ tiếp cận</h3>
-                    <p>12 bài học cơ bản, tập trung vào từ vựng, ngữ pháp và 4 kỹ năng.</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-users"></i>
-                    <h3>Môi trường học tập hỗ trợ</h3>
-                    <p>Lớp học thân thiện, tập trung vào thực hành cơ bản.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="thong-tin">
-        <div class="container">
-            <h2>Thông tin chi tiết</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <h3>Thời lượng</h3>
-                    <p>10 tuần</p>
-                </div>
-                <div class="info-item">
-                    <h3>Số buổi học</h3>
-                    <p>2 buổi/tuần</p>
-                </div>
-                <div class="info-item">
-                    <h3>Phương pháp giảng dạy</h3>
-                    <p>Học qua thực hành cơ bản, phát triển từ vựng và kỹ năng nghe-đọc</p>
-                </div>
-                <div class="info-item">
-                    <h3>Đối tượng học viên</h3>
-                    <p>Học viên muốn đạt IELTS 4.0-5.5</p>
-                </div>
-                <div class="info-item">
-                    <h3>Mục tiêu khóa học</h3>
-                    <p>Đạt IELTS 4.0-5.5, xây dựng nền tảng vững chắc cho cấp độ cao hơn</p>
-                </div>
-                <div class="info-item">
-                    <h3>Ưu đãi</h3>
-                    <p>Giảm 5% học phí khi đăng ký trước 16/6/2025</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="testimonial">
-        <div class="container">
-            <h2>Học viên nói gì?</h2>
-            <div class="testimonial-item">
-                <p>"Tôi đã đạt được IELTS 5.0 nhờ khóa học này, rất dễ hiểu và thực tế, cảm ơn KEC"</p>
-                <p class="author">- Học viên Nguyễn Tuấn Dũng -</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="dang-ky">
-        <div class="form-container">
-            <p class="form-intro">Nếu bạn muốn được tư vấn đăng kí khóa học, hãy để lại thông tin theo form dưới đây,
-                KEC sẽ liên hệ lại bạn để trao đổi chi tiết!</p>
-
-            <!-- Thêm id="registration-form" và novalidate -->
-            <form action="#" method="POST" id="registration-form" novalidate>
-                <div class="form-grid">
-                    <!-- Họ và tên -->
-                    <div class="form-group">
-                        <label for="fullname">Họ và tên <span class="required">*</span></label>
-                        <input type="text" id="fullname" name="fullname" placeholder="Họ và Tên học viên">
-                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
-                        <small class="error-message"></small>
-                    </div>
-
-                    <!-- Năm sinh -->
-                    <div class="form-group">
-                        <label for="birthyear">Năm sinh <span class="required">*</span></label>
-                        <input type="text" id="birthyear" name="birthyear" placeholder="Năm sinh của học viên">
-                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
-                        <small class="error-message"></small>
-                    </div>
-
-                    <!-- Số điện thoại -->
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại <span class="required">*</span></label>
-                        <input type="tel" id="phone" name="phone" placeholder="Số điện thoại phụ huynh">
-                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
-                        <small class="error-message"></small>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Nhập email phụ huynh">
-                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
-                        <small class="error-message"></small>
-                    </div>
-
-                    <!-- Khoá học quan tâm -->
-                    <div class="form-group full-width">
-                        <label for="course">Khoá học quan tâm <span class="required">*</span></label>
-                        <select id="course" name="course">
-                            <option value="" disabled selected>---</option>
-                            <option value="khoa-hoc-1">Khóa học Tiếng Anh cho trẻ em</option>
-                            <option value="khoa-hoc-2">Khóa học IELTS</option>
-                            <option value="khoa-hoc-3">Khóa học TOEIC</option>
-                        </select>
-                        <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
-                        <small class="error-message"></small>
-                    </div>
-
-                    <!-- Nội dung cần hỗ trợ -->
-                    <div class="form-group full-width">
-                        <label for="message">Nội dung cần hỗ trợ</label>
-                        <textarea id="message" name="message" rows="4"
-                            placeholder="Vui lòng để lại lời nhắn nếu có"></textarea>
-                    </div>
-
-                    <!-- Nút Gửi -->
-                    <div class="form-group full-width">
-                        <button type="submit" class="submit-btn">Gửi thông tin</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <footer>
-        <section id="lien-he">
+    <div class="element active">
+        <section id="hero">
             <div class="container">
-                <h2>Liên hệ với chúng tôi</h2>
-                <div class="contact-info">
-                    <p><i class="fas fa-phone"></i><strong> Điện thoại:</strong> 9876 543 210 | 0123 456 789</p>
-                    <p><i class="fas fa-envelope"></i><strong> Email:</strong> contact@actvn.edu.vn |
-                        <strong>Website:</strong> www.actvn.edu.vn</p>
-                    <p><i class="fas fa-address"></i>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì,
-                        Hà Nội</p>
-                    <p><i class="fab fa-copyright"></i>2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+                <h1>Khóa học IELTS 4.0 - 5.5</h1>
+                <p>Xây Dựng Nền Tảng, Tiến Tới IELTS 5.5!</p>
+                <a href="#registration" class="button">Đăng ký ngay</a>
+                <div class="hero-image-wrapper">
+                    <img src="../assets/img/5.5_illustration.png" alt="Ảnh minh họa khóa học IELTS 4.0-5.5"
+                        class="hero-image">
                 </div>
             </div>
         </section>
-    </footer>
+
+        <section id="introduction">
+            <div class="container">
+                <h2>Người có chứng chỉ IELTS 4.0-5.5 có thể làm được gì?</h2>
+                <ul class="benefits">
+                    <li><i class="fas fa-graduation-cap"></i> Đáp ứng yêu cầu cơ bản của một số trường đại học</li>
+                    <li><i class="fas fa-briefcase"></i> Cơ hội làm việc tại các công ty yêu cầu tiếng Anh cơ bản</li>
+                    <li><i class="fas fa-comments"></i> Giao tiếp cơ bản trong môi trường học tập hoặc làm việc</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="details">
+            <div class="container">
+                <h2>Tại sao nên chọn khóa học IELTS của chúng tôi?</h2>
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>Lộ trình học tập nền tảng</h3>
+                        <p>Thiết kế cho người có mục tiêu IELTS 4.0-5.5, tập trung xây dựng kỹ năng cơ bản.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h3>Giảng viên hướng dẫn tận tình</h3>
+                        <p>Đội ngũ giáo viên hỗ trợ học viên từ cấp độ thấp.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-book"></i>
+                        <h3>Tài liệu dễ tiếp cận</h3>
+                        <p>12 bài học cơ bản, tập trung vào từ vựng, ngữ pháp và 4 kỹ năng.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-users"></i>
+                        <h3>Môi trường học tập hỗ trợ</h3>
+                        <p>Lớp học thân thiện, tập trung vào thực hành cơ bản.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="information">
+            <div class="container">
+                <h2>Thông tin chi tiết</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <h3>Thời lượng</h3>
+                        <p>10 tuần</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Số buổi học</h3>
+                        <p>2 buổi/tuần</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Phương pháp giảng dạy</h3>
+                        <p>Học qua thực hành cơ bản, phát triển từ vựng và kỹ năng nghe-đọc</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Đối tượng học viên</h3>
+                        <p>Học viên muốn đạt IELTS 4.0-5.5</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Mục tiêu khóa học</h3>
+                        <p>Đạt IELTS 4.0-5.5, xây dựng nền tảng vững chắc cho cấp độ cao hơn</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Ưu đãi</h3>
+                        <p>Giảm 5% học phí khi đăng ký trước 16/6/2025</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonial">
+            <div class="container">
+                <h2>Học viên nói gì?</h2>
+                <div class="testimonial-item">
+                    <p>"Tôi đã đạt được IELTS 5.0 nhờ khóa học này, rất dễ hiểu và thực tế, cảm ơn KEC"</p>
+                    <p class="author">- Học viên Nguyễn Tuấn Dũng -</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="registration">
+            <div class="form-container">
+                <p class="form-intro">Nếu bạn muốn được tư vấn đăng kí khóa học, hãy để lại thông tin theo form dưới
+                    đây,
+                    KEC sẽ liên hệ lại bạn để trao đổi chi tiết!</p>
+
+                <!-- Thêm id="registration-form" và novalidate -->
+                <form action="#" method="POST" id="registration-form" novalidate>
+                    <div class="form-grid">
+                        <!-- Họ và tên -->
+                        <div class="form-group">
+                            <label for="fullname">Họ và tên <span class="required">*</span></label>
+                            <input type="text" id="fullname" name="fullname" placeholder="Họ và Tên học viên">
+                            <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                            <small class="error-message"></small>
+                        </div>
+
+                        <!-- Năm sinh -->
+                        <div class="form-group">
+                            <label for="birthyear">Năm sinh <span class="required">*</span></label>
+                            <input type="text" id="birthyear" name="birthyear" placeholder="Năm sinh của học viên">
+                            <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                            <small class="error-message"></small>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="Số điện thoại phụ huynh">
+                            <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                            <small class="error-message"></small>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Nhập email phụ huynh">
+                            <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                            <small class="error-message"></small>
+                        </div>
+
+                        <!-- Khoá học quan tâm -->
+                        <div class="form-group full-width">
+                            <label for="course">Khoá học quan tâm <span class="required">*</span></label>
+                            <select id="course" name="course">
+                                <option value="" disabled selected>---</option>
+                                <option value="khoa-hoc-1">Khóa học Tiếng Anh cho trẻ em</option>
+                                <option value="khoa-hoc-2">Khóa học IELTS</option>
+                                <option value="khoa-hoc-3">Khóa học TOEIC</option>
+                            </select>
+                            <!-- THAY ĐỔI Ở ĐÂY: Sử dụng thẻ <small> -->
+                            <small class="error-message"></small>
+                        </div>
+
+                        <!-- Nội dung cần hỗ trợ -->
+                        <div class="form-group full-width">
+                            <label for="message">Nội dung cần hỗ trợ</label>
+                            <textarea id="message" name="message" rows="4"
+                                placeholder="Vui lòng để lại lời nhắn nếu có"></textarea>
+                        </div>
+
+                        <!-- Nút Gửi -->
+                        <div class="form-group full-width">
+                            <button type="submit" class="submit-btn">Gửi thông tin</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <footer>
+            <section id="contact">
+                <div class="container">
+                    <h2>Liên hệ với chúng tôi</h2>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i><strong> Điện thoại:</strong> 9876 543 210 | 0123 456 789</p>
+                        <p><i class="fas fa-envelope"></i><strong> Email:</strong> contact@actvn.edu.vn |
+                            <strong>Website:</strong> www.actvn.edu.vn
+                        </p>
+                        <p><i class="fas fa-address"></i>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh
+                            Trì,
+                            Hà Nội</p>
+                        <p><i class="fab fa-copyright"></i>2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+                    </div>
+                </div>
+            </section>
+        </footer>
+    </div>
 
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT_ID.js" crossorigin="anonymous"></script>
     <script src="/assets/js/all_english_courses.js"></script>
