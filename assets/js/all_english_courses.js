@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.querySelector('a.button[href="#dang-ky"]');
+    const btn = document.querySelector('a.button[href="#registration"]');
     if (btn) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.getElementById('dang-ky');
+            const target = document.getElementById('registration');
             const nav = document.querySelector('nav');
             const navHeight = nav ? nav.offsetHeight : 0;
             if (target) {
@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- PHẦN CODE CUỘN TRANG (GIỮ NGUYÊN) ---
-    const smoothScrollBtn = document.querySelector('a.button[href="#dang-ky"]');
+    const smoothScrollBtn = document.querySelector('a.button[href="#registration"]');
     if (smoothScrollBtn) {
         smoothScrollBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.getElementById('dang-ky');
+            const target = document.getElementById('registration');
             const nav = document.querySelector('nav');
             const navHeight = nav ? nav.offsetHeight : 0;
             if (target) {

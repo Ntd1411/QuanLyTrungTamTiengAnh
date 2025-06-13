@@ -1,0 +1,129 @@
+.student-container {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 40px;
+    transition: transform 0.3s ease;
+}
+
+.student-container:hover {
+    transform: translateY(-5px);
+}
+
+.student-image {
+    margin: 30px;
+}
+
+.student-image img {
+    width: 100%;
+    height: 80%;
+    max-width: 650px;
+    object-fit: cover;
+    border: 4px solid #007bff;
+    transition: transform 0.3s ease;
+}
+
+.student-image img:hover {
+    transform: scale(1.05);
+    border-color: #320664;
+}
+
+.student-info {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f8f9fa;
+}
+
+.student-info h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.student-info h3 {
+    color: #2c3e50;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #007bff;
+}
+
+.student-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.student-info li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.student-info li:before {
+    content: "•";
+    color: #007bff;
+    position: absolute;
+    left: 0;
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .student-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .student-image {
+        margin: 0 0 20px 0;
+        flex: none;
+    }
+
+    .student-image img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .student-info h2 {
+        font-size: 20px;
+    }
+
+    .student-info li {
+        padding-left: 0;
+        text-align: left;
+    }
+
+    .student-info li:before {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-info {
+        padding: 20px;
+    }
+
+    .student-container {
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+
+    .student-image img {
+        width: 120px;
+        height: 120px;
+    }
+}
