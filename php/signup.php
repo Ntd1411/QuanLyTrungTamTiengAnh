@@ -125,80 +125,6 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
         </ul>
     </nav>
 
-<<<<<<< HEAD:view/signup.html
-    <div class="element active">
-        <div class="signup">
-            <div class="body">
-                <h1>Đăng ký</h1>
-                <form class="signup-form" action="/signup" method="post">
-                    <!-- ...form đăng ký... -->
-                    <div class="signup-block">
-                        <h2>Họ và tên</h2>
-                        <input type="text" name="fullname" placeholder="Họ và tên" required>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Giới tính</h2>
-                        <select name="gender" id="gender" class="form-select" required>
-                            <option value="">Chọn giới tính</option>
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                        </select>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Ngày sinh</h2>
-                        <input type="date" name="birthdate" required>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Tên đăng nhập</h2>
-                        <input type="text" name="username" placeholder="Tên đăng nhập" required>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Mật khẩu</h2>
-                        <input type="password" name="password" placeholder="Mật khẩu" required>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Nhập lại mật khẩu</h2>
-                        <input type="password" placeholder="Nhập lại mật khẩu" name="confirm_password" required>
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Email</h2>
-                        <input type="email" placeholder="Email" name="email">
-                    </div>
-
-                    <div class="signup-block">
-                        <h2>Số điện thoại</h2>
-                        <input type="tel" placeholder="Số điện thoại" name="phone">
-                    </div>
-
-                    <div class="signup-role">
-                        <h2>Vai trò</h2>
-                        <div class="block">
-                            <input type="radio" name="role" id="parent" name="role_parent">
-                            <label for="parent">Phụ huynh</label>
-                        </div>
-                        <div class="block">
-                            <input type="radio" name="role" id="student" name="role_student">
-                            <label for="student">Học sinh</label>
-                        </div>
-                    </div>
-
-                    <input type="checkbox" id="check">
-                    <label for="check">Đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo
-                            mật</a></label>
-
-                    <button type="submit">Đăng ký</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script src="../assets/js/validation.js"></script>
-=======
     <div class="signup">
         <div class="body">
             
@@ -313,7 +239,6 @@ document.getElementById('login-btn').addEventListener('click', function() {
     window.location.href = 'login.php';
 });
 </script>
->>>>>>> 4a38088ecfebe5ba7b98953bab3476a68351b3a7:php/signup.php
 </body>
 
 </html>
