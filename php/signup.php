@@ -58,41 +58,6 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
     <title>Đăng ký - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-    .popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .popup-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 5px;
-        text-align: center;
-    }
-
-    #login-btn {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-
-    #login-btn:hover {
-        background-color: #45a049;
-    }
-</style>
 </head>
 
 <body>
