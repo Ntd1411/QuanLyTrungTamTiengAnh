@@ -31,7 +31,7 @@ header .container {
 
 /* === Hero Section Styles === */
 #hero {
-    background: linear-gradient(rgba(200, 35, 51, 0.7), rgba(200, 35, 51, 0.7)), url('hero-bg.jpg') center/cover no-repeat; /*  Tông đỏ đậm hơn với độ trong suốt, Thay 'hero-bg.jpg' bằng ảnh background */
+    background: linear-gradient(rgba(200, 35, 51, 0.7), rgba(200, 35, 51, 0.7));
     color: #fff;
     padding: 50px 0;
     text-align: center;
@@ -177,17 +177,17 @@ section h2 {
     font-weight: bold;
     margin-top: 10px;
 }
-   
-#dang-ky .container {
+
+#registration .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-#dang-ky h2,
-#dang-ky p,
-#dang-ky .button {
+#registration h2,
+#registration p,
+#registration .button {
     text-align: center;
 }
 
