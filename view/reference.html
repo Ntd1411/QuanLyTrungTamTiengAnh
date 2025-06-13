@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài liệu tham khảo - KEC</title>
+    <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/reference.css"> 
+</head>
+
+body>
+    <!-- Header với ảnh -->
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="../index.html">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
+                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+                    <li><a href="../view/contact.html">Liên Hệ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
+                    <li><a href="">IELTS</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" onclick="event.preventDefault()">TOEIC</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="./reference.html" onclick="event.preventDefault()">Thư viện</a>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Sự Kiện</a></li>
+                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="../view/login.html">Đăng Nhập</a></li>
+                    <li><a href="../view/signup.html">Đăng Ký</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar-left">
+            <div class="ad-banner">
+                <a href="#signup" onclick="showElement('signup'); return false;">
+                    <img src="../assets/media/standee1.gif" alt="ad-banner">
+                </a>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h1>Tài liệu tham khảo</h1>
+            <p>Dưới đây là danh sách các tài liệu và nguồn học tập được trung tâm chúng tôi đề xuất để hỗ trợ quý học viên trong quá trình nâng cao trình độ tiếng Anh. Bạn có thể lọc tài liệu theo loại và tác giả.</p>
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="filterCategory">Lọc theo thể loại:</label>
+                    <select id="filterCategory">
+                        <option value="all">Tất cả</option>
+                        <option value="giaotrinhtoanthien">Giáo trình toàn diện</option>
+                        <option value="nguphap">Ngữ pháp</option>
+                        <option value="tuvung">Từ vựng</option>
+                        <option value="luyenthi_ielts">Luyện thi IELTS</option>
+                        <option value="luyenthi_toeic">Luyện thi TOEIC</option>
+                        <option value="luyenthitoefl">Luyện thi TOEFL</option>
+                        <option value="phatam">Phát âm</option>
+                        <option value="truyen_tieu_thuyet">Truyện/Tiểu thuyết</option>
+                        <option value="sach_song_ngu">Sách song ngữ</option>
+                        <option value="phim_video">Phim/Video</option>
+                        <option value="ung_dung">Ứng dụng</option>
+                        <option value="website_online">Website/Nguồn Online</option>
+                        <option value="podcast">Podcast</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterAuthor">Lọc theo tác giả/nhà phát hành:</label>
+                    <select id="filterAuthor">
+                        <option value="all">Tất cả</option>
+                        <option value="oxford_university_press">Oxford University Press</option>
+                        <option value="cambridge_university_press">Cambridge University Press</option>
+                        <option value="longman">Longman</option>
+                        <option value="barron_s">Barron's</option>
+                        <option value="raymond_murphy">Raymond Murphy</option>
+                        <option value="voca">Voca</option>
+                        <option value="duolingo">Duolingo</option>
+                        <option value="memrise">Memrise</option>
+                        <option value="quizlet">Quizlet</option>
+                        <option value="elsa_speak">Elsa Speak</option>
+                        <option value="bbc_learning_english">BBC Learning English</option>
+                        <option value="voa_learning_english">VOA Learning English</option>
+                        <option value="british_council">British Council</option>
+                        <option value="ted_talks">TED Talks</option>
+                        <option value="luke_s_english_podcast">Luke's English Podcast</option>
+                        <option value="national_geographic">National Geographic</option>
+                        <option value="the_economist">The Economist</option>
+                        <option value="the_new_york_times">The New York Times</option>
+                        <option value="the_guardian">The Guardian</option>
+                        <option value="penguin_readers">Penguin Readers</option>
+                        <option value="disney">Disney</option>
+                        <option value="netflix">Netflix</option>
+                        <option value="hoang_ngan">Hoàng Ngân</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="referenceList" class="reference-items-grid">
+                <div class="reference-item" data-category="giaotrinhtoanthien" data-author="oxford_university_press">
+                    <img src="../assets/img/img2.gif" alt="English File" class="reference-img">
+                    <div class="reference-info">
+                        <h3>English File</h3>
+                        <p class="reference-type">Thể loại: Giáo trình toàn diện</p>
+                        <p class="reference-author">Tác giả/NXB: Christina Latham-Koenig, Clive Oxenden, Jerry Lambert / Oxford University Press</p>
+                        <p class="reference-desc">Bộ giáo trình toàn diện phát triển cả 4 kỹ năng Nghe, Nói, Đọc, Viết, ngữ pháp và từ vựng rõ ràng, phù hợp mọi cấp độ từ Beginner đến Advanced.</p>
+                        <a href="https://elt.oup.com/catalogue/items/english-file-third-edition/?cc=vn&selLanguage=en" target="_blank" class="download-link">Tìm hiểu thêm</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="nguphap" data-author="raymond_murphy">
+                    <img src="../assets/img/img2.png" alt="English Grammar in Use" class="reference-img">
+                    <div class="reference-info">
+                        <h3>English Grammar in Use</h3>
+                        <p class="reference-type">Thể loại: Ngữ pháp</p>
+                        <p class="reference-author">Tác giả: Raymond Murphy / Cambridge University Press</p>
+                        <p class="reference-desc">Cuốn sách ngữ pháp kinh điển, giải thích rõ ràng, dễ hiểu kèm nhiều bài tập thực hành. Phù hợp cho người học tiếng Anh ở mọi trình độ.</p>
+                        <a href="https://www.cambridge.org/vn/cambridgeenglish/catalogue/grammar-vocabulary-and-pronunciation/english-grammar-use-5th-edition" target="_blank" class="download-link">Tải/Mua sách</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="luyenthi_ielts" data-author="cambridge_university_press">
+                    <img src="../assets/img/img3.jpg" alt="Cambridge English IELTS" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Cambridge English IELTS (Official Guides)</h3>
+                        <p class="reference-type">Thể loại: Luyện thi IELTS</p>
+                        <p class="reference-author">Tác giả/NXB: Cambridge University Press</p>
+                        <p class="reference-desc">Bộ sách đề thi mẫu IELTS chính thức, cung cấp các bài kiểm tra thực tế và đáp án chi tiết, cực kỳ quan trọng cho thí sinh luyện thi.</p>
+                        <a href="https://www.cambridgeenglish.org/exams-and-tests/ielts/" target="_blank" class="download-link">Tìm hiểu thêm</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="luyenthi_toeic" data-author="longman">
+                    <img src="../assets/img/img4.jpg" alt="Longman Preparation Series for the TOEIC Test" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Longman Preparation Series for the TOEIC Test</h3>
+                        <p class="reference-type">Thể loại: Luyện thi TOEIC</p>
+                        <p class="reference-author">Tác giả: Deborah Phillips / Pearson Education (Longman)</p>
+                        <p class="reference-desc">Bộ sách luyện thi TOEIC nổi tiếng, cung cấp các chiến lược, bài tập và đề thi thử sát với đề thi thật.</p>
+                        <a href="https://www.pearsonelt.com/catalogue/toeic/longman-preparation-series-for-the-toeic-test.html" target="_blank" class="download-link">Tải/Mua sách</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="truyen_tieu_thuyet" data-author="penguin_readers">
+                    <img src="../assets/img/img5.jpg" alt="Penguin Readers (Graded Readers)" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Penguin Readers (Graded Readers)</h3>
+                        <p class="reference-type">Thể loại: Truyện/Tiểu thuyết (phân cấp độ)</p>
+                        <p class="reference-author">Tác giả/NXB: Nhiều tác giả / Pearson Education (Penguin Readers)</p>
+                        <p class="reference-desc">Bộ sách truyện tiếng Anh được đơn giản hóa theo từng cấp độ, giúp người học cải thiện kỹ năng đọc và mở rộng từ vựng một cách tự nhiên.</p>
+                        <a href="https://www.penguinreaders.com/" target="_blank" class="download-link">Tìm hiểu thêm</a>
+                    </div>
+                </div>
+
+                 <div class="reference-item" data-category="sach_song_ngu" data-author="hoang_ngan">
+                    <img src="../assets/img/img6.jpg" alt="Truyện cổ tích song ngữ Anh - Việt" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Tuyển tập truyện cổ tích song ngữ Anh - Việt</h3>
+                        <p class="reference-type">Thể loại: Sách song ngữ</p>
+                        <p class="reference-author">Tác giả: Hoàng Ngân</p>
+                        <p class="reference-desc">Các câu chuyện cổ tích quen thuộc được trình bày song ngữ, giúp người đọc vừa giải trí vừa học từ vựng và cấu trúc câu tiếng Anh.</p>
+                        <a href="https://www.fahasa.com/tuyen-tap-truyen-co-tich-song-ngu-anh-viet.html" target="_blank" class="download-link">Mua sách</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="phim_video" data-author="netflix">
+                    <img src="../assets/img/img7.jpg" alt="Friends TV Series" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Friends (TV Series)</h3>
+                        <p class="reference-type">Thể loại: Phim/Video</p>
+                        <p class="reference-author">Nền tảng: Netflix (Warner Bros. Television)</p>
+                        <p class="reference-desc">Sitcom kinh điển của Mỹ, phù hợp để luyện nghe giao tiếp tiếng Anh tự nhiên, từ vựng đời thường và thành ngữ. Có phụ đề tiếng Anh/Việt.</p>
+                        <a href="https://www.netflix.com/title/70153404" target="_blank" class="download-link">Xem trên Netflix</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="ung_dung" data-author="elsa_speak">
+                    <img src="../assets/img/img8.jpg" alt="Elsa Speak App" class="reference-img">
+                    <div class="reference-info">
+                        <h3>ELSA Speak</h3>
+                        <p class="reference-type">Thể loại: Ứng dụng</p>
+                        <p class="reference-author">Nhà phát hành: ELSA Corp</p>
+                        <p class="reference-desc">Ứng dụng luyện phát âm tiếng Anh sử dụng công nghệ AI để phân tích và chỉ ra lỗi sai, giúp người học cải thiện rõ rệt phát âm của mình.</p>
+                        <a href="https://elsaspeak.com/" target="_blank" class="download-link">Truy cập Website/Tải ứng dụng</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="website_online" data-author="bbc_learning_english">
+                    <img src="../assets/img/img9.png" alt="BBC Learning English" class="reference-img">
+                    <div class="reference-info">
+                        <h3>BBC Learning English</h3>
+                        <p class="reference-type">Thể loại: Website/Nguồn Online</p>
+                        <p class="reference-author">Nhà cung cấp: BBC</p>
+                        <p class="reference-desc">Trang web học tiếng Anh miễn phí với các bài học đa dạng, tin tức, podcast, video, phù hợp cho mọi cấp độ học viên.</p>
+                        <a href="https://www.bbc.co.uk/learningenglish/" target="_blank" class="download-link">Truy cập trang web</a>
+                    </div>
+                </div>
+
+                <div class="reference-item" data-category="podcast" data-author="luke_s_english_podcast">
+                    <img src="../assets/img/img10.jpg" alt="Luke's English Podcast" class="reference-img">
+                    <div class="reference-info">
+                        <h3>Luke's English Podcast</h3>
+                        <p class="reference-type">Thể loại: Podcast</p>
+                        <p class="reference-author">Tác giả: Luke Thompson</p>
+                        <p class="reference-desc">Podcast thú vị về tiếng Anh và văn hóa Anh, giúp người nghe cải thiện kỹ năng nghe và mở rộng kiến thức một cách tự nhiên.</p>
+                        <a href="https://teacherluke.co.uk/" target="_blank" class="download-link">Nghe Podcast</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <aside class="sidebar-right">
+            <div class="ad-banner">
+                <a href="#signup" onclick="showElement('signup'); return false;">
+                    <img src="../assets/media/standee1.gif" alt="ad-banner">
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
+        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
+        <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
+        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+    </footer>
+
+    <script src="../assets/js/reference.js"></script>
+</body>
+
+</html>

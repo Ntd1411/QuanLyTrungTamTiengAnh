@@ -1,0 +1,191 @@
+/*
+ * File: reference.css
+ * Mô tả: Chứa các quy tắc CSS độc đáo cho trang tài liệu tham khảo.
+ * Các quy tắc chung đã được định nghĩa trong style.css.
+ */
+
+/* ======== Style cho phần tài liệu tham khảo ======== */
+
+/* Bộ lọc tài liệu */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các nhóm lọc xuống dòng */
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Căn label và select về bên trái */
+}
+
+.filter-group label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 1em;
+}
+
+.filter-group select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    min-width: 200px; /* Đảm bảo chiều rộng tối thiểu */
+    appearance: none; /* Bỏ giao diện mặc định của select */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4zm0%205L0%203h4z%22%2F%3E%3C%2Fsvg%3E'); /* Icon mũi tên tùy chỉnh */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-group select:focus {
+    border-color: var(--primary-color); /* Sử dụng biến từ style.css */
+    box-shadow: 0 0 0 3px rgba(228, 49, 42, 0.2); /* Sử dụng màu dựa trên primary-color */
+    outline: none;
+}
+
+
+/* Lưới hiển thị các mục tài liệu */
+.reference-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 300px là chiều rộng tối thiểu của mỗi cột */
+    gap: 30px; /* Khoảng cách giữa các mục */
+    padding: 20px 0;
+    min-height: 200px; /* Đảm bảo có không gian cho thông báo nếu không có tài liệu */
+    align-items: center; /* Căn giữa thông báo */
+    justify-items: center; /* Căn giữa thông báo */
+}
+
+/* Mỗi mục tài liệu */
+.reference-item {
+    display: flex;
+    flex-direction: column; /* Sắp xếp ảnh và thông tin theo cột */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Bóng đổ đẹp hơn */
+    overflow: hidden; /* Đảm bảo hình ảnh không tràn ra ngoài bo tròn */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee; /* Viền nhẹ */
+}
+
+.reference-item:hover {
+    transform: translateY(-5px); /* Hiệu ứng nhấc nhẹ khi hover */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Bóng đổ rõ hơn khi hover */
+}
+
+.reference-img {
+    width: 100%;
+    height: 220px; /* Chiều cao cố định cho ảnh */
+    object-fit: cover; /* Đảm bảo ảnh đầy đủ khung mà không bị méo */
+    border-bottom: 1px solid #eee;
+}
+
+.reference-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Cho phép phần info mở rộng để lấp đầy */
+}
+
+.reference-info h3 {
+    font-size: 1.3em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.reference-info p {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: left; /* Căn trái cho nội dung chi tiết */
+}
+
+.reference-type,
+.reference-author {
+    font-weight: 500;
+    color: #444;
+}
+
+.reference-desc {
+    flex-grow: 1; /* Cho phép mô tả chiếm không gian còn lại */
+    margin-bottom: 15px;
+}
+
+.download-link {
+    display: inline-block;
+    background-color: var(--primary-color); /* Sử dụng biến từ style.css */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: auto; /* Đẩy link xuống cuối */
+    align-self: flex-start; /* Căn link về bên trái */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.download-link:hover {
+    background-color: #b30000; /* Màu đỏ đậm hơn khi hover */
+    transform: translateY(-2px);
+}
+
+/* Thông báo không có kết quả */
+.no-results-message {
+    grid-column: 1 / -1; /* Chiếm toàn bộ chiều rộng lưới */
+    text-align: center;
+    font-size: 1.2em;
+    color: #888;
+    padding: 50px 0;
+}
+
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .reference-items-grid {
+        grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
+        gap: 25px;
+    }
+
+    .reference-item {
+        margin: 0 10px; /* Thêm khoảng cách hai bên cho các item trên di động */
+    }
+
+    .reference-img {
+        height: 180px; /* Giảm chiều cao ảnh trên di động */
+    }
+
+    .reference-info h3 {
+        font-size: 1.2em;
+    }
+    .reference-info p {
+        font-size: 0.85em;
+    }
+}
+
+/* Responsive cho tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .reference-items-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
