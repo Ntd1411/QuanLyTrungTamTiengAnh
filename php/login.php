@@ -1,88 +1,181 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-header('Content-Type: application/json');
-
-// Initialize the session
 session_start();
+ob_start();
 
-// Proper debug logging
-$postData = file_get_contents('php://input');
-error_log("Raw POST data: " . $postData);
-error_log("POST contents: " . json_encode($_POST));
+include "../model/config.php";
+include "../model/user.php";
 
-// Include config file
-require_once "config.php";
-
-// Check database connection
-if (!$conn) {
-    error_log("Database connection failed: " . mysqli_connect_error());
-    die(json_encode(['success' => false, 'error' => 'Lỗi kết nối database']));
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate POST data
+if (isset($_POST['login']) && ($_POST['login'])) {
+    $response = array();
+    
     if (empty($_POST['username']) || empty($_POST['password'])) {
-        die(json_encode(['success' => false, 'error' => 'Thiếu thông tin đăng nhập']));
+        $response['error'] = "Thiếu thông tin đăng nhập";
+        echo json_encode($response);
+        exit;
     }
 
-    $username = mysqli_real_escape_string($conn, trim($_POST['username']));
-    $password = trim($_POST['password']);
-    
-    // Check in each table
-    $tables = ['admin', 'teachers', 'students', 'parents'];
-    $found = false;
-    
-    foreach ($tables as $table) {
-        $sql = "SELECT * FROM $table WHERE Username = ?";
-        if ($stmt = mysqli_prepare($conn, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $username);
-            
-            if (mysqli_stmt_execute($stmt)) {
-                $result = mysqli_stmt_get_result($stmt);
-                
-                if ($row = mysqli_fetch_assoc($result)) {
-                    // Use password_verify instead of direct comparison
-                    if (password_verify($password, $row['Password'])) {
-                        $_SESSION["loggedin"] = true;
-                        $_SESSION["id"] = $row[ucfirst($table) . 'ID'];
-                        $_SESSION["username"] = $row['Username'];
-                        $_SESSION["role"] = rtrim($table, 's');
-                        
-                        $redirect_url = "../view/" . rtrim($table, 's') . ".html";
-                        
-                        error_log("Login successful for user: " . $username . " in table: " . $table);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-                        header("Location: ../view/admin.html");
-                        
-                        echo json_encode([
-                            'success' => true,
-                            'redirect' => $redirect_url,
-                            'role' => rtrim($table, 's')
-                        ]);
-                        
-                        mysqli_stmt_close($stmt);
-                        mysqli_close($conn);
-                        exit;
-                    }
-                    error_log("Password verification failed for user: " . $username . " in table: " . $table);
-                    $found = true;
-                    break;
-                }
-            }
-            mysqli_stmt_close($stmt);
+    $role = getRole($username, $password);
+    $_SESSION['role'] = $role;
+    
+    if (isset($_SESSION['role'])) {
+        switch ($role) {
+            case 0:
+                $response['redirect'] = "admin.php";
+                $_SESSION['username'] = $username;
+                break;
+            case 1:
+                $response['redirect'] = "teacher.php";
+                $_SESSION['username'] = $username;
+                break;
+            case 2:
+                $response['redirect'] = "student.php";
+                $_SESSION['username'] = $username;
+                break;
+            case 3:
+                $response['redirect'] = "parent.php";
+                $_SESSION['username'] = $username;
+                break;
+            default:
+                $response['error'] = "Sai tên đăng nhập hoặc mật khẩu";
+                break;
         }
     }
-    
-    mysqli_close($conn);
-    
-    if ($found) {
-        echo json_encode(['success' => false, 'error' => 'Sai mật khẩu']);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Tài khoản không tồn tại']);
-    }
+    $conn = null;
+    echo json_encode($response);
     exit;
-} else {
-    die(json_encode(['success' => false, 'error' => 'Phương thức không hợp lệ']));
 }
+
 ?>
+
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập - KEC</title>
+    <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+    <!-- Header với ảnh -->
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="../index.html">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
+                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+                    <li><a href="../view/contact.html">Liên Hệ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
+                    <li><a href="#" onclick="event.preventDefault()">IELTS</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" onclick="event.preventDefault()">TOEIC</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Thư viện</a>
+                <ul class="submenu">
+                    <li><a href="#ielts-library">IELTS</a></li>
+                    <li><a href="#toeic-library">TOEIC</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Sự Kiện</a></li>
+                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="">Đăng Nhập</a></li>
+                    <li><a href="../view/signup.html">Đăng Ký</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="login">
+        <div class="body">
+            <h1>Đăng nhập</h1>
+            <form id="loginForm" method="post">
+                <div class="block">
+                    <h2>Tài khoản</h2>
+                    <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản" required>
+                </div>
+
+                <div class="block">
+                    <h2>Mật khẩu</h2>
+                    <input type="password" title="Mật khẩu" name="password" placeholder="Mật khẩu" required>
+                </div>
+
+                <div id="error-message" style="color: red;"></div>
+
+                <div class="remember">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Ghi nhớ đăng nhập</label>
+                </div>
+
+                <a href="#">Quên mật khẩu?</a>
+
+                <button type="submit" name="login" id="login">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('login', true);
+
+            fetch('login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('error-message').textContent = data.error;
+                } else if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            })
+            .catch(error => {
+                document.getElementById('error-message').textContent = 'Đã xảy ra lỗi, vui lòng thử lại';
+            });
+        });
+    </script>
+</body>
+</html>

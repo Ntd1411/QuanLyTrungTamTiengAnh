@@ -1,3 +1,55 @@
+<?php
+session_start();
+ob_start();
+
+include "../model/config.php";
+include "../model/user.php";
+
+if (isset($_POST['signup']) && ($_POST['signup'])) {
+    $respon = array();
+    
+    if(empty($_POST['check']) || !$_POST['check']){
+        $respon['error'] = "Vui lòng đồng ý với điều khoản dịch vụ của chúng tôi!";
+        echo json_encode($respon);
+        exit;
+    }
+    $fullname = $_POST['fullname'];
+    $birthdate = $_POST['birthdate'];
+    $gender = $_POST['gender'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $role = $_POST['role'];
+
+    if(empty($_POST['fullname']) || empty($_POST['birthdate']) || empty($_POST['gender']) ||
+    empty($_POST['username']) ||empty($_POST['password']) ||empty($_POST['email']) || empty($_POST['confirm_password']) )
+    {
+        $respon['error'] = "Không được để trống dữ liệu!";
+        echo json_encode($respon);
+        exit;
+    }
+    if(isExistUsername($_POST['username'])) {
+        $respon['error'] = "Tên đăng nhập đã tồn tại!";
+        echo json_encode($respon);
+        exit;
+    }
+    if(strcmp($password, $confirmPassword) != 0){
+        $respon['error'] = "Mật khẩu nhập lại không trùng khớp!";
+        echo json_encode($respon);
+        exit;
+    }
+
+    addStudentOrParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $role);
+    
+    $respon['redirect'] = "login.php";
+    echo json_encode($respon);
+        exit;
+
+}
+?>
+
 <!doctype html>
 <html lang="vi">
 
@@ -6,6 +58,41 @@
     <title>Đăng ký - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    #login-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    #login-btn:hover {
+        background-color: #45a049;
+    }
+</style>
 </head>
 
 <body>
@@ -75,9 +162,11 @@
 
     <div class="signup">
         <div class="body">
+            
             <h1>Đăng ký</h1>
-            <form class="signup-form" action="/signup" method="post">
+            <form class="signup-form" id="signup-form" action="" method="post">
                 <!-- ...form đăng ký... -->
+                 
                 <div class="signup-block">
                     <h2>Họ và tên</h2>
                     <input type="text" name="fullname" placeholder="Họ và tên" required>
@@ -125,23 +214,66 @@
                 <div class="signup-role">
                     <h2>Vai trò</h2>
                     <div class="block">
-                        <input type="radio" name="role" id="parent" name="role_parent">
+                        <input type="radio" name="role" id="parent" value="3" checked>
                         <label for="parent">Phụ huynh</label>
                     </div>
                     <div class="block">
-                        <input type="radio" name="role" id="student" name="role_student">
+                        <input type="radio" name="role" id="student" value="2">
                         <label for="student">Học sinh</label>
                     </div>
                 </div>
+                <div>
 
-                <input type="checkbox" id="check">
-                <label for="check">Đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo
-                        mật</a></label>
-
-                <button type="submit">Đăng ký</button>
+                    <input type="checkbox" id="check" name="check">
+                    <label for="check">Đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo
+                            mật</a></label>
+                </div>
+                <div id="error-message" style="color: red; background-color: antiquewhite; margin-bottom: 5px;line-height: 2rem; width: 100%;"></div>
+                <div id="check-error-placeholder"></div>
+                <button type="submit" name="signup" id="signup" onclick="">Đăng ký</button>
             </form>
         </div>
     </div>
+
+    <div id="success-popup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Đăng ký thành công!</h2>
+            <p>Bạn đã đăng ký tài khoản thành công.</p>
+            <button id="login-btn">Đăng nhập ngay</button>
+        </div>
+    </div>
+    
+    <script src="../assets/js/validation.js"></script>
+    <script>
+document.getElementById('signup-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('signup', true);
+
+    fetch('signup.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(respon => respon.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('error-message').textContent = data.error;
+        } else if (data.redirect) {
+            // Hiển thị popup thay vì chuyển hướng ngay
+            document.getElementById('success-popup').style.display = 'flex';
+        }
+    })
+    .catch(error => {
+        document.getElementById('error-message').textContent = 'Đã xảy ra lỗi, vui lòng thử lại';
+    });
+});
+
+// Thêm sự kiện click cho nút đăng nhập trong popup
+document.getElementById('login-btn').addEventListener('click', function() {
+    window.location.href = 'login.php';
+});
+</script>
 </body>
 
 </html>
