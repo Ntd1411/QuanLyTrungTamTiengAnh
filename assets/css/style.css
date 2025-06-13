@@ -392,6 +392,11 @@ footer p {
   background-color: #eb6b6b;
 }
 
+input[type="text"]:not(:placeholder-shown),
+input[type="password"]:not(:placeholder-shown) {
+    background-color: #fff !important; /* hoặc màu bạn muốn */
+}
+
 /* ====================== signup ====================== */
 #signup {
   margin: 0 auto;
