@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin tức - KEC</title>
+    <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/news.css">
+</head>
+
+body>
+    <!-- Header với ảnh -->
+    <header>
+        <img src="../assets/img/poster.jpg" alt="Logo Website">
+    </header>
+
+    <!-- Menu đa cấp -->
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="../index.html">Trang Chủ</a>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
+                <ul class="submenu">
+                    <li><a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
+                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+                    <li><a href="../view/contact.html">Liên Hệ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
+                <ul class="submenu">
+                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
+                    <li><a href="">IELTS</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" onclick="event.preventDefault()">TOEIC</a>
+                        <ul class="sub-submenu">
+                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="../view/reference.html">Thư viện</a>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tin Tức</a>
+                <ul class="submenu">
+                    <li><a href="#academic-news">Sự Kiện</a></li>
+                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
+                <ul class="submenu">
+                    <li><a href="../view/login.html">Đăng Nhập</a></li>
+                    <li><a href="../view/signup.html">Đăng Ký</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar-left">
+            <div class="ad-banner">
+                <a href="#signup" onclick="showElement('signup'); return false;">
+                    <img src="../assets/media/standee1.gif" alt="ad-banner">
+                </a>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h1>Tin tức mới nhất</h1>
+            <p>Cập nhật những thông tin, sự kiện và bài viết hữu ích từ Trung tâm Tiếng Anh KEC.</p>
+
+            <div class="news-list-grid">
+                <div class="news-item">
+                    <img src="../assets/img/news_summer_camp.jpg" alt="Trại hè tiếng Anh 2025" class="news-img">
+                    <div class="news-info">
+                        <h3><a href="#" class="news-title-link">Khai giảng Trại hè Tiếng Anh 2025 - Vui học, vui khám phá!</a></h3>
+                        <p class="news-meta">
+                            <span class="news-date">10/06/2025</span> | <span class="news-author">KEC Team</span>
+                        </p>
+                        <p class="news-excerpt">Trại hè Tiếng Anh KEC 2025 chính thức khai giảng, mang đến một mùa hè sôi động, bổ ích với vô vàn hoạt động lý thú kết hợp học tập và trải nghiệm thực tế...</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <img src="../assets/img/news_ielts_success.jpg" alt="Học viên đạt IELTS 7.5" class="news-img">
+                    <div class="news-info">
+                        <h3><a href="#" class="news-title-link">Chúc mừng học viên Nguyễn Văn A đạt IELTS 7.5 Overall!</a></h3>
+                        <p class="news-meta">
+                            <span class="news-date">05/06/2025</span> | <span class="news-author">Ban Tuyển sinh</span>
+                        </p>
+                        <p class="news-excerpt">KEC xin gửi lời chúc mừng chân thành nhất đến học viên Nguyễn Văn A đã xuất sắc đạt 7.5 IELTS chỉ sau 6 tháng học tại trung tâm. Cùng tìm hiểu bí quyết thành công của bạn...</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <img src="../assets/img/news_english_tips.jpg" alt="Mẹo học tiếng Anh" class="news-img">
+                    <div class="news-info">
+                        <h3><a href="#" class="news-title-link">5 mẹo học từ vựng tiếng Anh hiệu quả không thể bỏ qua</a></h3>
+                        <p class="news-meta">
+                            <span class="news-date">01/06/2025</span> | <span class="news-author">Cô Lan Anh</span>
+                        </p>
+                        <p class="news-excerpt">Bạn gặp khó khăn khi ghi nhớ từ vựng? Đừng lo, bài viết này sẽ chia sẻ 5 chiến lược đã được kiểm chứng giúp bạn mở rộng vốn từ nhanh chóng và hiệu quả...</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <img src="../assets/img/news_toeic_update.jpg" alt="Cập nhật TOEIC" class="news-img">
+                    <div class="news-info">
+                        <h3><a href="#" class="news-title-link">Cập nhật cấu trúc đề thi TOEIC Reading mới nhất 2025</a></h3>
+                        <p class="news-meta">
+                            <span class="news-date">28/05/2025</span> | <span class="news-author">Thầy Duy Hưng</span>
+                        </p>
+                        <p class="news-excerpt">Những thay đổi quan trọng trong phần thi Reading của kỳ thi TOEIC năm 2025 mà bạn cần biết để chuẩn bị tốt nhất cho bài thi của mình...</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </div>
+
+                </div>
+
+            <div class="pagination">
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <a href="#" class="page-link">3</a>
+                <a href="#" class="page-link">Next &raquo;</a>
+            </div>
+
+        </div>
+
+        <aside class="sidebar-right">
+            <div class="ad-banner">
+                <a href="#signup" onclick="showElement('signup'); return false;">
+                    <img src="../assets/media/standee1.gif" alt="ad-banner">
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
+        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
+        <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
+        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+    </footer>
+
+    <script src="../assets/js/news.js"></script>
+</body>
+
+</html>
