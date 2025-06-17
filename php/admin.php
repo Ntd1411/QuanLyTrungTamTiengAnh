@@ -2,13 +2,11 @@
 session_start();
 ob_start();
 
-if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) || (isset($_SESSION['role'])  && $_SESSION['role'] == 0)) {
+if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
+    (isset($_SESSION['role'])  && $_SESSION['role'] == 0)
+) {
     $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
-    
-
-    
-}
- else {
+} else {
     echo "<h1>Vui lòng đăng nhập vào tài khoản được cấp quyền admin để xem trang này</h1>";
     exit();
 }
@@ -28,6 +26,25 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) || (isset($_
     <link rel="stylesheet" href="../assets/css/admin.css">
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <script>
+        // Ngăn không cho cache trang
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+        window.addEventListener('load', function() {
+            if (window.performance && window.performance.navigation.type === 2) {
+                // type 2 means back/forward button was used
+                window.location.reload(); // reload the page
+            }
+        });
+
+        // Hoặc cách 2 - sử dụng popstate event
+        window.addEventListener('popstate', function(event) {
+            window.location.reload();
+        });
+    </script>
 </head>
 
 <body>

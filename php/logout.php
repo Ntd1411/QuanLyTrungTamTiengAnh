@@ -2,6 +2,8 @@
 session_start();
 
 // Xóa tất cả session
+unset($_SESSION['role']);
+unset($_SESSION['username']);
 session_unset();
 session_destroy();
 
