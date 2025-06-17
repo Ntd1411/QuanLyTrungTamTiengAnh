@@ -16,6 +16,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
 
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $remember = $_POST['remember'] ?? "";
 
     $role = getRole($username, $password);
     $_SESSION['role'] = $role;
@@ -25,18 +26,37 @@ if (isset($_POST['login']) && ($_POST['login'])) {
             case 0:
                 $response['redirect'] = "admin.php";
                 $_SESSION['username'] = $username;
+                if(isset($remember) && $remember){
+                    setcookie('is_login', true, time() + 3600*24*7, '/');
+                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                }
                 break;
             case 1:
                 $response['redirect'] = "teacher.php";
                 $_SESSION['username'] = $username;
+                if(isset($remember) && $remember){
+                    setcookie('is_login', true, time()+ 3600*24*7, '/');
+                    setcookie('username', $username, time()+ 3600*24*7, '/');
+                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                }
                 break;
             case 2:
                 $response['redirect'] = "student.php";
                 $_SESSION['username'] = $username;
+                 if(isset($remember) && $remember){
+                    setcookie('is_login', true, time()+ 3600*24*7, '/');
+                    setcookie('username', $username, time()+ 3600*24*7, '/');
+                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                }
                 break;
             case 3:
                 $response['redirect'] = "parent.php";
                 $_SESSION['username'] = $username;
+                 if(isset($remember) && $remember){
+                    setcookie('is_login', true, time()+ 3600*24*7, '/');
+                    setcookie('username', $username, time()+ 3600*24*7, '/');
+                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                }
                 break;
             default:
                 $response['error'] = "Sai tên đăng nhập hoặc mật khẩu";

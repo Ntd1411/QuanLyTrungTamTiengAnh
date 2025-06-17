@@ -1,3 +1,10 @@
+<?php
+    if((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true){
+        echo "<script>alert('Đã đăng nhập');</script>";
+        exit();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
