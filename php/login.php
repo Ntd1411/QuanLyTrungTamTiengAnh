@@ -127,56 +127,55 @@ if (isset($_POST['login']) && ($_POST['login'])) {
                 </ul>
             </li>
             <li>
-                <a href="#" onclick="event.preventDefault()">Thư viện</a>
-                <ul class="submenu">
-                    <li><a href="#ielts-library">IELTS</a></li>
-                    <li><a href="#toeic-library">TOEIC</a></li>
-                </ul>
+                <a href="../view/reference.html">Thư viện</a>
             </li>
             <li>
                 <a href="#" onclick="event.preventDefault()">Tin Tức</a>
                 <ul class="submenu">
-                    <li><a href="#academic-news">Sự Kiện</a></li>
-                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+                    <li><a href="../view/news.html">Sự Kiện</a></li>
+                    <li><a href="../view/student_intro.html">Học Viên Xuất Sắc</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
                 <ul class="submenu">
-                    <li><a href="">Đăng Nhập</a></li>
-                    <li><a href="../view/signup.html">Đăng Ký</a></li>
+                    <li><a href="../php/login.php">Đăng Nhập</a></li>
+                    <li><a href="../php/signup.php">Đăng Ký</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 
-    <div class="login">
-        <div class="body">
-            <h1>Đăng nhập</h1>
-            <form id="loginForm" method="post">
-                <div class="block">
-                    <h2>Tài khoản</h2>
-                    <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản" required>
-                </div>
+    <div class="element active">
+        <div class="login">
+            <div class="body">
+                <h1>Đăng nhập</h1>
+                <form id="loginForm" method="post">
+                    <div class="block">
+                        <h2>Tài khoản</h2>
+                        <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản" required>
+                    </div>
 
-                <div class="block">
-                    <h2>Mật khẩu</h2>
-                    <input type="password" title="Mật khẩu" name="password" placeholder="Mật khẩu" required>
-                </div>
+                    <div class="block">
+                        <h2>Mật khẩu</h2>
+                        <input type="password" title="Mật khẩu" name="password" placeholder="Mật khẩu" required>
+                    </div>
 
-                <div id="error-message" style="color: red;"></div>
+                    <div id="error-message" style="color: red;"></div>
 
-                <div class="remember">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember">Ghi nhớ đăng nhập</label>
-                </div>
+                    <div class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Ghi nhớ đăng nhập</label>
+                    </div>
 
-                <a href="#">Quên mật khẩu?</a>
+                    <a href="#">Quên mật khẩu?</a>
 
-                <button type="submit" name="login" id="login">Đăng nhập</button>
-            </form>
+                    <button type="submit" name="login" id="login">Đăng nhập</button>
+                </form>
+            </div>
         </div>
     </div>
+
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
