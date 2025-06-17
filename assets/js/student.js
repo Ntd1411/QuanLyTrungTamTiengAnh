@@ -1,47 +1,25 @@
-// Fake data for demonstration
-let studentData = {
-    id: 1,
-    name: "Nguyễn Văn B",
-    email: "nguyenvanb@example.com",
-    phone: "0987654321",
-    class: {
-        id: 1,
-        name: "Lớp 3.1",
-        teacher: "Cô Thanh Hương",
-        schedule: "Thứ 2-4-6 (18:00-19:30)",
-        classmates: [
-            "Nguyễn Văn B",
-            "Trần Thị C",
-            "Lê Văn D",
-            "Phạm Thị E"
-        ]
-    },
-    attendance: {
-        attended: 15,
-        absent: 2,
-        history: [
-            { date: "2023-12-18", status: "present", note: "" },
-            { date: "2023-12-15", status: "absent", note: "Ốm" },
-            { date: "2023-12-13", status: "present", note: "" }
-        ]
-    },
-    homework: [
-        {
-            id: 1,
-            title: "Bài tập Unit 5",
-            description: "Làm các bài tập trong workbook trang 45-47",
-            dueDate: "2023-12-25",
-            status: "new"
-        },
-        {
-            id: 2,
-            title: "Vocabulary Review",
-            description: "Ôn tập từ vựng Unit 4",
-            dueDate: "2023-12-20",
-            status: "done"
-        }
-    ]
-};
+let studentData = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('../php/get_student_data.php')
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            studentData = data;
+            loadStudentDashboard();
+            loadClassInfo();
+            loadAttendance();
+            loadHomework();
+            loadStudentProfile();
+        })
+        .catch(err => {
+            alert('Không thể tải dữ liệu học sinh!');
+            console.error(err);
+        });
+});
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {

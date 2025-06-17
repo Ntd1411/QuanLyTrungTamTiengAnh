@@ -1,51 +1,21 @@
-// Fake data for demonstration
-let parentData = {
-    id: 1,
-    name: "Nguyễn Văn A",
-    email: "nguyenvana@example.com",
-    phone: "0123456789",
-    zalo: "nvana123",
-    children: [
-        {
-            id: 1,
-            name: "Nguyễn Văn B",
-            class: "Lớp 3.1",
-            attended: 15,
-            absent: 2,
-            teacher: "Cô Thanh Hương",
-            fee: 1500000,
-            paid: 1000000
-        },
-        {
-            id: 2,
-            name: "Nguyễn Văn C",
-            class: "Lớp 5.2",
-            attended: 12,
-            absent: 1,
-            teacher: "Cô Thu Hương",
-            fee: 1500000,
-            paid: 500000
-        }
-    ],
-    messages: [
-        {
-            id: 1,
-            from: "Cô Thanh Hương",
-            subject: "Thông báo nghỉ học",
-            content: "Lớp 3.1 sẽ nghỉ học ngày 20/12/2023",
-            date: "2023-12-18",
-            read: false
-        },
-        {
-            id: 2,
-            from: "Admin",
-            subject: "Nhắc nộp học phí",
-            content: "Vui lòng đóng học phí tháng 12 cho bé",
-            date: "2023-12-15",
-            read: true
-        }
-    ]
-};
+let parentData = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('../php/get_parent_data.php')
+        .then(res => res.json())
+        .then(data => {
+            parentData = data;
+            loadParentDashboard();
+            loadChildren();
+            loadPayments();
+            loadMessages();
+            loadParentProfile();
+        })
+        .catch(err => {
+            alert('Không thể tải dữ liệu phụ huynh!');
+            console.error(err);
+        });
+});
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
