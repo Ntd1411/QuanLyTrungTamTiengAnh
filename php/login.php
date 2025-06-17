@@ -7,7 +7,7 @@ include "../model/user.php";
 
 if (isset($_POST['login']) && ($_POST['login'])) {
     $response = array();
-    
+
     if (empty($_POST['username']) || empty($_POST['password'])) {
         $response['error'] = "Thiếu thông tin đăng nhập";
         echo json_encode($response);
@@ -20,42 +20,47 @@ if (isset($_POST['login']) && ($_POST['login'])) {
 
     $role = getRole($username, $password);
     $_SESSION['role'] = $role;
-    
+
     if (isset($_SESSION['role'])) {
         switch ($role) {
             case 0:
                 $response['redirect'] = "admin.php";
                 $_SESSION['username'] = $username;
-                if(isset($remember) && $remember){
-                    setcookie('is_login', true, time() + 3600*24*7, '/');
-                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                $_SESSION['role'] = $role;
+                if (isset($remember) && $remember) {
+                    setcookie('is_login', true, time() + 3600 * 24, '/');
+                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 1:
                 $response['redirect'] = "teacher.php";
+                $_SESSION['role'] = $role;
                 $_SESSION['username'] = $username;
-                if(isset($remember) && $remember){
-                    setcookie('is_login', true, time()+ 3600*24*7, '/');
-                    setcookie('username', $username, time()+ 3600*24*7, '/');
-                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                if (isset($remember) && $remember) {
+                    setcookie('is_login', true, time() + 3600 * 24, '/');
+                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 2:
                 $response['redirect'] = "student.php";
+                $_SESSION['role'] = $role;
                 $_SESSION['username'] = $username;
-                 if(isset($remember) && $remember){
-                    setcookie('is_login', true, time()+ 3600*24*7, '/');
-                    setcookie('username', $username, time()+ 3600*24*7, '/');
-                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                if (isset($remember) && $remember) {
+                    setcookie('is_login', true, time() + 3600 * 24, '/');
+                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 3:
                 $response['redirect'] = "parent.php";
+                $_SESSION['role'] = $role;
                 $_SESSION['username'] = $username;
-                 if(isset($remember) && $remember){
-                    setcookie('is_login', true, time()+ 3600*24*7, '/');
-                    setcookie('username', $username, time()+ 3600*24*7, '/');
-                    setcookie('role', $role, time()+ 3600*24*7, '/');
+                if (isset($remember) && $remember) {
+                    setcookie('is_login', true, time() + 3600 * 24, '/');
+                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             default:
@@ -176,26 +181,27 @@ if (isset($_POST['login']) && ($_POST['login'])) {
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             formData.append('login', true);
 
             fetch('login.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('error-message').textContent = data.error;
-                } else if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            })
-            .catch(error => {
-                document.getElementById('error-message').textContent = 'Đã xảy ra lỗi, vui lòng thử lại';
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('error-message').textContent = data.error;
+                    } else if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('error-message').textContent = 'Đã xảy ra lỗi, vui lòng thử lại';
+                });
         });
     </script>
 </body>
+
 </html>

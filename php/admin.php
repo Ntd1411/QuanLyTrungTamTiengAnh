@@ -1,8 +1,21 @@
 <?php
-    if((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true){
-        echo "<script>alert('Đã đăng nhập');</script>";
-        exit();
-    }
+session_start();
+ob_start();
+
+if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) || (isset($_SESSION['role'])  && $_SESSION['role'] == 0)) {
+    $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
+    
+
+    
+}
+ else {
+    echo "<h1>Vui lòng đăng nhập vào tài khoản được cấp quyền admin để xem trang này</h1>";
+    exit();
+}
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +52,7 @@
                 <ul class="submenu">
                     <li><a href="#account-info" onclick="showElement('account-info'); return false;">Thông tin tài khoản</a>
                     </li>
-                    <li><a href="../index.html">Đăng Xuất</a></li>
+                    <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>
         </ul>
@@ -270,7 +283,7 @@
                             <option value="">Chọn lớp</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('student-form').reset()">Làm mới</button>
                         <button type="button" onclick="addStudent()">Thêm học sinh</button>
