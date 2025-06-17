@@ -60,4 +60,3 @@ function addStudentOrParent($fullname, $birthdate, $gender, $username, $password
     $conn = null;
 }
 
-

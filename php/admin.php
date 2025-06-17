@@ -2,6 +2,10 @@
 session_start();
 ob_start();
 
+include "../model/config.php";
+include "../model/user.php";
+include "../model/configadmin.php";
+
 if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     (isset($_SESSION['role'])  && $_SESSION['role'] == 0)
 ) {
@@ -86,28 +90,44 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <div class="stat-icon">👨‍🏫</div>
                         <div class="stat-info">
                             <h3>Giáo viên</h3>
-                            <p id="home-teachers-count">0</p>
+                            <p id="home-teachers-count">
+                                <?php
+                                   echo countRow("teachers");
+                                ?>
+                            </p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">👨‍🎓</div>
                         <div class="stat-info">
                             <h3>Học sinh</h3>
-                            <p id="home-students-count">0</p>
+                            <p id="home-students-count">
+                                <?php
+                                   echo countRow("students");
+                                ?>
+                            </p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">📚</div>
                         <div class="stat-info">
                             <h3>Lớp học</h3>
-                            <p id="home-classes-count">0</p>
+                            <p id="home-classes-count">
+                                <?php
+                                    echo countRow("classes");
+                                ?>
+                            </p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">👥</div>
                         <div class="stat-info">
                             <h3>Phụ huynh</h3>
-                            <p id="home-parents-count">0</p>
+                            <p id="home-parents-count">
+                                <?php
+                                    echo countRow("parents");
+                                ?>
+                            </p>
                         </div>
                     </div>
                 </div>
