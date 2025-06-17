@@ -11,13 +11,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 ) {
     $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
 } else {
-    echo "<h1>Vui lòng đăng nhập vào tài khoản được cấp quyền admin để xem trang này</h1>";
+    echo "<script>alert('Vui lòng đăng nhập vào tài khoản được cấp quyền admin để xem trang này');</script>";
+    echo "<script>window.location.href = './login.php';</script>";
     exit();
 }
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -30,25 +27,6 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <link rel="stylesheet" href="../assets/css/admin.css">
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
-    <script>
-        // Ngăn không cho cache trang
-        window.onpageshow = function(event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        };
-        window.addEventListener('load', function() {
-            if (window.performance && window.performance.navigation.type === 2) {
-                // type 2 means back/forward button was used
-                window.location.reload(); // reload the page
-            }
-        });
-
-        // Hoặc cách 2 - sử dụng popstate event
-        window.addEventListener('popstate', function(event) {
-            window.location.reload();
-        });
-    </script>
 </head>
 
 <body>
@@ -494,6 +472,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/update_page.js"></script>
 </body>
 
 </html>
