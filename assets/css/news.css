@@ -1,0 +1,192 @@
+/*
+ * File: news.css
+ * Mô tả: Chứa các quy tắc CSS độc đáo cho trang tin tức.
+ * Các quy tắc chung đã được định nghĩa trong style.css.
+ */
+
+/* Định nghĩa màu chính từ style.css để sử dụng trong news.css */
+:root {
+    --primary-color: #E4312A;
+    --border-color: #ddd; /* Giả định có biến này từ style.css cho border */
+}
+
+/* ======== Style cho phần Tin tức ======== */
+
+/* Container chính cho nội dung tin tức */
+.content h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.content p {
+    text-align: center;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Lưới hiển thị các bài viết tin tức */
+.news-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Điều chỉnh min-width phù hợp */
+    gap: 30px; /* Khoảng cách giữa các bài viết */
+    padding: 20px 0;
+}
+
+/* Mỗi bài viết tin tức */
+.news-item {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    display: flex; /* Dùng flexbox để sắp xếp nội dung bên trong */
+    flex-direction: column; /* Sắp xếp ảnh và info theo cột */
+}
+
+.news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.news-img {
+    width: 100%;
+    height: 200px; /* Chiều cao cố định cho ảnh đại diện */
+    object-fit: cover; /* Đảm bảo ảnh đầy đủ khung mà không bị méo */
+    border-bottom: 1px solid #eee;
+}
+
+.news-info {
+    padding: 20px;
+    flex-grow: 1; /* Cho phép phần info mở rộng để lấp đầy */
+    display: flex;
+    flex-direction: column; /* Sắp xếp tiêu đề, meta, excerpt, link theo cột */
+}
+
+.news-info h3 {
+    font-size: 1.4em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.news-title-link {
+    text-decoration: none;
+    color: inherit; /* Kế thừa màu từ h3 */
+    transition: color 0.3s ease;
+}
+
+.news-title-link:hover {
+    color: var(--primary-color); /* Đổi màu khi hover */
+}
+
+.news-meta {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.news-meta span {
+    margin-right: 10px;
+}
+
+.news-excerpt {
+    font-size: 0.95em;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    flex-grow: 1; /* Cho phép excerpt chiếm không gian còn lại */
+    overflow: hidden; /* Ngăn chặn văn bản tràn ra ngoài */
+    text-overflow: ellipsis; /* Thêm dấu ba chấm nếu văn bản quá dài */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Giới hạn số dòng hiển thị */
+    -webkit-box-orient: vertical;
+}
+
+.read-more {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: auto; /* Đẩy link xuống cuối */
+    align-self: flex-start; /* Căn link về bên trái */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.read-more:hover {
+    background-color: #b30000;
+    transform: translateY(-2px);
+}
+
+/* Phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.page-link {
+    display: block;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-decoration: none;
+    color: #555;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.page-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: bold;
+    cursor: default;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+    .news-list-grid {
+        grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
+        gap: 25px;
+    }
+
+    .news-item {
+        margin: 0 10px; /* Thêm khoảng cách hai bên cho các item trên di động */
+    }
+
+    .news-img {
+        height: 180px;
+    }
+
+    .news-info h3 {
+        font-size: 1.2em;
+    }
+    .news-info p {
+        font-size: 0.85em;
+    }
+    .read-more {
+        font-size: 0.9em;
+        padding: 6px 12px;
+    }
+}
+
+/* Responsive cho tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .news-list-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
