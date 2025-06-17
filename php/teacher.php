@@ -1,3 +1,18 @@
+<?php
+session_start();
+ob_start();
+
+if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
+    (isset($_SESSION['role'])  && $_SESSION['role'] == 1)
+) {
+    $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
+} else {
+    echo "<script>alert('Vui lòng đăng nhập vào tài khoản giáo viên để xem trang này');</script>";
+    echo "<script>window.location.href = './login.php';</script>";
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -28,7 +43,7 @@
                 <a href="#account">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
-                    <li><a href="../index.html">Đăng Xuất</a></li>
+                    <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>
         </ul>
@@ -179,6 +194,7 @@
 
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/teacher.js"></script>
+    <script src="../assets/js/update_page.js"></script>
 </body>
 
 </html>

@@ -19,7 +19,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
     $remember = $_POST['remember'] ?? "";
 
     $role = getRole($username, $password);
-    $_SESSION['role'] = $role;
+    $_SESSION['role'] = $role; //thừa
 
     if (isset($_SESSION['role'])) {
         switch ($role) {
