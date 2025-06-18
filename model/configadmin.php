@@ -371,72 +371,69 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
 }
 
 
-function addParent(
-    $fullname,
-    $birthdate,
-    $gender,
-    $username,
-    $password,
-    $email,
-    $phone,
-    $zalo,
-    $unpaid
-) {
+function addParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $zalo, $unpaid) {
     try {
         $conn = connectdb();
-        error_log("Addparent params: $fullname, $birthdate, $gender, $username, $password, $email, $phone, $zalo, $unpaid");
+        error_log("addParent params: $fullname, $birthdate, $gender, $username, $email, $phone, $zalo, $unpaid");
 
         // Kiểm tra username đã tồn tại chưa
         $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([':username' => $username]);
-        if ($checkStmt->fetchColumn() > 0) {
+        if($checkStmt->fetchColumn() > 0) {
             return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
         }
 
+        // Thêm học sinh dùng stored procedure
+        $stmt = $conn->prepare("CALL AddNewParent(?, ?, ?, ?, ?, ?, ?)");
+        $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+        
+        $stmt->execute([
+            $username,
+            $password_hashed, 
+            $fullname,
+            $gender,
+            $email,
+            $phone,
+            $birthdate
+        ]);
+
+        // Chờ stored procedure hoàn thành
+        $stmt->closeCursor();
+
+        // Lấy UserID của phụ huynh vừa thêm
+        $userId = $conn->query("SELECT UserID FROM users WHERE Username = '$username'")->fetch(PDO::FETCH_COLUMN);
+
+        // Bắt đầu transaction cho phần cập nhật
+        $conn->beginTransaction();
+
         try {
-            // Thêm học sinh dùng stored procedure
-            $stmt = $conn->prepare("CALL AddNewParent(?, ?, ?, ?, ?, ?, ?)");
-            $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-
-            $stmt->execute([
-                $username,
-                $password_hashed,
-                $fullname,
-                $gender,
-                $email,
-                $phone,
-                $birthdate
-            ]);
-
-            // Lấy UserID của phu huynh vừa thêm
-            $userId = $conn->lastInsertId();
-
-            // Cập nhật thêm thông tin lớp và phụ huynh
-            if ($zalo || $unpaid) {
-                $updateSql = "UPDATE students SET ";
-                $params = [];
-
-                if ($zalo) {
-                    $updateSql .= "ZaloID = :zaloID";
-                    $params[':zaloID'] = $zalo;
+            // Cập nhật Zalo và Unpaid nếu có
+            if($zalo != "" || $unpaid != "") {
+                $updateSql = "UPDATE parents SET ";
+                $updateParams = [];
+                
+                if($zalo != "") {
+                    $updateSql .= "ZaloID = :zalo";
+                    $updateParams[':zalo'] = $zalo;
                 }
-
-                if ($unpaid) {
-                    if ($zalo) $updateSql .= ", ";
+                
+                if($unpaid != "") {
+                    if($zalo != "") $updateSql .= ", ";
                     $updateSql .= "UnpaidAmount = :unpaid";
-                    $params[':unpaid'] = $unpaid;
+                    $updateParams[':unpaid'] = $unpaid;
                 }
-
+                
                 $updateSql .= " WHERE UserID = :userId";
-                $params[':userId'] = $userId;
-
+                $updateParams[':userId'] = $userId;
+                
                 $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->execute($params);
+                $updateStmt->execute($updateParams);
             }
 
-
+            $conn->commit();
             return ['status' => 'success', 'message' => 'Thêm phụ huynh thành công'];
+            
         } catch (Exception $e) {
             $conn->rollBack();
             throw $e;
