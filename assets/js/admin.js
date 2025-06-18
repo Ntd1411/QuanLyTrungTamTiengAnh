@@ -172,3 +172,41 @@ function loadParents() {
 // Gọi loadParents khi trang được tải
 document.addEventListener('DOMContentLoaded', loadParents);
 
+function loadStatistics() {
+    const startDate = document.getElementById('stats-start').value;
+    const endDate = document.getElementById('stats-end').value;
+
+    if (!startDate || !endDate) {
+        alert('Vui lòng chọn thời gian bắt đầu và kết thúc');
+        return;
+    }
+
+    if (startDate > endDate) {
+        alert('Thời gian bắt đầu không thể sau thời gian kết thúc');
+        return;
+    }
+
+    fetch(`admin.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('total-expected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
+            document.getElementById('total-collected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
+            document.getElementById('students-increased').textContent = 
+                data.data.studentsIncreased;
+            document.getElementById('students-decreased').textContent = 
+                data.data.studentsDecreased;
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi tải thống kê');
+    });
+}
+

@@ -11,13 +11,12 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+  background-color: #fff;
   width: 95%;
   max-width: 1500px;
   margin: auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
 }
 
 /* ======== thay đổi ================== */
@@ -641,3 +640,10 @@ input.error {
 #login-btn:hover {
   background-color: #eb6b6b;
 }
+
+.statistics__time {
+    display: flex !important;
+    align-items: center;
+    gap: 30px;
+}
+

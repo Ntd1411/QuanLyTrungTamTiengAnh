@@ -252,6 +252,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
                 }
                 exit;
+            case "loadStatistics":
+                if (!isset($_GET['startDate']) || !isset($_GET['endDate'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin ngày thống kê']);
+                    exit;
+                }
+                $startDate = $_GET['startDate'];
+                $endDate = $_GET['endDate'];
+
+                if ($startDate > $endDate) {
+                    echo json_encode(['status' => 'error', 'message' => 'Ngày bắt đầu không thể sau ngày kết thúc']);
+                    exit;
+                }
+
+                $result = getStatistics($startDate, $endDate);
+                echo json_encode($result);
+                exit;
+                break;
         }
     }
 } else {
@@ -631,7 +648,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Mật khẩu:</label>
-                        <input type="password" name="parentPassword" id="parent-password" >
+                        <input type="password" name="parentPassword" id="parent-password">
                     </div>
                     <div class="form-group">
                         <label>Giới tính:</label>
@@ -659,7 +676,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Số tiền chưa đóng (VNĐ):</label>
-                        <input type="number" name="parentUnpaid" id="parent-unpaid" >
+                        <input type="number" name="parentUnpaid" id="parent-unpaid">
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>
@@ -692,9 +709,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div id="statistics" class="element">
                 <h2>Thống Kê</h2>
                 <div class="form-group">
-                    <label>Chọn khoảng thời gian:</label>
-                    <input type="month" id="stats-month">
-                    <div class="button-container"><button onclick="loadStatistics()">Xem thống kê</button></div>
+                    <div class="statistics__time">
+                        <span>Từ</span>
+                        <input type="date" id="stats-start" required>
+                        <span>đến</span>
+                        <input type="date" id="stats-end" required>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="loadStatistics()">Xem thống kê</button>
+                    </div>
                 </div>
                 <div id="stats-results">
                     <p>Tổng tiền dự kiến: <span id="total-expected">0</span> VNĐ</p>

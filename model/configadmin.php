@@ -448,3 +448,63 @@ function addParent($fullname, $birthdate, $gender, $username, $password, $email,
         $conn = null;
     }
 }
+
+function getStatistics($startDate, $endDate) {
+    try {
+        $conn = connectdb();
+        error_log("Getting statistics from $startDate to $endDate");
+
+        // Tổng tiền dự kiến và đã thu
+        $sql = "SELECT 
+                COALESCE(SUM(Amount), 0) as ExpectedAmount,
+                COALESCE(SUM(CASE WHEN Status = 'Đã đóng' THEN Amount ELSE 0 END), 0) as CollectedAmount
+                FROM tuition 
+                WHERE DueDate BETWEEN :startDate AND :endDate";
+                
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':startDate' => $startDate, 
+            ':endDate' => $endDate
+        ]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Số học sinh tăng giảm - sửa lại logic này
+        $sqlStudents = "SELECT 
+            (SELECT COUNT(*) FROM students 
+             WHERE DATE(CreatedAt) BETWEEN :startDate AND :endDate) as Increased,
+            (SELECT COUNT(DISTINCT s.UserID)
+             FROM students s
+             LEFT JOIN attendance a ON s.UserID = a.StudentID
+             WHERE a.AttendanceDate BETWEEN :startDate AND :endDate 
+             AND a.Status = 'Vắng mặt'
+             GROUP BY s.UserID
+             HAVING COUNT(*) >= 3) as Decreased";
+
+        $stmtStudents = $conn->prepare($sqlStudents);
+        $stmtStudents->execute([
+            ':startDate' => $startDate,
+            ':endDate' => $endDate
+        ]);
+        $studentStats = $stmtStudents->fetch(PDO::FETCH_ASSOC);
+
+        error_log("Statistics result: " . print_r(array_merge($result, $studentStats), true));
+
+        return [
+            'status' => 'success',
+            'data' => [
+                'expectedAmount' => (int)$result['ExpectedAmount'],
+                'collectedAmount' => (int)$result['CollectedAmount'], 
+                'studentsIncreased' => (int)$studentStats['Increased'],
+                'studentsDecreased' => (int)$studentStats['Decreased']
+            ]
+        ];
+    } catch (PDOException $e) {
+        error_log("Database Error in getStatistics: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        error_log("General Error in getStatistics: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()]; 
+    } finally {
+        $conn = null;
+    }
+}
