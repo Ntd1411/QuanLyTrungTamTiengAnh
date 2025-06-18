@@ -82,7 +82,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (
                     empty($_POST['studentFullName']) || empty($_POST['studentUsername']) ||
                     empty($_POST['studentGender']) || empty($_POST['studentEmail']) ||
-                    empty($_POST['studentPhone']) || empty($_POST['studentDate'] )
+                    empty($_POST['studentPhone']) || empty($_POST['studentDate'])
                 ) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
@@ -108,6 +108,41 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $studentPhone,
                     $studentClass,
                     $studentParentID
+                );
+                echo json_encode($result);
+                exit;
+                break;
+            case "addParent":
+                if (
+                    empty($_POST['parentFullName']) || empty($_POST['parentUserName']) ||
+                    empty($_POST['parentGender']) || empty($_POST['parentEmail']) ||
+                    empty($_POST['parentPhone']) || empty($_POST['parentBirthdate'])
+                ) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+
+                $parentFullName = $_POST['parentFullName'];
+                $parentUserName = $_POST['parentUserName'];
+                $parentPassword = empty($_POST['parentPassword']) ? "123456" : $_POST['parentPassword'];
+                $parentGender = $_POST['parentGender'];
+                $parentEmail = $_POST['parentEmail'];
+                $parentPhone = $_POST['parentPhone'];
+                $parentBirthdate = $_POST['parentBirthdate'];
+                $parentZalo = $_POST['parentZalo'] ?? "Chưa có dữ liệu";
+                $parentUnpaid = $_POST['parentUnpaid'] ?? "0";
+
+
+                $result = addParent(
+                    $parentFullName,
+                    $parentBirthdate,
+                    $parentGender,
+                    $parentUserName,
+                    $parentPassword,
+                    $parentEmail,
+                    $parentPhone,
+                    $parentZalo,
+                    $parentUnpaid
                 );
                 echo json_encode($result);
                 exit;
@@ -185,6 +220,31 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>
                         <button onclick='editstudent(" . $student['UserID'] . ")'>Sửa</button>
                         <button onclick='deletestudent(" . $student['UserID'] . ")'>Xóa</button>
+                      </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                }
+                exit;
+            case "getParents":
+                $parents = getDataFromTable("parents");
+                if ($parents != []) {
+                    foreach ($parents as $parent) {
+                        $parentChild = getChild($parent['UserID']);
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($parent['UserID']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['FullName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Gender']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có dữ liệu") . "</td>";
+                        echo "<td>" . htmlspecialchars($parentChild) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['UnpaidAmount'] ?? "Chưa có dữ liệu") . "</td>";
+                        echo "<td>
+                        <button onclick='editparent(" . $parent['UserID'] . ")'>Sửa</button>
+                        <button onclick='deleteparent(" . $parent['UserID'] . ")'>Xóa</button>
                       </td>";
                         echo "</tr>";
                     }
@@ -513,9 +573,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <select id="student-class" name="studentClass">
                             <option value="">Chọn lớp</option>
                             <?php
-                                 showOptionClassName();
+                            showOptionClassName();
                             ?>
-                           
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -523,15 +583,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <select id="parent-id" name="parentID">
                             <option value="">Chọn phụ huynh</option>
                             <?php
-                                 showOptionParent();
+                            showOptionParent();
                             ?>
-                           
+
                         </select>
                     </div>
 
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('student-form').reset()">Làm mới</button>
-                        <button type="submit" >Thêm học sinh</button>
+                        <button type="submit">Thêm học sinh</button>
                     </div>
                 </form>
 
@@ -571,7 +631,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Mật khẩu:</label>
-                        <input type="password" name="parentPassword" id="parent-password" required>
+                        <input type="password" name="parentPassword" id="parent-password" >
                     </div>
                     <div class="form-group">
                         <label>Giới tính:</label>
@@ -596,6 +656,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <div class="form-group">
                         <label>Zalo ID:</label>
                         <input type="text" name="parentZalo" id="parent-zalo" placeholder="Nhập Zalo ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Số tiền chưa đóng (VNĐ):</label>
+                        <input type="number" name="parentUnpaid" id="parent-unpaid" >
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>

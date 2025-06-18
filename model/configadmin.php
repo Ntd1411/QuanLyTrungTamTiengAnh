@@ -87,7 +87,7 @@ function showOptionParent()
         if (count($result) > 0) {
             foreach ($result as $row) {
                 echo "<option value='" . htmlspecialchars($row['UserID']) . "'>"
-                . htmlspecialchars($row['UserID']) . " " .
+                    . htmlspecialchars($row['UserID']) . " " .
                     htmlspecialchars($row['FullName']) . "</option>";
             }
         } else {
@@ -265,11 +265,38 @@ function getTeacherClasses($teacherId)
 }
 
 
+function getchild($parentID)
+{
+    try {
+        if (!$parentID) return null;
+
+        $conn = connectdb();
+
+
+        $sql = "SELECT GROUP_CONCAT(ClassID SEPARATOR ', ') as Childs
+                FROM students 
+                WHERE ParentID = :parentID";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':parentID' => $parentID]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result['Childs'] ?? 'Chưa có con nào';
+    } catch (PDOException $e) {
+        error_log("Error getting parent child: " . $e->getMessage());
+        return 'Lỗi khi lấy danh sách con';
+    } finally {
+        $stmt = null;
+        $conn = null;
+    }
+}
+
+
 function addStudent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $classId, $parentId) {
     try {
         $conn = connectdb();
-        error_log("AddStudent params: $fullname, $birthdate, $gender, $username, $email, $phone");
-        
+        error_log("AddStudent params: $fullname, $birthdate, $gender, $username, $email, $phone, $classId, $parentId");
+
         // Kiểm tra username đã tồn tại chưa
         $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
         $checkStmt = $conn->prepare($checkSql);
@@ -278,14 +305,103 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
             return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
         }
 
+        // Thêm học sinh dùng stored procedure
+        $stmt = $conn->prepare("CALL AddNewStudent(?, ?, ?, ?, ?, ?, ?)");
+        $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+        
+        $stmt->execute([
+            $username,
+            $password_hashed, 
+            $fullname,
+            $gender,
+            $email,
+            $phone,
+            $birthdate
+        ]);
+
+        // Chờ stored procedure hoàn thành
+        $stmt->closeCursor();
+
+        // Lấy UserID của học sinh vừa thêm
+        $userId = $conn->query("SELECT UserID FROM users WHERE Username = '$username'")->fetch(PDO::FETCH_COLUMN);
+
+        // Bắt đầu transaction cho phần cập nhật
+        $conn->beginTransaction();
+
+        try {
+            // Cập nhật ClassID và ParentID nếu có
+            if($classId != "" || $parentId != "") {
+                $updateSql = "UPDATE students SET ";
+                $updateParams = [];
+                
+                if($classId != "") {
+                    $updateSql .= "ClassID = :classId";
+                    $updateParams[':classId'] = $classId;
+                }
+                
+                if($parentId != "") {
+                    if($classId != "") $updateSql .= ", ";
+                    $updateSql .= "ParentID = :parentId";
+                    $updateParams[':parentId'] = $parentId;
+                }
+                
+                $updateSql .= " WHERE UserID = :userId";
+                $updateParams[':userId'] = $userId;
+                
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->execute($updateParams);
+            }
+
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Thêm học sinh thành công'];
+            
+        } catch (Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        error_log("General Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
+    } finally {
+        $conn = null;
+    }
+}
+
+
+function addParent(
+    $fullname,
+    $birthdate,
+    $gender,
+    $username,
+    $password,
+    $email,
+    $phone,
+    $zalo,
+    $unpaid
+) {
+    try {
+        $conn = connectdb();
+        error_log("Addparent params: $fullname, $birthdate, $gender, $username, $password, $email, $phone, $zalo, $unpaid");
+
+        // Kiểm tra username đã tồn tại chưa
+        $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->execute([':username' => $username]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
+        }
+
         try {
             // Thêm học sinh dùng stored procedure
-            $stmt = $conn->prepare("CALL AddNewStudent(?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("CALL AddNewParent(?, ?, ?, ?, ?, ?, ?)");
             $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-            
+
             $stmt->execute([
                 $username,
-                $password_hashed, 
+                $password_hashed,
                 $fullname,
                 $gender,
                 $email,
@@ -293,35 +409,34 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
                 $birthdate
             ]);
 
-            // Lấy UserID của học sinh vừa thêm
+            // Lấy UserID của phu huynh vừa thêm
             $userId = $conn->lastInsertId();
 
             // Cập nhật thêm thông tin lớp và phụ huynh
-            if($classId || $parentId) {
+            if ($zalo || $unpaid) {
                 $updateSql = "UPDATE students SET ";
                 $params = [];
-                
-                if($classId) {
-                    $updateSql .= "ClassID = :classId";
-                    $params[':classId'] = $classId;
+
+                if ($zalo) {
+                    $updateSql .= "ZaloID = :zaloID";
+                    $params[':zaloID'] = $zalo;
                 }
-                
-                if($parentId) {
-                    if($classId) $updateSql .= ", ";
-                    $updateSql .= "ParentID = :parentId";
-                    $params[':parentId'] = $parentId;
+
+                if ($unpaid) {
+                    if ($zalo) $updateSql .= ", ";
+                    $updateSql .= "UnpaidAmount = :unpaid";
+                    $params[':unpaid'] = $unpaid;
                 }
-                
+
                 $updateSql .= " WHERE UserID = :userId";
                 $params[':userId'] = $userId;
-                
+
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->execute($params);
             }
 
-           
-            return ['status' => 'success', 'message' => 'Thêm học sinh thành công'];
-            
+
+            return ['status' => 'success', 'message' => 'Thêm phụ huynh thành công'];
         } catch (Exception $e) {
             $conn->rollBack();
             throw $e;

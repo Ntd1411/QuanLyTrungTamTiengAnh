@@ -115,17 +115,60 @@ document.getElementById('student-form').addEventListener('submit', function(e) {
 
 function loadStudents() {
     fetch('admin.php?action=getStudents', {
-        method: 'get'
+        method: 'post'
     })
     .then(response => response.text())
     .then(html => {
         document.getElementById('student-table-body').innerHTML = html;
     })
     .catch(error => {
-        console.error('Error loading teacher:', error);
+        console.error('Error loading student:', error);
     });
 }
 
 // Gọi loadStudents khi trang được tải
 document.addEventListener('DOMContentLoaded', loadStudents);
+
+// Xử lý Parents
+document.getElementById('parent-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'addParent');
+
+    fetch('admin.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            this.reset();
+            loadParents();
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể thêm phụ huynh'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi thêm phụ huynh: ' + error.message);
+    });
+});
+
+function loadParents() {
+    fetch('admin.php?action=getParents', {
+        method: 'post'
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('parent-table-body').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error loading parent:', error);
+    });
+}
+
+// Gọi loadParents khi trang được tải
+document.addEventListener('DOMContentLoaded', loadParents);
 
