@@ -147,6 +147,16 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
+            case "changeAdminPassword":
+                if (empty($_POST['currentPassword']) || empty($_POST['newPassword']) || empty($_POST['confirmPassword'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+                
+                $result = changeAdminPassword($_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword']);
+                echo json_encode($result);
+                exit;
+                break;
         }
     }
 
@@ -744,7 +754,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="admin-profile">
                     <div class="admin-header">
                         <div class="admin-avatar">
-                            <img src="../assets/img/admin-avatar.png" alt="Admin Avatar">
+                            <img src="../assets/img/admin.png" alt="Admin Avatar">
                         </div>
                         <div class="admin-info">
                             <h3>Admin</h3>
@@ -752,20 +762,57 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <p>Email: admin@example.com</p>
                         </div>
                     </div>
-                    <div class="admin-stats">
+
+                     <div class="admin-stats">
                         <div class="stat-box">
                             <h4>Tổng số lớp</h4>
-                            <p id="total-classes-count">0</p>
+                            <p id="total-classes-count">
+                                <?php
+                                    countRow("classes");
+                                ?>
+                            </p>
                         </div>
                         <div class="stat-box">
                             <h4>Tổng số giáo viên</h4>
-                            <p id="total-teachers-count">0</p>
+                            <p id="total-teachers-count">
+                                <?php
+                                    countRow("teachers");
+                                ?>
+                            </p>
                         </div>
                         <div class="stat-box">
                             <h4>Tổng số học sinh</h4>
-                            <p id="total-students-count">0</p>
+                            <p id="total-students-count">
+                                <?php
+                                    countRow("students");
+                                ?>
+                            </p>
                         </div>
                     </div>
+                    
+                    <!-- Add password change form -->
+                    <div class="password-change-form">
+                        <h3>Đổi mật khẩu</h3>
+                        <form id="admin-password-form">
+                            <div class="form-group">
+                                <label>Mật khẩu hiện tại:</label>
+                                <input type="password" id="current-password" name="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mật khẩu mới:</label>
+                                <input type="password" id="new-password" name="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Xác nhận mật khẩu mới:</label>
+                                <input type="password" id="confirm-password" name="confirmPassword" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Đổi mật khẩu</button>
+                            </div>
+                        </form>
+                    </div>
+
+                   
                 </div>
             </div>
 

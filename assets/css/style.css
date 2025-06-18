@@ -647,3 +647,86 @@ input.error {
     gap: 30px;
 }
 
+/* Password Change Form Styles */
+.password-change-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin: 50px auto 20px;
+    max-width: 500px;
+    border: 1px solid #e0e0e0;
+}
+
+.password-change-form h3 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.5em;
+    border-bottom: 2px solid #E4312A;
+    padding-bottom: 10px;
+}
+
+.password-change-form .form-group {
+    margin-bottom: 20px;
+}
+
+.password-change-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.password-change-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.password-change-form input[type="password"]:focus {
+    border-color: #E4312A;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.password-change-form .form-actions {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.password-change-form button {
+    background-color: #E4312A;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.password-change-form button:hover {
+    background-color: #E4312A;
+}
+
+.password-change-form button:active {
+    transform: translateY(1px);
+}
+
+.password-change-form input[type="password"]::placeholder {
+    color: #95a5a6;
+}
+
+.password-change-form .form-group.error input {
+    border-color: #e74c3c;
+}
+
+.password-change-form .form-group.success input {
+    border-color: #E4312A;
+}
+

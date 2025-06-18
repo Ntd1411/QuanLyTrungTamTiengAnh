@@ -210,3 +210,29 @@ function loadStatistics() {
     });
 }
 
+// Add password change handler
+document.getElementById('admin-password-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'changeAdminPassword');
+
+    fetch('admin.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            this.reset();
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể đổi mật khẩu'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi đổi mật khẩu');
+    });
+});
+

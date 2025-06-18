@@ -508,3 +508,35 @@ function getStatistics($startDate, $endDate) {
         $conn = null;
     }
 }
+
+function changeAdminPassword($currentPassword, $newPassword, $confirmPassword) {
+    try {
+        if ($newPassword !== $confirmPassword) {
+            return ['status' => 'error', 'message' => 'Mật khẩu mới không khớp'];
+        }
+
+        $conn = connectdb();
+        
+        // Lấy mật khẩu hiện tại của admin
+        $stmt = $conn->prepare("SELECT Password FROM users WHERE UserID = '0'");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!password_verify($currentPassword, $result['Password'])) {
+            return ['status' => 'error', 'message' => 'Mật khẩu hiện tại không đúng'];
+        }
+        
+        // Cập nhật mật khẩu mới
+        $password_hashed = password_hash($newPassword, PASSWORD_DEFAULT);
+        $updateStmt = $conn->prepare("UPDATE users SET Password = :password WHERE UserID = '0'");
+        $updateStmt->execute([':password' => $password_hashed]);
+        
+        return ['status' => 'success', 'message' => 'Đổi mật khẩu thành công'];
+        
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
+    } finally {
+        $conn = null;
+    }
+}
