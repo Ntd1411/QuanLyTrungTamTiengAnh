@@ -21,6 +21,11 @@ SET time_zone = "+00:00";
 -- Cơ sở dữ liệu: `quanlytrungtamtienganh`
 --
 
+-- Tạo và sử dụng database
+DROP DATABASE IF EXISTS `quanlytrungtamtienganh`;
+CREATE DATABASE `quanlytrungtamtienganh`;
+USE `quanlytrungtamtienganh`;
+
 DELIMITER $$
 --
 -- Thủ tục
