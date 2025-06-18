@@ -82,7 +82,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (
                     empty($_POST['studentFullName']) || empty($_POST['studentUsername']) ||
                     empty($_POST['studentGender']) || empty($_POST['studentEmail']) ||
-                    empty($_POST['studentPhone']) || empty($_POST['studentDate'] )
+                    empty($_POST['studentPhone']) || empty($_POST['studentDate'])
                 ) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
@@ -109,6 +109,51 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $studentClass,
                     $studentParentID
                 );
+                echo json_encode($result);
+                exit;
+                break;
+            case "addParent":
+                if (
+                    empty($_POST['parentFullName']) || empty($_POST['parentUserName']) ||
+                    empty($_POST['parentGender']) || empty($_POST['parentEmail']) ||
+                    empty($_POST['parentPhone']) || empty($_POST['parentBirthdate'])
+                ) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+
+                $parentFullName = $_POST['parentFullName'];
+                $parentUserName = $_POST['parentUserName'];
+                $parentPassword = empty($_POST['parentPassword']) ? "123456" : $_POST['parentPassword'];
+                $parentGender = $_POST['parentGender'];
+                $parentEmail = $_POST['parentEmail'];
+                $parentPhone = $_POST['parentPhone'];
+                $parentBirthdate = $_POST['parentBirthdate'];
+                $parentZalo = $_POST['parentZalo'] ?? "Chưa có dữ liệu";
+                $parentUnpaid = $_POST['parentUnpaid'] ?? "0";
+
+
+                $result = addParent(
+                    $parentFullName,
+                    $parentBirthdate,
+                    $parentGender,
+                    $parentUserName,
+                    $parentPassword,
+                    $parentEmail,
+                    $parentPhone,
+                    $parentZalo,
+                    $parentUnpaid
+                );
+                echo json_encode($result);
+                exit;
+                break;
+            case "changeAdminPassword":
+                if (empty($_POST['currentPassword']) || empty($_POST['newPassword']) || empty($_POST['confirmPassword'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+                
+                $result = changeAdminPassword($_POST['currentPassword'], $_POST['newPassword'], $_POST['confirmPassword']);
                 echo json_encode($result);
                 exit;
                 break;
@@ -192,6 +237,48 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
                 }
                 exit;
+            case "getParents":
+                $parents = getDataFromTable("parents");
+                if ($parents != []) {
+                    foreach ($parents as $parent) {
+                        $parentChild = getChild($parent['UserID']);
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($parent['UserID']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['FullName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Gender']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có dữ liệu") . "</td>";
+                        echo "<td>" . htmlspecialchars($parentChild) . "</td>";
+                        echo "<td>" . htmlspecialchars($parent['UnpaidAmount'] ?? "Chưa có dữ liệu") . "</td>";
+                        echo "<td>
+                        <button onclick='editparent(" . $parent['UserID'] . ")'>Sửa</button>
+                        <button onclick='deleteparent(" . $parent['UserID'] . ")'>Xóa</button>
+                      </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                }
+                exit;
+            case "loadStatistics":
+                if (!isset($_GET['startDate']) || !isset($_GET['endDate'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin ngày thống kê']);
+                    exit;
+                }
+                $startDate = $_GET['startDate'];
+                $endDate = $_GET['endDate'];
+
+                if ($startDate > $endDate) {
+                    echo json_encode(['status' => 'error', 'message' => 'Ngày bắt đầu không thể sau ngày kết thúc']);
+                    exit;
+                }
+
+                $result = getStatistics($startDate, $endDate);
+                echo json_encode($result);
+                exit;
+                break;
         }
     }
 } else {
@@ -513,9 +600,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <select id="student-class" name="studentClass">
                             <option value="">Chọn lớp</option>
                             <?php
-                                 showOptionClassName();
+                            showOptionClassName();
                             ?>
-                           
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -523,15 +610,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <select id="parent-id" name="parentID">
                             <option value="">Chọn phụ huynh</option>
                             <?php
-                                 showOptionParent();
+                            showOptionParent();
                             ?>
-                           
+
                         </select>
                     </div>
 
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('student-form').reset()">Làm mới</button>
-                        <button type="submit" >Thêm học sinh</button>
+                        <button type="submit">Thêm học sinh</button>
                     </div>
                 </form>
 
@@ -571,7 +658,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Mật khẩu:</label>
-                        <input type="password" name="parentPassword" id="parent-password" required>
+                        <input type="password" name="parentPassword" id="parent-password">
                     </div>
                     <div class="form-group">
                         <label>Giới tính:</label>
@@ -596,6 +683,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <div class="form-group">
                         <label>Zalo ID:</label>
                         <input type="text" name="parentZalo" id="parent-zalo" placeholder="Nhập Zalo ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Số tiền chưa đóng (VNĐ):</label>
+                        <input type="number" name="parentUnpaid" id="parent-unpaid">
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>
@@ -628,9 +719,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div id="statistics" class="element">
                 <h2>Thống Kê</h2>
                 <div class="form-group">
-                    <label>Chọn khoảng thời gian:</label>
-                    <input type="month" id="stats-month">
-                    <div class="button-container"><button onclick="loadStatistics()">Xem thống kê</button></div>
+                    <div class="statistics__time">
+                        <span>Từ</span>
+                        <input type="date" id="stats-start" required>
+                        <span>đến</span>
+                        <input type="date" id="stats-end" required>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="loadStatistics()">Xem thống kê</button>
+                    </div>
                 </div>
                 <div id="stats-results">
                     <p>Tổng tiền dự kiến: <span id="total-expected">0</span> VNĐ</p>
@@ -657,7 +754,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="admin-profile">
                     <div class="admin-header">
                         <div class="admin-avatar">
-                            <img src="../assets/img/admin-avatar.png" alt="Admin Avatar">
+                            <img src="../assets/img/admin.png" alt="Admin Avatar">
                         </div>
                         <div class="admin-info">
                             <h3>Admin</h3>
@@ -665,20 +762,57 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <p>Email: admin@example.com</p>
                         </div>
                     </div>
-                    <div class="admin-stats">
+
+                     <div class="admin-stats">
                         <div class="stat-box">
                             <h4>Tổng số lớp</h4>
-                            <p id="total-classes-count">0</p>
+                            <p id="total-classes-count">
+                                <?php
+                                    countRow("classes");
+                                ?>
+                            </p>
                         </div>
                         <div class="stat-box">
                             <h4>Tổng số giáo viên</h4>
-                            <p id="total-teachers-count">0</p>
+                            <p id="total-teachers-count">
+                                <?php
+                                    countRow("teachers");
+                                ?>
+                            </p>
                         </div>
                         <div class="stat-box">
                             <h4>Tổng số học sinh</h4>
-                            <p id="total-students-count">0</p>
+                            <p id="total-students-count">
+                                <?php
+                                    countRow("students");
+                                ?>
+                            </p>
                         </div>
                     </div>
+                    
+                    <!-- Add password change form -->
+                    <div class="password-change-form">
+                        <h3>Đổi mật khẩu</h3>
+                        <form id="admin-password-form">
+                            <div class="form-group">
+                                <label>Mật khẩu hiện tại:</label>
+                                <input type="password" id="current-password" name="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mật khẩu mới:</label>
+                                <input type="password" id="new-password" name="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Xác nhận mật khẩu mới:</label>
+                                <input type="password" id="confirm-password" name="confirmPassword" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Đổi mật khẩu</button>
+                            </div>
+                        </form>
+                    </div>
+
+                   
                 </div>
             </div>
 

@@ -115,17 +115,124 @@ document.getElementById('student-form').addEventListener('submit', function(e) {
 
 function loadStudents() {
     fetch('admin.php?action=getStudents', {
-        method: 'get'
+        method: 'post'
     })
     .then(response => response.text())
     .then(html => {
         document.getElementById('student-table-body').innerHTML = html;
     })
     .catch(error => {
-        console.error('Error loading teacher:', error);
+        console.error('Error loading student:', error);
     });
 }
 
 // Gọi loadStudents khi trang được tải
 document.addEventListener('DOMContentLoaded', loadStudents);
+
+// Xử lý Parents
+document.getElementById('parent-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'addParent');
+
+    fetch('admin.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            this.reset();
+            loadParents();
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể thêm phụ huynh'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi thêm phụ huynh: ' + error.message);
+    });
+});
+
+function loadParents() {
+    fetch('admin.php?action=getParents', {
+        method: 'post'
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('parent-table-body').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error loading parent:', error);
+    });
+}
+
+// Gọi loadParents khi trang được tải
+document.addEventListener('DOMContentLoaded', loadParents);
+
+function loadStatistics() {
+    const startDate = document.getElementById('stats-start').value;
+    const endDate = document.getElementById('stats-end').value;
+
+    if (!startDate || !endDate) {
+        alert('Vui lòng chọn thời gian bắt đầu và kết thúc');
+        return;
+    }
+
+    if (startDate > endDate) {
+        alert('Thời gian bắt đầu không thể sau thời gian kết thúc');
+        return;
+    }
+
+    fetch(`admin.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('total-expected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
+            document.getElementById('total-collected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
+            document.getElementById('students-increased').textContent = 
+                data.data.studentsIncreased;
+            document.getElementById('students-decreased').textContent = 
+                data.data.studentsDecreased;
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi tải thống kê');
+    });
+}
+
+// Add password change handler
+document.getElementById('admin-password-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'changeAdminPassword');
+
+    fetch('admin.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            this.reset();
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể đổi mật khẩu'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi đổi mật khẩu');
+    });
+});
 
