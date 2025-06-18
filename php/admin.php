@@ -9,7 +9,68 @@ include "../model/configadmin.php";
 if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     (isset($_SESSION['role'])  && $_SESSION['role'] == 0)
 ) {
+
     $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
+    if (isset($_POST['action'])) {
+        $response = array();
+
+        switch ($_POST['action']) {
+            case "addClass":
+                if (
+                    empty($_POST['className']) || empty($_POST['schoolYear']) ||
+                    empty($_POST['teacherId']) || empty($_POST['startDate']) ||
+                    empty($_POST['endDate']) || empty($_POST['classTime']) ||
+                    empty($_POST['room'])
+                ) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+
+                $className = $_POST['className'];
+                $classYear = $_POST['schoolYear'];
+                $teacher = $_POST['teacherId'];
+                $startDate = $_POST['startDate'];
+                $endDate = $_POST['endDate'];
+                $classTime = $_POST['classTime'];
+                $classRoom = $_POST['room'];
+
+                $result = addClass($className, $classYear, $teacher, $startDate, $endDate, $classTime, $classRoom);
+                echo json_encode($result);
+                exit;
+                break;
+            case "getClass":
+        }
+    }
+
+    // Thêm xử lý GET request
+    if (isset($_GET['action']) && $_GET['action'] === 'getClasses') {
+        switch ($_GET['action']) {
+            case "getClasses":
+                $classes = getDataFromTable("classes");
+                if ($classes != []) {
+                    foreach ($classes as $class) {
+                        $teacher_name = getTeacherName($class['TeacherID']);
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . "</td>";
+                        echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
+                        echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
+                        echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
+                        echo "<td>" . htmlspecialchars($class['Room']) . "</td>";
+                        echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
+                        echo "<td>
+                        <button onclick='editClass(" . $class['ClassID'] . ")'>Sửa</button>
+                        <button onclick='deleteClass(" . $class['ClassID'] . ")'>Xóa</button>
+                      </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                }
+                exit;
+        }
+    }
 } else {
     echo "<script>alert('Vui lòng đăng nhập vào tài khoản được cấp quyền admin để xem trang này');</script>";
     echo "<script>window.location.href = './login.php';</script>";
@@ -70,7 +131,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <h3>Giáo viên</h3>
                             <p id="home-teachers-count">
                                 <?php
-                                   echo countRow("teachers");
+                                echo countRow("teachers");
                                 ?>
                             </p>
                         </div>
@@ -81,7 +142,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <h3>Học sinh</h3>
                             <p id="home-students-count">
                                 <?php
-                                   echo countRow("students");
+                                echo countRow("students");
                                 ?>
                             </p>
                         </div>
@@ -92,7 +153,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <h3>Lớp học</h3>
                             <p id="home-classes-count">
                                 <?php
-                                    echo countRow("classes");
+                                echo countRow("classes");
                                 ?>
                             </p>
                         </div>
@@ -103,7 +164,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <h3>Phụ huynh</h3>
                             <p id="home-parents-count">
                                 <?php
-                                    echo countRow("parents");
+                                echo countRow("parents");
                                 ?>
                             </p>
                         </div>
@@ -126,37 +187,42 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <form id="class-form" class="class-form">
                     <div class="form-group">
                         <label>Tên lớp (VD: Lớp 3.1):</label>
-                        <input type="text" id="class-name" placeholder="Nhập tên lớp">
+                        <input type="text" name="className" id="class-name" placeholder="Nhập tên lớp" required>
                     </div>
                     <div class="form-group">
                         <label>Năm học:</label>
-                        <input type="number" id="class-year" placeholder="VD: 2023">
+                        <input type="number" name="schoolYear" id="class-year" placeholder="VD: 2023" required>
                     </div>
                     <div class="form-group">
                         <label>Giáo viên phụ trách:</label>
-                        <select id="class-teacher">
+                        <select name="teacherId" id="teacher" required>
                             <option value="">Chọn giáo viên</option>
+                            <?php
+                            showOptionTeacherName();
+                            ?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Ngày bắt đầu:</label>
-                        <input type="date" id="class-start-date" required>
+                        <input type="date" name="startDate" id="class-start-date" required>
                     </div>
                     <div class="form-group">
                         <label>Ngày kết thúc:</label>
-                        <input type="date" id="class-end-date" required>
+                        <input type="date" name="endDate" id="class-end-date" required>
                     </div>
                     <div class="form-group">
                         <label>Giờ học:</label>
-                        <select id="class-time" required>
+                        <select id="class-time" name="classTime" required>
                             <option value="">Chọn giờ học</option>
-                            <option value="18:00-19:30">18:00-19:30</option>
-                            <option value="19:45-21:15">19:45-21:15</option>
+                            <option value="07:00-09:00">07:00-09:00</option>
+                            <option value="09:00-11:00">09:00-11:00</option>
+                            <option value="15:00-17:00">15:00-17:00</option>
+                            <option value="19:00-21:00">19:00-21:00</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Phòng học:</label>
-                        <select id="class-room" required>
+                        <select id="class-room" name="room" required>
                             <option value="">Chọn phòng học</option>
                             <option value="P201">P201</option>
                             <option value="P202">P202</option>
@@ -166,7 +232,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('class-form').reset()">Làm mới</button>
-                        <button type="button" onclick="addClass()">Thêm lớp</button>
+                        <button type="submit">Thêm lớp</button>
                     </div>
                 </form>
 
@@ -185,7 +251,33 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody id="class-table-body"></tbody>
+                        <tbody id="class-table-body">
+                            <?php
+                            // $classes = getDataFromTable("classes");
+
+                            // if($classes != []) {
+                            //     foreach($classes as $class) { 
+                            //         $teacher_name = getTeacherName($class['TeacherID']);
+                            //         echo "<tr>";
+                            //         echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['Room']) . "</td>";
+                            //         echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
+                            //         echo "<td>
+                            //                 <button onclick='editClass(" . $class['ClassID'] . ")'>Sửa</button>
+                            //                 <button onclick='deleteClass(" . $class['ClassID'] . ")'>Xóa</button>
+                            //               </td>";
+                            //         echo "</tr>";
+                            //     }
+                            // } else {
+                            //     echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                            // }
+                            ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
