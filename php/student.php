@@ -2,10 +2,11 @@
 session_start();
 ob_start();
 
-if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
-    (isset($_SESSION['role'])  && $_SESSION['role'] == 2)
-) {
-    $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
+if (
+    ((isset($_COOKIE['is_login']) && $_COOKIE['is_login'] == true && isset($_COOKIE['role']) && $_COOKIE['role'] == 2 && isset($_COOKIE['username']))
+    || (isset($_SESSION['role']) && $_SESSION['role'] == 2 && isset($_SESSION['username']))
+)) {
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : $_COOKIE['username'];
 } else {
     echo "<script>alert('Vui lòng đăng nhập vào tài khoản học sinh để xem trang này');</script>";
     echo "<script>window.location.href = './login.php';</script>";
@@ -51,7 +52,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div class="dashboard-summary">
                 <div class="summary-card">
                     <h3>Lớp học</h3>
-                    <p id="class-name">Lớp 3.1</p>
+                    <p id="class-name">Chưa trong lớp nào</p>
                 </div>
                 <div class="summary-card">
                     <h3>Buổi đã học</h3>

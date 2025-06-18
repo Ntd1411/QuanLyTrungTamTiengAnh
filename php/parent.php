@@ -2,10 +2,12 @@
 session_start();
 ob_start();
 
-if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
-    (isset($_SESSION['role'])  && $_SESSION['role'] == 3)
+if (
+    (isset($_COOKIE['is_login']) && $_COOKIE['is_login'] == true && isset($_COOKIE['role']) && $_COOKIE['role'] == 3 && isset($_COOKIE['username']))
+    || (isset($_SESSION['role']) && $_SESSION['role'] == 3 && isset($_SESSION['username']))
 ) {
-    $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : $_SESSION['username'];
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : $_COOKIE['username'];
+    $role = isset($_SESSION['role']) ? $_SESSION['role'] : $_COOKIE['role'];
 } else {
     echo "<script>alert('Vui lòng đăng nhập vào tài khoản phụ huynh để xem trang này');</script>";
     echo "<script>window.location.href = './login.php';</script>";
