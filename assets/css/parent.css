@@ -50,6 +50,11 @@
     border-left: 4px solid #ff4444;
 }
 
+.summary-card.success {
+    background: linear-gradient(145deg, #e0f7e0, #c8f7c8);
+    border-left: 4px solid #28a745;
+}
+
 /* Children List Section */
 .children-list {
     display: grid;
@@ -104,6 +109,131 @@
 .payment-info span {
     font-weight: 600;
     color: var(--primary-color);
+}
+
+/* Popup Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px 25px 20px 25px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    font-size: 28px;
+    color: #dc2626;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #b91c1c;
+}
+
+/* Form styling */
+#feeForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#feeForm label {
+    color: #dc2626;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#feeForm select,
+#feeForm input[type="text"],
+#feeForm input[type="number"] {
+    padding: 10px;
+    border: 1px solid #dc2626;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#feeForm select:focus,
+#feeForm input:focus {
+    outline: none;
+    border-color: #b91c1c;
+    box-shadow: 0 0 5px rgba(220, 38, 38, 0.3);
+}
+
+#feeForm button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#feeForm button[type="submit"] {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+#feeForm button[type="submit"]:hover {
+    background-color: #b91c1c;
+}
+
+#feeForm button[type="button"] {
+    background-color: #fff;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+}
+
+#feeForm button[type="button"]:hover {
+    background-color: #fef2f2;
+}
+
+/* Animation for modal appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#feeForm input[readonly] {
+    background-color: #e0e0e0;
+    color: #585858;
+    font-weight: bold;
+    border: 1.5px solid #bdbdbd;
+    cursor: not-allowed;
 }
 
 .payment-history table {
@@ -168,6 +298,25 @@
 .message-item.unread {
     background: #fff5f5;
     border-left: 4px solid var(--primary-color);
+}
+
+.message-item.selected {
+    background: #e3f2fd;
+    border-left: 4px solid #1976d2;
+}
+
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.message-content {
+    animation: slideUpFadeIn 1.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .message-detail {

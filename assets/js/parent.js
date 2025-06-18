@@ -17,26 +17,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    loadParentDashboard();
-    loadChildren();
-    loadPayments();
-    loadMessages();
-    loadParentProfile();
-});
-
 // Load dashboard data
 function loadParentDashboard() {
     document.getElementById('parent-name').textContent = parentData.name;
     document.getElementById('total-children').textContent = parentData.children.length;
-    
-    const totalUnpaid = parentData.children.reduce((sum, child) => 
-        sum + (child.fee - child.paid), 0);
-    document.getElementById('unpaid-amount').textContent = totalUnpaid.toLocaleString() + ' VNĐ';
-    
-    const unreadMessages = parentData.messages.filter(msg => !msg.read).length;
-    document.getElementById('new-messages').textContent = unreadMessages;
+    document.getElementById('unpaid-amount').textContent = parentData.unpaid.toLocaleString() + ' VNĐ';
+    document.getElementById('new-messages').textContent = parentData.messages.filter(m => !m.read).length;
+
+    // Đổi màu summary-card warning nếu học phí chưa đóng là 0
+    const unpaidCard = document.querySelector('.summary-card.warning');
+    if (parentData.unpaid == 0) {
+        unpaidCard.classList.remove('warning');
+        unpaidCard.classList.add('success');
+    } else {
+        unpaidCard.classList.remove('success');
+        unpaidCard.classList.add('warning');
+    }
 }
 
 // Load children information
@@ -64,28 +60,61 @@ function loadChildren() {
 function loadPayments() {
     const totalFee = parentData.children.reduce((sum, child) => sum + child.fee, 0);
     const totalPaid = parentData.children.reduce((sum, child) => sum + child.paid, 0);
-    const discount = 0; // Implement discount logic here
-    
+    const discount = parentData.children.reduce((sum, child) => sum + (child.discount || 0), 0);
+
     document.getElementById('total-fee').textContent = totalFee.toLocaleString() + ' VNĐ';
     document.getElementById('discount-amount').textContent = discount.toLocaleString() + ' VNĐ';
     document.getElementById('paid-amount').textContent = totalPaid.toLocaleString() + ' VNĐ';
     document.getElementById('remaining-amount').textContent = (totalFee - totalPaid - discount).toLocaleString() + ' VNĐ';
+
+    // --- Thêm đoạn này để hiển thị lịch sử đóng học phí ---
+    const tbody = document.getElementById('payment-history-body');
+    tbody.innerHTML = '';
+    // Gom tất cả lịch sử của các con vào một mảng
+    let allPayments = [];
+    parentData.children.forEach(child => {
+        (child.paymentHistory || []).forEach(payment => {
+            allPayments.push({
+                ...payment,
+                childName: child.name
+            });
+        });
+    });
+    // Sắp xếp theo ngày mới nhất lên đầu
+    allPayments.sort((a, b) => new Date(b.PaymentDate) - new Date(a.PaymentDate));
+    // Render từng dòng
+    allPayments.forEach(payment => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${payment.PaymentDate || ''}</td>
+            <td>${payment.childName || ''}</td>
+            <td>${Number(payment.Amount).toLocaleString()} VNĐ</td>
+            <td>${payment.Note || ''}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 // Load messages
 function loadMessages() {
     const messageList = document.querySelector('.message-list');
     messageList.innerHTML = '';
-    
-    parentData.messages.forEach(message => {
+
+    parentData.messages.forEach((message, idx) => {
         const messageItem = document.createElement('div');
-        messageItem.className = `message-item ${message.read ? '' : 'unread'}`;
+        messageItem.className = `message-item ${message.read ? 'read' : 'unread'}`;
         messageItem.innerHTML = `
             <h4>${message.subject}</h4>
             <p>Từ: ${message.from}</p>
             <p>Ngày: ${message.date}</p>
         `;
-        messageItem.onclick = () => showMessageDetail(message);
+        messageItem.onclick = () => {
+            // Xóa class selected khỏi tất cả message-item
+            document.querySelectorAll('.message-item').forEach(item => item.classList.remove('selected'));
+            // Thêm class selected cho item được click
+            messageItem.classList.add('selected');
+            showMessageDetail(message);
+        };
         messageList.appendChild(messageItem);
     });
 }
@@ -99,6 +128,10 @@ function showMessageDetail(message) {
         <p><strong>Ngày:</strong> ${message.date}</p>
         <div class="message-body">${message.content}</div>
     `;
+    // Thêm lại class để kích hoạt animation
+    messageContent.classList.remove('message-content');
+    void messageContent.offsetWidth; // trigger reflow
+    messageContent.classList.add('message-content');
     message.read = true;
     loadParentDashboard(); // Update unread count
 }
@@ -124,3 +157,81 @@ function updateProfile() {
     
     alert('Thông tin đã được cập nhật');
 }
+
+// Pay fee
+function payFees() {
+    document.getElementById('pay-fee-modal').classList.add('show');
+    const select = document.getElementById('fee-student');
+    select.innerHTML = '';
+    parentData.children.forEach(child => {
+        const option = document.createElement('option');
+        option.value = child.id;
+        option.textContent = child.name;
+        select.appendChild(option);
+    });
+
+    // Gán giá trị mặc định cho số tiền đóng khi mở form
+    updateFeeAmountAndNote();
+
+    // Khi chọn con khác thì cập nhật lại số tiền đóng
+    select.onchange = updateFeeAmountAndNote;
+}
+
+function updateFeeAmountAndNote() {
+    const select = document.getElementById('fee-student');
+    const amountInput = document.getElementById('fee-amount');
+    const noteInput = document.getElementById('fee-note');
+    const child = parentData.children.find(c => c.id === select.value);
+    if (child) {
+        // Số tiền cần đóng = fee - paid - discount
+        const unpaid = child.fee - child.paid - (child.discount || 0);
+        amountInput.value = unpaid > 0 ? unpaid : 0;
+        // Ghi chú: note từ DB - tên con
+        noteInput.value = (child.note ? child.note + ' - ' : '') + child.name;
+    } else {
+        amountInput.value = 0;
+        noteInput.value = '';
+    }
+}
+
+function hidePayFeeForm() {
+    document.getElementById('pay-fee-modal').classList.remove('show');
+}
+
+// Handle form submit
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('feeForm');
+    if (form) {
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('fee-student').value;
+            const bank = document.getElementById('fee-bank').value;
+            const amount = document.getElementById('fee-amount').value;
+            const note = document.getElementById('fee-note').value;
+
+            fetch('../php/payfee.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    studentId, bank, amount, note
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+
+                    // Phát triển xử lý nộp tiền thêm ở đây
+
+
+                    alert('Nộp tiền thành công!');
+                    hidePayFeeForm();
+                    // Reload Data
+                    location.reload();
+                } else {
+                    alert('Có lỗi xảy ra: ' + (data.error || ''));
+                }
+            })
+            .catch(() => alert('Không thể kết nối máy chủ!'));
+        };
+    }
+});
