@@ -28,17 +28,7 @@ function isExistUsername($username){
     return $result > 0;
 }
 
-function addTeacher($fullname, $birthdate, $gender, $username, $password, $email, $phone, $salary)
-{
-    $conn = connectdb();
-    $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("CALL AddNewTeacher(
-            '" . $username . "', '" . $password_hashed . "', '" . $fullname . "', '" . $gender . "',
-            '" . $email . "', '" . $phone . "', '" . $birthdate . "', " . $salary . "
-            )");
-    $stmt->execute();
-    $conn = null;
-}
+
 function addStudentOrParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $role)
 {
     $conn = connectdb();
