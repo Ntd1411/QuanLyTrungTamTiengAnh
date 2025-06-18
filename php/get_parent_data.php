@@ -46,11 +46,32 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Lấy học phí từng con
 $childrenData = [];
 foreach ($children as $child) {
-    $sql = "SELECT SUM(Amount) AS fee, SUM(CASE WHEN Status='Đã đóng' THEN Amount ELSE 0 END) AS paid
-            FROM tuition WHERE StudentID = ?";
+    // Lấy thông tin học phí tổng hợp
+    $sql = "SELECT 
+            SUM(Amount) AS fee, 
+            SUM(CASE WHEN Status='Đã đóng' THEN Amount * (100 - Discount) / 100 ELSE 0 END) AS paid,
+            SUM(Amount * (Discount/100)) AS discount
+        FROM tuition WHERE StudentID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$child['UserID']]);
     $feeData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Lấy Note của khoản học phí chưa đóng gần nhất
+    $sql = "SELECT Note FROM tuition WHERE StudentID = ? AND Status = 'Chưa đóng' ORDER BY DueDate ASC LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID']]);
+    $noteRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $note = $noteRow ? $noteRow['Note'] : '';
+
+    // Lấy lịch sử đóng học phí cho từng con
+    $sql = "SELECT PaymentDate, Amount, Note
+            FROM tuition
+            WHERE StudentID = ?
+            AND Status = 'Đã đóng'
+            ORDER BY PaymentDate DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID']]);
+    $paymentHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $childrenData[] = [
         'id' => $child['UserID'],
@@ -60,7 +81,10 @@ foreach ($children as $child) {
         'absent' => $child['AbsentClasses'],
         'teacher' => $child['TeacherName'],
         'fee' => (int)($feeData['fee'] ?? 0),
-        'paid' => (int)($feeData['paid'] ?? 0)
+        'paid' => (int)($feeData['paid'] ?? 0),
+        'discount' => (int)($feeData['discount'] ?? 0),
+        'paymentHistory' => $paymentHistory,
+        'note' => $note
     ];
 }
 
@@ -74,6 +98,12 @@ $stmt = $conn->prepare($sql);
 $stmt->execute([$parent['UserID']]);
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Tính tổng học phí chưa đóng của tất cả các con
+$totalUnpaid = 0;
+foreach ($childrenData as $child) {
+    $totalUnpaid += $child['fee'] - $child['paid'] - $child['discount'];
+}
+
 // Trả về JSON
 echo json_encode([
     'id' => $parent['UserID'],
@@ -81,8 +111,7 @@ echo json_encode([
     'email' => $parent['Email'],
     'phone' => $parent['Phone'],
     'zalo' => $parent['ZaloID'],
-    'unpaid' => $parent['UnpaidAmount'],
+    'unpaid' => $totalUnpaid,
     'children' => $childrenData,
     'messages' => $messages
 ]);
-?>

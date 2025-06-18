@@ -17,6 +17,7 @@ if (
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +26,7 @@ if (
     <title>Parent Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
 </head>
+
 <body>
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
@@ -37,7 +39,7 @@ if (
             <li><a href="#payments" onclick="showElement('payments'); return false;">Học Phí</a></li>
             <li><a href="#messages" onclick="showElement('messages'); return false;">Tin Nhắn</a></li>
             <li>
-                <a href="#account">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
@@ -49,17 +51,17 @@ if (
     <div class="main-content-parent">
         <!-- Home Section -->
         <div id="home-parent" class="element active">
-            <h2>Chào mừng, <span id="parent-name">Phụ huynh</span></h2>
+            <h2>Chào mừng phụ huynh <span id="parent-name"></span></h2>
             <div class="dashboard-summary">
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('children')">
                     <h3>Số con đang học</h3>
                     <p id="total-children">0</p>
                 </div>
-                <div class="summary-card warning">
+                <div class="summary-card warning" onclick="showElement('payments')">
                     <h3>Học phí chưa đóng</h3>
                     <p id="unpaid-amount">0 VNĐ</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('messages')">
                     <h3>Tin nhắn mới</h3>
                     <p id="new-messages">0</p>
                 </div>
@@ -82,6 +84,7 @@ if (
                     <p>Đã giảm: <span id="discount-amount">0 VNĐ</span></p>
                     <p>Đã đóng: <span id="paid-amount">0 VNĐ</span></p>
                     <p>Còn nợ: <span id="remaining-amount">0 VNĐ</span></p>
+                    <button onclick="payFees()">Đóng học phí</button>
                 </div>
                 <div class="payment-history">
                     <h3>Lịch sử đóng học phí</h3>
@@ -90,13 +93,36 @@ if (
                             <tr>
                                 <th>Ngày</th>
                                 <th>Con</th>
-                                <th>Số tiền</th>
-                                <th>Trạng thái</th>
+                                <th>Học phí (chưa giảm giá)</th>
+                                <th>Ghi chú</th>
                             </tr>
                         </thead>
                         <tbody id="payment-history-body"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- Popup Modal Form -->
+        <div id="pay-fee-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hidePayFeeForm()">&times;</span>
+                <form id="feeForm">
+                    <label>Chọn con:
+                        <select id="fee-student" required></select>
+                    </label><br>
+                    <label>Số tài khoản ngân hàng:
+                        <input type="text" id="fee-bank" required>
+                    </label><br>
+                    <label>Số tiền đóng:
+                        <input type="number" id="fee-amount" min="1" required readonly>
+                    </label><br>
+                    <label>Ghi chú:
+                        <input type="text" id="fee-note">
+                    </label><br>
+                    <button type="submit">Nộp tiền</button>
+                    <button type="button" onclick="hidePayFeeForm()">Hủy</button>
+                </form>
             </div>
         </div>
 
@@ -149,4 +175,5 @@ if (
     <script src="../assets/js/parent.js"></script>
     <script src="../assets/js/update_page.js"></script>
 </body>
+
 </html>
