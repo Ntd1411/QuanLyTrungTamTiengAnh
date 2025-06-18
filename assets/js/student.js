@@ -21,64 +21,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    loadStudentDashboard();
-    loadClassInfo();
-    loadAttendance();
-    loadHomework();
-    loadStudentProfile();
-});
-
 // Load dashboard data
 function loadStudentDashboard() {
-    document.getElementById('student-name').textContent = studentData.name;
-    document.getElementById('class-name').textContent = studentData.class.name;
-    document.getElementById('attended-sessions').textContent = studentData.attendance.attended;
-    document.getElementById('absent-sessions').textContent = studentData.attendance.absent;
-    
-    const newHomework = studentData.homework.filter(hw => hw.status === 'new').length;
+    document.getElementById('student-name').textContent = studentData.name || 'Học sinh';
+    document.getElementById('class-name').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : 'Chưa trong lớp nào';
+    document.getElementById('attended-sessions').textContent = studentData.attendance ? studentData.attendance.attended : 0;
+    document.getElementById('absent-sessions').textContent = studentData.attendance ? studentData.attendance.absent : 0;
+
+    // Đếm số bài tập chưa hoàn thành
+    const newHomework = studentData.homework
+        ? studentData.homework.filter(hw => hw.status === 'Chưa hoàn thành').length
+        : 0;
     document.getElementById('new-homework').textContent = newHomework;
 }
 
 // Load class information
 function loadClassInfo() {
-    // Hiển thị thông tin chung
-    document.getElementById('current-class').textContent = studentData.class.name;
-    document.getElementById('teacher-name').textContent = studentData.class.teacher;
-    document.getElementById('class-schedule').textContent = studentData.class.schedule;
+    document.getElementById('current-class').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : '';
+    document.getElementById('teacher-name').textContent = (studentData.class && studentData.class.teacher) ? studentData.class.teacher : '';
+    document.getElementById('class-schedule').textContent = (studentData.class && studentData.class.schedule) ? studentData.class.schedule : '';
 
     // Hiển thị bảng danh sách học sinh
     const classmatesTable = document.getElementById('classmates-table');
     classmatesTable.innerHTML = '';
 
-    studentData.class.classmates.forEach((student, index) => {
-        const row = document.createElement('tr');
-        const attendanceRate = ((student.attended / (student.attended + student.absent)) * 100).toFixed(1);
-        let rateClass = '';
-        
-        if (attendanceRate >= 90) rateClass = 'rate-good';
-        else if (attendanceRate >= 80) rateClass = 'rate-warning';
-        else rateClass = 'rate-poor';
-
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${student.name}</td>
-            <td>${student.attended}</td>
-            <td>${student.absent}</td>
-            <td><span class="attendance-rate ${rateClass}">${attendanceRate}%</span></td>
-        `;
-        classmatesTable.appendChild(row);
-    });
+    if (studentData.class && Array.isArray(studentData.class.classmates)) {
+        studentData.class.classmates.forEach((mate, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${mate.FullName}</td>
+                <td>${mate.attended || 0}</td>
+                <td>${mate.absent || 0}</td>
+                <td>${mate.participation || 0}%</td>
+            `;
+            classmatesTable.appendChild(row);
+        });
+    }
 }
 
 // Load attendance history
 function loadAttendance() {
-    const attended = studentData.attendance.attended;
-    const absent = studentData.attendance.absent;
+    const attended = studentData.attendance ? studentData.attendance.attended : 0;
+    const absent = studentData.attendance ? studentData.attendance.absent : 0;
     const total = attended + absent;
 
-    // Update summary stats
     document.getElementById('total-sessions').textContent = total;
     document.getElementById('attended-count').textContent = attended;
     document.getElementById('absent-count').textContent = absent;
@@ -88,16 +75,23 @@ function loadAttendance() {
 
     const historyBody = document.getElementById('attendance-history-body');
     historyBody.innerHTML = '';
-    
-    studentData.attendance.history.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${record.date}</td>
-            <td>${record.status === 'present' ? 'Có mặt' : 'Vắng mặt'}</td>
-            <td>${record.note || '-'}</td>
-        `;
-        historyBody.appendChild(row);
-    });
+
+    if (studentData.attendance && Array.isArray(studentData.attendance.history)) {
+        studentData.attendance.history.forEach(record => {
+            const row = document.createElement('tr');
+            let statusText = '-';
+            if (record.Status === 'Có mặt') statusText = 'Có mặt';
+            else if (record.Status === 'Vắng mặt') statusText = 'Vắng mặt';
+            else if (record.Status === 'Đi muộn') statusText = 'Đi muộn';
+            row.innerHTML = `
+                <td>${record.Date}</td>
+                <td>${statusText}</td>
+                <td>${record.Note || '-'}</td>
+                <td>${studentData.class && studentData.class.teacher ? studentData.class.teacher : '-'}</td>
+            `;
+            historyBody.appendChild(row);
+        });
+    }
 
     updateAttendanceRate();
 }
@@ -140,26 +134,28 @@ function updateAttendanceProgress(attended, total) {
 function loadHomework() {
     const homeworkList = document.getElementById('homework-list');
     homeworkList.innerHTML = '';
-    
-    studentData.homework.forEach(hw => {
-        const card = document.createElement('div');
-        card.className = `homework-card ${hw.status}`;
-        card.innerHTML = `
-            <h3>${hw.title}</h3>
-            <p>${hw.description}</p>
-            <p>Hạn nộp: ${hw.dueDate}</p>
-            <p>Trạng thái: ${hw.status === 'new' ? 'Chưa làm' : 'Đã hoàn thành'}</p>
-        `;
-        homeworkList.appendChild(card);
-    });
+
+    if (Array.isArray(studentData.homework)) {
+        studentData.homework.forEach(hw => {
+            const card = document.createElement('div');
+            card.className = `homework-card ${hw.status === 'Đã hoàn thành' ? 'done' : 'new'}`;
+            card.innerHTML = `
+                <h3>${hw.title}</h3>
+                <p>${hw.description}</p>
+                <p>Hạn nộp: ${hw.dueDate}</p>
+                <p>Trạng thái: ${hw.status}</p>
+            `;
+            homeworkList.appendChild(card);
+        });
+    }
 }
 
 // Load student profile
 function loadStudentProfile() {
-    document.getElementById('profile-name').value = studentData.name;
-    document.getElementById('profile-class').value = studentData.class.name;
-    document.getElementById('profile-email').value = studentData.email;
-    document.getElementById('profile-phone').value = studentData.phone;
+    document.getElementById('profile-name').value = studentData.name || '';
+    document.getElementById('profile-class').value = (studentData.class && studentData.class.name) ? studentData.class.name : '';
+    document.getElementById('profile-email').value = studentData.email || '';
+    document.getElementById('profile-phone').value = studentData.phone || '';
 }
 
 // Update profile

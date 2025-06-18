@@ -133,7 +133,7 @@ if (
                                 <th>Ngày</th>
                                 <th>Trạng thái</th>
                                 <th>Ghi chú</th>
-                                <th>Giáo viên</th>
+                                <th>Người điểm danh</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-history-body"></tbody>

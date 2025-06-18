@@ -156,7 +156,7 @@ CREATE TABLE `tuition` (
   `TuitionID` int(11) NOT NULL AUTO_INCREMENT,
   `StudentID` varchar(10) DEFAULT NULL,
   `Amount` decimal(12,0) NOT NULL,
-  `Discount` decimal(12,0) DEFAULT 0,
+  `Discount` decimal(5,2) DEFAULT 0.00,
   `PaymentDate` date DEFAULT NULL,
   `DueDate` date NOT NULL,
   `Status` enum('Chưa đóng','Đã đóng','Trễ hạn') DEFAULT 'Chưa đóng',
@@ -185,11 +185,12 @@ CREATE TABLE `messages` (
 
 CREATE TABLE homework (
     HomeworkID INT AUTO_INCREMENT PRIMARY KEY,
-    StudentID VARCHAR(10) NOT NULL,
     Title VARCHAR(255) NOT NULL,
+    ClassID INT(11) NOT NULL,
+    FOREIGN KEY (ClassID) REFERENCES classes(ClassID),
     Description TEXT,
     DueDate DATE,
-    Status VARCHAR(20),
+    Status ENUM('Chưa hoàn thành', 'Đã hoàn thành') NOT NULL,
     FOREIGN KEY (StudentID) REFERENCES students(UserID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
