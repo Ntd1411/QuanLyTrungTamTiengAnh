@@ -20,7 +20,8 @@ function countRow($table)
     }
 }
 
-function showOptionTeacherName() {
+function showOptionTeacherName()
+{
     try {
         $conn = connectdb();
         $sql = "SELECT UserID, FullName 
@@ -31,8 +32,8 @@ function showOptionTeacherName() {
 
         if (count($result) > 0) {
             foreach ($result as $row) {
-                echo "<option value='" . htmlspecialchars($row['UserID']) . "'>" . 
-                     htmlspecialchars($row['FullName']) . "</option>";
+                echo "<option value='" . htmlspecialchars($row['UserID']) . "'>" .
+                    htmlspecialchars($row['FullName']) . "</option>";
             }
         } else {
             echo "<option value=''>Không có giáo viên</option>";
@@ -47,23 +48,24 @@ function showOptionTeacherName() {
 }
 
 
-function addClass($className, $schoolYear, $teacherId, $startDate, $endDate, $classTime, $room) {
+function addClass($className, $schoolYear, $teacherId, $startDate, $endDate, $classTime, $room)
+{
     try {
         $conn = connectdb();
         error_log("Adding class: $className, $schoolYear, $teacherId, $startDate, $endDate, $classTime, $room");
-        
+
         // Kiểm tra xem lớp đã tồn tại chưa
         $checkSql = "SELECT COUNT(*) FROM classes WHERE ClassName = :className";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([':className' => $className]);
-        if($checkStmt->fetchColumn() > 0) {
+        if ($checkStmt->fetchColumn() > 0) {
             return ['status' => 'error', 'message' => 'Tên lớp đã tồn tại'];
         }
 
         // Thêm lớp mới
         $sql = "INSERT INTO classes (ClassName, SchoolYear, TeacherID, StartDate, EndDate, ClassTime, Room, Status, CreatedAt) 
                 VALUES (:className, :schoolYear, :teacherId, :startDate, :endDate, :classTime, :room, 'Đang hoạt động', NOW())";
-        
+
         $stmt = $conn->prepare($sql);
         $params = [
             ':className' => $className,
@@ -74,18 +76,17 @@ function addClass($className, $schoolYear, $teacherId, $startDate, $endDate, $cl
             ':classTime' => $classTime,
             ':room' => $room
         ];
-        
+
         error_log("Executing SQL with params: " . print_r($params, true));
         $result = $stmt->execute($params);
 
-        if($result) {
+        if ($result) {
             error_log("Class added successfully");
             return ['status' => 'success', 'message' => 'Thêm lớp thành công'];
         } else {
             error_log("Failed to add class");
             return ['status' => 'error', 'message' => 'Thêm lớp thất bại'];
         }
-
     } catch (PDOException $e) {
         error_log("Database Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
@@ -97,15 +98,16 @@ function addClass($className, $schoolYear, $teacherId, $startDate, $endDate, $cl
     }
 }
 
-function getDataFromTable($table) {
+function getDataFromTable($table)
+{
     try {
         $conn = connectdb();
-        $sql = "SELECT * FROM " .$table. "";
-        
+        $sql = "SELECT * FROM " . $table . "";
+
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         return $classes;
     } catch (Exception $e) {
         error_log("Error getting classes: " . $e->getMessage());
@@ -115,21 +117,90 @@ function getDataFromTable($table) {
     }
 }
 
-function getTeacherName($id) {
+function getTeacherName($id)
+{
     try {
         if (!$id) return null;
-        
+
         $conn = connectdb();
         $sql = "SELECT FullName FROM teachers WHERE UserID = :id";
-        
+
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         return $result['FullName'];
     } catch (PDOException $e) {
         error_log("Error getting teacher name: " . $e->getMessage());
         return null;
+    } finally {
+        $stmt = null;
+        $conn = null;
+    }
+}
+
+// hàm thêm giáo viên trả về mảng kết quả
+function addTeacher($fullname, $birthdate, $gender, $username, $password, $email, $phone, $salary) {
+    try {
+        $conn = connectdb();
+        error_log("AddTeacher params: $fullname, $birthdate, $gender, $username, $email, $phone, $salary");
+
+        // Kiểm tra username đã tồn tại chưa
+        $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->execute([':username' => $username]);
+        if($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
+        }
+
+        // Chuẩn bị và gọi stored procedure
+        $stmt = $conn->prepare("CALL AddNewTeacher(?, ?, ?, ?, ?, ?, ?, ?)");
+        $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+        
+        $stmt->execute([
+            $username,
+            $password_hashed,
+            $fullname, 
+            $gender,
+            $email,
+            $phone,
+            $birthdate,
+            $salary
+        ]);
+
+        return ['status' => 'success', 'message' => 'Thêm giáo viên thành công'];
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        error_log("General Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
+    } finally {
+        $stmt = null;
+        $conn = null;
+    }
+}
+
+function getTeacherClasses($teacherId) {
+    try {
+        if (!$teacherId) return null;
+        
+        $conn = connectdb();
+        
+
+        $sql = "SELECT GROUP_CONCAT(ClassID SEPARATOR ', ') as Classes 
+                FROM classes 
+                WHERE TeacherID = :teacherId 
+                AND Status = 'Đang hoạt động'";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':teacherId' => $teacherId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['Classes'] ?? 'Chưa có lớp phụ trách';
+    } catch (PDOException $e) {
+        error_log("Error getting teacher classes: " . $e->getMessage());
+        return 'Lỗi khi lấy danh sách lớp';
     } finally {
         $stmt = null;
         $conn = null;

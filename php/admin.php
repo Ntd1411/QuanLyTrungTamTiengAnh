@@ -34,16 +34,55 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $classTime = $_POST['classTime'];
                 $classRoom = $_POST['room'];
 
-                $result = addClass($className, $classYear, $teacher, $startDate, $endDate, $classTime, $classRoom);
+                $result = addClass(
+                    $className,
+                    $classYear,
+                    $teacher,
+                    $startDate,
+                    $endDate,
+                    $classTime,
+                    $classRoom
+                );
                 echo json_encode($result);
                 exit;
                 break;
-            case "getClass":
+            case "addTeacher":
+                if (
+                    empty($_POST['teacherFullName']) || empty($_POST['teacherUsername']) ||
+                    empty($_POST['teacherGender']) || empty($_POST['teacherEmail']) ||
+                    empty($_POST['teacherPhone']) || empty($_POST['teacherBirthdate'] || empty($_POST['teacherSalary']))
+                ) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+
+                $teacherFullName = $_POST['teacherFullName'];
+                $teacherUsername = $_POST['teacherUsername'];
+                $teacherPassword = empty($_POST['teacherPassword']) ? "123456" : $_POST['teacherPassword'];
+                $teacherGender = $_POST['teacherGender'];
+                $teacherEmail = $_POST['teacherEmail'];
+                $teacherPhone = $_POST['teacherPhone'];
+                $teacherBirthdate = $_POST['teacherBirthdate'];
+                $teacherSalary = $_POST['teacherSalary'];
+
+                $result = addTeacher(
+                    $teacherFullName,
+                    $teacherBirthdate,
+                    $teacherGender,
+                    $teacherUsername,
+                    $teacherPassword,
+                    $teacherEmail,
+                    $teacherPhone,
+                    $teacherSalary
+                );
+                echo json_encode($result);
+                exit;
+                break;
         }
     }
 
-    // Thêm xử lý GET request
-    if (isset($_GET['action']) && $_GET['action'] === 'getClasses') {
+    // Thêm xử lý GET request để hiển thị dữ liệu ra các bảng
+    if (isset($_GET['action'])) {  // Kiểm tra GET parameter
         switch ($_GET['action']) {
             case "getClasses":
                 $classes = getDataFromTable("classes");
@@ -51,6 +90,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     foreach ($classes as $class) {
                         $teacher_name = getTeacherName($class['TeacherID']);
                         echo "<tr>";
+                        echo "<td>" . htmlspecialchars($class['ClassID']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
                         echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . "</td>";
@@ -62,6 +102,30 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>
                         <button onclick='editClass(" . $class['ClassID'] . ")'>Sửa</button>
                         <button onclick='deleteClass(" . $class['ClassID'] . ")'>Xóa</button>
+                      </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                }
+                exit;
+            case "getTeachers":
+                $teachers = getDataFromTable("teachers");
+                if ($teachers != []) {
+                    foreach ($teachers as $teacher) {
+                        $teacherClasses = getTeacherClasses($teacher['UserID']);
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($teacher['UserID']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['FullName']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['Gender']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['Email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['Phone']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['BirthDate']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher['Salary']) . "</td>";
+                        echo "<td>" . htmlspecialchars($teacherClasses) . "</td>";
+                        echo "<td>
+                        <button onclick='editteacher(" . $teacher['UserID'] . ")'>Sửa</button>
+                        <button onclick='deleteteacher(" . $teacher['UserID'] . ")'>Xóa</button>
                       </td>";
                         echo "</tr>";
                     }
@@ -240,6 +304,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <table id="class-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Tên lớp</th>
                                 <th>Năm học</th>
                                 <th>Giáo viên</th>
@@ -288,19 +353,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <form id="teacher-form" class="teacher-form">
                     <div class="form-group">
                         <label>Họ và tên:</label>
-                        <input type="text" id="teacher-fullname" required>
+                        <input type="text" name="teacherFullName" id="teacher-fullname" required>
                     </div>
                     <div class="form-group">
                         <label>Tên đăng nhập:</label>
-                        <input type="text" id="teacher-username" required>
+                        <input type="text" name="teacherUsername" id="teacher-username" required>
                     </div>
                     <div class="form-group">
                         <label>Mật khẩu:</label>
-                        <input type="password" id="teacher-password" required>
+                        <input type="password" name="teacherPassword" id="teacher-password">
                     </div>
                     <div class="form-group">
                         <label>Giới tính:</label>
-                        <select id="teacher-gender" required>
+                        <select id="teacher-gender" name="teacherGender" required>
                             <option value="">Chọn giới tính</option>
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
@@ -308,23 +373,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" id="teacher-email" required>
+                        <input type="email" name="teacherEmail" id="teacher-email" required>
                     </div>
                     <div class="form-group">
                         <label>Số điện thoại:</label>
-                        <input type="tel" id="teacher-phone" required>
+                        <input type="tel" name="teacherPhone" id="teacher-phone" required>
                     </div>
                     <div class="form-group">
                         <label>Ngày sinh:</label>
-                        <input type="date" id="teacher-birthdate" required>
+                        <input type="date" name="teacherBirthdate" id="teacher-birthdate" required>
                     </div>
                     <div class="form-group">
                         <label>Lương (VNĐ):</label>
-                        <input type="number" id="teacher-salary" required>
+                        <input type="number" name="teacherSalary" id="teacher-salary" required>
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('teacher-form').reset()">Làm mới</button>
-                        <button type="button" onclick="addTeacher()">Thêm giáo viên</button>
+                        <button type="submit" onclick="addTeacher()">Thêm giáo viên</button>
                     </div>
                 </form>
 
@@ -332,14 +397,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <table id="teacher-table" class="teacher-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Họ và tên</th>
-                                <th>Tên đăng nhập</th>
                                 <th>Giới tính</th>
                                 <th>Email</th>
                                 <th>Số điện thoại</th>
                                 <th>Ngày sinh</th>
                                 <th>Lương</th>
-                                <th>Lớp phụ trách</th>
+                                <th>ID Lớp phụ trách</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
