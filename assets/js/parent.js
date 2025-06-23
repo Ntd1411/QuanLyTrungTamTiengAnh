@@ -149,13 +149,36 @@ function updateProfile() {
     const newEmail = document.getElementById('profile-email').value;
     const newPhone = document.getElementById('profile-phone').value;
     const newZalo = document.getElementById('profile-zalo').value;
+    const oldPassword = document.getElementById('profile-old-password').value;
+    const newPassword = document.getElementById('profile-new-password').value;
 
-    // Here you would typically send this data to the server
-    parentData.email = newEmail;
-    parentData.phone = newPhone;
-    parentData.zalo = newZalo;
-    
-    alert('Thông tin đã được cập nhật');
+    fetch('../php/update_parent_data.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            email: newEmail,
+            phone: newPhone,
+            zalo: newZalo,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cập nhật thông tin thành công!');
+            // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
+            if (oldPassword && newPassword) {
+                window.location.href = '../index.html';
+            }
+        } else {
+            alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+        }
+    })
+    .catch(err => {
+        alert('Có lỗi xảy ra khi cập nhật!');
+        console.error(err);
+    });
 }
 
 // Pay fee
