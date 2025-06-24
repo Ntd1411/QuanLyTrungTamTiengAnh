@@ -33,6 +33,15 @@ function loadStudentDashboard() {
         ? studentData.homework.filter(hw => hw.status === 'Chưa hoàn thành').length
         : 0;
     document.getElementById('new-homework').textContent = newHomework;
+
+    // Đổi viền thành xanh lá nếu số buổi nghỉ bằng 0
+    const absentElem = document.getElementById('absent-sessions');
+    const absentCard = absentElem.closest('.summary-card');
+    if (absentElem.textContent === "0" || absentElem.textContent === 0) {
+        absentCard.classList.add('green-border');
+    } else {
+        absentCard.classList.remove('green-border');
+    }
 }
 
 // Load class information

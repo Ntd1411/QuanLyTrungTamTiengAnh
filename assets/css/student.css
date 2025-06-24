@@ -66,6 +66,11 @@
     border-left: 4px solid #ff4444;
 }
 
+.summary-card.warning.green-border {
+    border-left: 4px solid #4CAF50 !important;
+    background: linear-gradient(145deg, #f5fff5, #e0ffe0);
+}
+
 /* Class Info Card */
 .class-info-card {
     background: #ffffff;
