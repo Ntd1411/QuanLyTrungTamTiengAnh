@@ -80,7 +80,8 @@ Không cần cài đặt phức tạp. Bạn chỉ cần tải xuống mã ngu�
 * **Cập nhật thông tin cá nhân:** Trong mục "Tài Khoản" -> "Hồ sơ", bạn có thể cập nhật số điện thoại và mật khẩu mới.
 
 ## Cấu trúc dự án
-Dự án được tổ chức với cấu trúc thư mục sau (nên đọc phần này trong file .txt hoặc phần mềm viết code):
+Dự án được tổ chức với cấu trúc thư mục sau:
+'''
 WEBSITEQUANLYTRUNGTAMTIENGANH
 │   index.html
 │   README.md
@@ -199,6 +200,7 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
         toeic_550_650.html
         toeic_650_800.html
         toeic_800+.html
+'''
 
 ## Đóng góp
 Chúng tôi hoan nghênh mọi đóng góp để cải thiện hệ thống quản lý trung tâm tiếng Anh KEC. Nếu bạn muốn đóng góp, vui lòng làm theo các bước sau:
