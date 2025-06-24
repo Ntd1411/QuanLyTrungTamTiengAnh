@@ -80,12 +80,12 @@ unset($msg);
 // Lấy danh sách bạn cùng lớp
 $classmates = [];
 if ($student['ClassID']) {
-    $sql = "SELECT s.UserID, s.FullName,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND (a.Status = 'Có mặt' OR a.Status = 'Đi muộn')) AS attended,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND a.Status = 'Vắng mặt') AS absent,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID) AS total
-            FROM students s
-            WHERE s.ClassID = ?";
+    $sql = "SELECT s.UserID, s.FullName, s.BirthDate,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND (a.Status = 'Có mặt' OR a.Status = 'Đi muộn')) AS attended,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND a.Status = 'Vắng mặt') AS absent,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID) AS total
+        FROM students s
+        WHERE s.ClassID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$student['ClassID']]);
     $classmates = $stmt->fetchAll(PDO::FETCH_ASSOC);

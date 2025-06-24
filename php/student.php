@@ -39,7 +39,7 @@ if (
             <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
             <li><a href="#homework" onclick="showElement('homework'); return false;">Bài Tập</a></li>
             <li>
-                <a href="#account">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault()">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
@@ -88,10 +88,10 @@ if (
         <div id="my-class" class="element">
             <div class="class-info-card">
                 <div class="info-group">
-                    <h3></h3>
-                    <p><span id="current-class"></span></p>
-                    <p><span id="teacher-name"></span></p>
-                    <p><span id="class-schedule"></span></p>
+                    <h3>Thông tin lớp học</h3>
+                    <p>Lớp: <span id="current-class"></span></p>
+                    <p>Giảng Viên: <span id="teacher-name"></span></p>
+                    <p>Lịch Học: <span id="class-schedule"></span></p>
                 </div>
                 <div class="classmates-list">
                     <h3>Danh sách học sinh trong lớp</h3>
@@ -101,7 +101,7 @@ if (
                                 <tr>
                                     <th>STT</th>
                                     <th>Họ và tên</th>
-                                    <th>Mã học sinh</th>
+                                    <th>Ngày sinh</th>
                                 </tr>
                             </thead>
                             <tbody id="classmates-table"></tbody>

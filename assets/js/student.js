@@ -104,10 +104,10 @@ function loadClassInfo() {
         studentData.class.classmates.forEach((mate, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${mate.FullName}</td>
-            <td>${mate.UserID}</td>
-        `;
+                <td>${index + 1}</td>
+                <td>${mate.FullName}</td>
+                <td>${mate.BirthDate ? mate.BirthDate : ''}</td>
+            `;
             classmatesTable.appendChild(row);
         });
     }
