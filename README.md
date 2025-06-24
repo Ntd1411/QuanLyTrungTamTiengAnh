@@ -30,8 +30,9 @@ Dưới đây là các tính năng nổi bật của hệ thống:
     * **Liên Hệ:** Cung cấp thông tin liên hệ và biểu mẫu gửi tin nhắn.
 * **Đào Tạo:**
     * **Tiếng Anh cho trẻ:** Thông tin về các khóa học tiếng Anh dành cho trẻ em.
-    * **IELTS:** Các cấp độ khóa học IELTS (cơ bản, 4.0-5.0, 5.0-6.0, 6.0-7.0) với thông tin chi tiết.
-* **Giao diện người dùng:** Thiết kế hiện đại, sạch sẽ và thân thiện, với màu sắc thương hiệu nhất quán.
+    * **IELTS:** Các cấp độ khóa học IELTS (cơ bản, 4.0-5.0, 5.0-6.0, 6.0-7.0) cùng thông tin chi tiết.
+    * **TOEIC:** Các cấp độ khóa học toeic cùng thông tin chi tiết
+* **Giao diện người dùng:** Thiết kế hiện đại, thoáng đãng và thân thiện, màu sắc thương hiệu nhất quán.
 
 ### Bảng điều khiển Giáo viên (Teacher Dashboard)
 * **Trang Chủ Giáo Viên:** Tổng quan về các thông tin quan trọng dành cho giáo viên.
@@ -46,11 +47,13 @@ Dự án này chủ yếu được xây dựng với các công nghệ Frontend 
 * **HTML5:** Cấu trúc nội dung web.
 * **CSS3:** Định kiểu và thiết kế giao diện người dùng, bao gồm responsive design.
 * **JavaScript (ES6+):** Xử lý các tương tác người dùng, điều hướng và các tính năng động của giao diện (ví dụ: chuyển đổi tab, menu).
-* *(Lưu ý: Các file cung cấp không bao gồm phần Backend hoặc Database. Nếu dự án có phần này, bạn cần bổ sung thông tin về ngôn ngữ lập trình Backend, framework và hệ quản trị cơ sở dữ liệu.)*
+* **PHP:** Tạo kịch bản, điều hướng người dùng và bảo mật thông tin
+* **MySQL** Lưu trữ dữ liệu trực quan, dễ dàng chỉnh sửa
 
 ## Yêu cầu hệ thống
 Để chạy ứng dụng web này, bạn chỉ cần:
-* Một trình duyệt web hiện đại (Chrome, Firefox, Edge, Safari...).
+* Một máy chủ để lưu trữ source code
+* Một trình duyệt web hiện đại (Chrome, Firefox, Edge, Safari...) để truy cập
 
 ## Cài đặt
 Không cần cài đặt phức tạp. Bạn chỉ cần tải xuống mã nguồn và mở file HTML.
@@ -78,6 +81,7 @@ Không cần cài đặt phức tạp. Bạn chỉ cần tải xuống mã ngu�
 
 ## Cấu trúc dự án
 Dự án được tổ chức với cấu trúc thư mục sau:
+```
 WEBSITEQUANLYTRUNGTAMTIENGANH
 │   index.html
 │   README.md
@@ -196,6 +200,7 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
         toeic_550_650.html
         toeic_650_800.html
         toeic_800+.html
+```
 
 ## Đóng góp
 Chúng tôi hoan nghênh mọi đóng góp để cải thiện hệ thống quản lý trung tâm tiếng Anh KEC. Nếu bạn muốn đóng góp, vui lòng làm theo các bước sau:
