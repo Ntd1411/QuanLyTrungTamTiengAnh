@@ -901,3 +901,13 @@ button:hover {
         flex-direction: column;
     }
 }
+
+
+/* Message table styling */
+#message-table .message-content {
+    max-width: 250px;
+    white-space: normal;
+    word-wrap: break-word;
+    position: relative;
+    padding: 10px 90px 10px 10px;
+}

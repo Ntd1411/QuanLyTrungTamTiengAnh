@@ -524,13 +524,13 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label>Phương thức gửi:</label>
                         <div class="send-methods">
                             <label>
-                                <input type="checkbox" name="sendMethods[]" value="web" checked> Website
+                                <input type="checkbox" name="sendMethods" value="web" checked> Website
                             </label>
                             <label>
-                                <input type="checkbox" name="sendMethods[]" value="zalo"> Zalo
+                                <input type="checkbox" name="sendMethods" value="zalo"> Zalo
                             </label>
                             <label>
-                                <input type="checkbox" name="sendMethods[]" value="messenger"> Messenger
+                                <input type="checkbox" name="sendMethods" value="messenger"> Messenger
                             </label>
                         </div>
                     </div>
@@ -549,8 +549,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                     <th>Thời gian</th>
                                     <th>Người nhận</th>
                                     <th>Chủ đề</th>
-                                    <th>Nội dung</th>
-                                    <th>Phương thức gửi</th>
+                                    <th class="message-content">Nội dung</th>
                                     <th>Trạng thái</th>
                                 </tr>
                             </thead>

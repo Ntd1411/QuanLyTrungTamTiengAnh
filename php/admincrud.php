@@ -157,9 +157,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
-                
-           
-           
+
+
+
 
             case "deleteClass":
                 if (!isset($_POST['id'])) {
@@ -237,7 +237,65 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
-           
+
+            case "sendNotification":
+                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+
+                try {
+                    $conn = connectdb();
+                    $selectedMethods = json_decode($_POST['sendMethods'], true);
+
+                    // Insert notification into messages table
+                    $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
+                            VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
+        
+                    $stmt = $conn->prepare($sql);
+                    $result = $stmt->execute([
+                        ':receiverId' => $_POST['receiverId'],
+                        ':subject' => $_POST['subject'],
+                        ':content' => $_POST['content']
+                    ]);
+
+                    if ($result) {
+                        $successMethods = [];
+                        foreach ($selectedMethods as $method) {
+                            switch ($method) {
+                                case 'web':
+                                    $successMethods[] = 'Website';
+                                    break;
+                                case 'zalo':
+                                    // Thêm code gửi Zalo ở đây nếu có
+                                    $successMethods[] = 'Zalo';
+                                    break;
+                                case 'messenger':
+                                    // Thêm code gửi Messenger ở đây nếu có
+                                    $successMethods[] = 'Messenger';
+                                    break;
+                            }
+                        }
+            
+                        echo json_encode([
+                            'status' => 'success',
+                            'message' => 'Thông báo đã được gửi thành công qua ' . implode(', ', $successMethods)
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'Không thể gửi thông báo'
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    error_log("Error sending notification: " . $e->getMessage());
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+                    ]);
+                }
+                exit;
+                break;
         }
     }
 
@@ -319,7 +377,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 exit;
             case "getParents":
-                $parents = getDataFromTable("parents"); 
+                $parents = getDataFromTable("parents");
                 if ($parents != []) {
                     foreach ($parents as $parent) {
                         $parentChild = getChild($parent['UserID']);
@@ -360,16 +418,38 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
+
+            case "getMessages":
+                $messages = getDataFromTable("messages");
+                if ($messages != []) {
+                    foreach ($messages as $message) {
+
+                        if ($message['SenderID'] ==  0) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($message['SendDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($message['ReceiverID']) . "</td>";
+                            echo "<td>" . htmlspecialchars($message['Subject']) . "</td>";
+                            echo "<td class='message-content'>" . htmlspecialchars($message['Content']) . "</td>";
+                            echo "<td>" . htmlspecialchars($message['IsRead'] ==  0 ? "Chưa đọc" : "Đã đọc") . "</td>";
+                            echo "</tr>";
+                        }
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                }
+                exit;
+                break;
+
             case "getClass":
                 if (!isset($_GET['id'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu ID']);
                     exit;
                 }
-                $result = getClassById($_GET['id']); 
+                $result = getClassById($_GET['id']);
                 echo json_encode($result);
                 exit;
                 break;
-             case "getTeacher":
+            case "getTeacher":
                 if (!isset($_GET['id'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu ID']);
                     exit;

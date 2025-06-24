@@ -511,6 +511,55 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
         });
 });
 
+// Add notification form handler
+document.getElementById('notification-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'sendNotification');
+
+    // Lấy tất cả các checkbox đã chọn
+    const selectedMethods = [];
+    document.querySelectorAll('input[name="sendMethods[]"]:checked').forEach(checkbox => {
+        selectedMethods.push(checkbox.value);
+    });
+    formData.append('sendMethods', JSON.stringify(selectedMethods));
+
+    fetch('admincrud.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            this.reset();
+            loadMessages();
+            $('.recipient-select').val(null).trigger('change');
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi gửi thông báo');
+    });
+});
+
+function loadMessages() {
+    fetch('admincrud.php?action=getMessages')
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('message-table-body').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error loading messages:', error);
+    });
+}
+
+// Load messages when page loads 
+document.addEventListener('DOMContentLoaded', loadMessages);
+
 // Initialize Select2 when document is ready
 $(document).ready(function() {
     $('.select2-dropdown').select2({
