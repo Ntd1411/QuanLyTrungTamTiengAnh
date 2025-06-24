@@ -71,6 +71,69 @@
     background: linear-gradient(145deg, #f5fff5, #e0ffe0);
 }
 
+/* Notification Board (copy từ parent.css và chỉnh lại tên class) */
+.notification-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 25px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.notification-list {
+    border-right: 2px solid #eee;
+    padding-right: 25px;
+}
+
+.notification-item {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.notification-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.notification-item.unread {
+    background: #fff5f5;
+    border-left: 4px solid var(--primary-color, #e4312a);
+}
+
+.notification-item.selected {
+    background: #e3f2fd;
+    border-left: 4px solid #1976d2;
+}
+
+.notification-content {
+    animation: slideUpFadeIn 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.notification-detail {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+    .notification-container {
+        grid-template-columns: 1fr;
+    }
+    .notification-list {
+        border-right: none;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+}
+
 /* Class Info Card */
 .class-info-card {
     background: #ffffff;

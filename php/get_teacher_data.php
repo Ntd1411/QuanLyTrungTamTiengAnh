@@ -1,0 +1,94 @@
+<?php
+session_start();
+require_once '../model/config.php';
+
+$username = $_SESSION['username'] ?? $_COOKIE['username'] ?? null;
+if (!$username) {
+    echo json_encode(['error' => 'Chưa đăng nhập']);
+    exit;
+}
+
+$conn = connectdb();
+
+// Lấy thông tin giáo viên
+$sql = "SELECT t.UserID, t.FullName, t.Email, t.Phone
+        FROM teachers t
+        JOIN users u ON t.UserID = u.UserID
+        WHERE u.Username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$username]);
+$teacher = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$teacher) {
+    echo json_encode(['error' => 'Không tìm thấy giáo viên']);
+    exit;
+}
+
+// Lấy danh sách lớp giáo viên phụ trách
+$sql = "SELECT ClassID, ClassName, SchoolYear, StartDate, EndDate, ClassTime, Room
+        FROM classes
+        WHERE TeacherID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$teacher['UserID']]);
+$classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Lấy học sinh từng lớp
+foreach ($classes as &$class) {
+    $stmt2 = $conn->prepare("
+        SELECT 
+            s.UserID, s.FullName,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND (a.Status = 'Có mặt' OR a.Status = 'Đi muộn')) AS attended,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND a.Status = 'Vắng mặt') AS absent,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID) AS total
+        FROM students s
+        WHERE s.ClassID = ?
+    ");
+    $stmt2->execute([$class['ClassID']]);
+    $students = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+    // Tính tỷ lệ tham gia
+    foreach ($students as &$st) {
+        $total = isset($st['total']) && is_numeric($st['total']) ? (int)$st['total'] : 0;
+        $attended = isset($st['attended']) && is_numeric($st['attended']) ? (int)$st['attended'] : 0;
+        $st['participation'] = $total > 0 ? round($attended * 100 / $total, 1) : 0;
+    }
+    unset($st);
+
+    $class['students'] = $students;
+}
+unset($class);
+
+// Lấy số buổi dạy tháng này từ bảng teaching_sessions
+$sql = "SELECT COUNT(*) AS monthly_sessions
+        FROM teaching_sessions
+        WHERE TeacherID = ?
+        AND MONTH(SessionDate) = MONTH(CURDATE())
+        AND YEAR(SessionDate) = YEAR(CURDATE())
+        AND Status = 'Đã dạy'";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$teacher['UserID']]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$monthly_sessions = $row ? (int)$row['monthly_sessions'] : 0;
+
+// Lấy nhật ký dạy tháng này
+$sql = "SELECT ts.SessionDate, c.ClassName, ts.Status, ts.Note
+        FROM teaching_sessions ts
+        JOIN classes c ON ts.ClassID = c.ClassID
+        WHERE ts.TeacherID = ?
+        AND MONTH(ts.SessionDate) = MONTH(CURDATE())
+        AND YEAR(ts.SessionDate) = YEAR(CURDATE())
+        ORDER BY ts.SessionDate DESC";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$teacher['UserID']]);
+$teaching_log = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Trả về JSON
+echo json_encode([
+    'id' => $teacher['UserID'],
+    'name' => $teacher['FullName'],
+    'email' => $teacher['Email'],
+    'phone' => $teacher['Phone'],
+    'classes' => $classes,
+    'monthly_sessions' => $monthly_sessions,
+    'teaching_log' => $teaching_log
+]);

@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadAttendance();
             loadHomework();
             loadStudentProfile();
+            loadStudentNotifications();
         })
         .catch(err => {
             alert('Không thể tải dữ liệu học sinh!');
@@ -44,6 +45,51 @@ function loadStudentDashboard() {
     }
 }
 
+// Load student notifications
+function loadStudentNotifications() {
+    const notificationList = document.querySelector('.notification-list');
+    const notificationContent = document.querySelector('.notification-content');
+    notificationList.innerHTML = '';
+    notificationContent.innerHTML = '<p>Chọn một thông báo để xem chi tiết</p>';
+
+    if (!studentData.messages || studentData.messages.length === 0) {
+        notificationList.innerHTML = '<p>Không có thông báo nào.</p>';
+        return;
+    }
+
+    studentData.messages.forEach((msg, idx) => {
+        const item = document.createElement('div');
+        item.className = `notification-item${msg.read ? '' : ' unread'}`;
+        item.innerHTML = `
+            <h4>${msg.subject}</h4>
+            <p>Từ: ${msg.from}</p>
+            <p>Ngày: ${msg.date}</p>
+        `;
+        item.onclick = () => {
+            document.querySelectorAll('.notification-item').forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            showStudentNotificationDetail(msg);
+            msg.read = true;
+            item.classList.remove('unread');
+        };
+        notificationList.appendChild(item);
+    });
+}
+
+function showStudentNotificationDetail(msg) {
+    const notificationContent = document.querySelector('.notification-content');
+    notificationContent.innerHTML = `
+        <h3>${msg.subject}</h3>
+        <p><strong>Từ:</strong> ${msg.from}</p>
+        <p><strong>Ngày:</strong> ${msg.date}</p>
+        <div class="message-body">${msg.content}</div>
+    `;
+    // Hiệu ứng animation
+    notificationContent.classList.remove('notification-content');
+    void notificationContent.offsetWidth;
+    notificationContent.classList.add('notification-content');
+}
+
 // Load class information
 function loadClassInfo() {
     document.getElementById('current-class').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : '';
@@ -58,12 +104,10 @@ function loadClassInfo() {
         studentData.class.classmates.forEach((mate, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${mate.FullName}</td>
-                <td>${mate.attended || 0}</td>
-                <td>${mate.absent || 0}</td>
-                <td>${mate.participation || 0}%</td>
-            `;
+            <td>${index + 1}</td>
+            <td>${mate.FullName}</td>
+            <td>${mate.UserID}</td>
+        `;
             classmatesTable.appendChild(row);
         });
     }
@@ -144,7 +188,7 @@ function loadHomework() {
     const homeworkList = document.getElementById('homework-list');
     homeworkList.innerHTML = '';
 
-    if (Array.isArray(studentData.homework)) {
+    if (Array.isArray(studentData.homework) && studentData.homework.length > 0) {
         studentData.homework.forEach(hw => {
             let statusClass = 'new';
             if (hw.status === 'Đã hoàn thành') statusClass = 'done';
@@ -182,6 +226,9 @@ function loadHomework() {
 
             homeworkList.appendChild(card);
         });
+    } else {
+        // Nếu không có bài tập nào
+        homeworkList.innerHTML = '<h2>Không có bài tập nào.<h2>';
     }
 }
 
@@ -220,7 +267,7 @@ function updateProfile() {
 
     fetch('../php/update_student_data.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             email: newEmail,
             phone: newPhone,
@@ -228,21 +275,21 @@ function updateProfile() {
             newPassword: newPassword
         })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Cập nhật thông tin thành công!');
-            if (oldPassword && newPassword) {
-                window.location.href = '../index.html';
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Cập nhật thông tin thành công!');
+                if (oldPassword && newPassword) {
+                    window.location.href = '../index.html';
+                }
+            } else {
+                alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
             }
-        } else {
-            alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
-        }
-    })
-    .catch(err => {
-        alert('Có lỗi xảy ra khi cập nhật!');
-        console.error(err);
-    });
+        })
+        .catch(err => {
+            alert('Có lỗi xảy ra khi cập nhật!');
+            console.error(err);
+        });
 }
 
 function updateAttendanceRate() {

@@ -40,6 +40,12 @@ body {
   visibility: visible;
 }
 
+.element:not(.active) {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
 /* Animation Effects */
 @keyframes fadeIn {
   from {

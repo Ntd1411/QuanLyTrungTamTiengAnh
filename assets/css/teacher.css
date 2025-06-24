@@ -44,6 +44,33 @@
     font-weight: bold;
 }
 
+/* Log Table */
+.table-container {
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+.table-container th {
+    background: var(--primary-color, #E4312A);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+}
+.table-container td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+.table-container tr:hover {
+    background: #f8f9fa;
+}
+
 /* Classes Container */
 .classes-container {
     display: grid;
@@ -73,6 +100,21 @@
 .class-info p {
     margin: 5px 0;
     color: #666;
+}
+
+.class-students-list {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.0s cubic-bezier(.4,2,.6,1), transform 1.0s cubic-bezier(.4,2,.6,1);
+    will-change: opacity, transform;
+    pointer-events: none;
+    display: block;
+}
+
+.class-students-list.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 /* Forms */

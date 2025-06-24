@@ -37,7 +37,7 @@ if (
             <li><a href="#home-parent" onclick="showElement('home-parent'); return false;">Trang Chủ</a></li>
             <li><a href="#children" onclick="showElement('children'); return false;">Con</a></li>
             <li><a href="#payments" onclick="showElement('payments'); return false;">Học Phí</a></li>
-            <li><a href="#messages" onclick="showElement('messages'); return false;">Tin Nhắn</a></li>
+            <li><a href="#messages" onclick="showElement('messages'); return false;">Thông báo</a></li>
             <li>
                 <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
@@ -62,7 +62,7 @@ if (
                     <p id="unpaid-amount">0 VNĐ</p>
                 </div>
                 <div class="summary-card" onclick="showElement('messages')">
-                    <h3>Tin nhắn mới</h3>
+                    <h3>Thông báo mới</h3>
                     <p id="new-messages">0</p>
                 </div>
             </div>
