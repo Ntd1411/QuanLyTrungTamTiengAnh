@@ -170,6 +170,33 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
+            case "deleteTeacher":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID']);
+                    exit;
+                }
+                $result = deleteTeacher($_POST['id']);
+                echo json_encode($result);
+                exit;
+                break;
+            case "deleteParent":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID']);
+                    exit;
+                }
+                $result = deleteParent($_POST['id']);
+                echo json_encode($result);
+                exit;
+                break;
+            case "deleteStudent":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID']);
+                    exit;
+                }
+                $result = deleteStudent($_POST['id']);
+                echo json_encode($result);
+                exit;
+                break;
 
             case "updateClass":
                 if (empty($_POST['id']) || empty($_POST['className']) || empty($_POST['teacherId'])) {
@@ -257,8 +284,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($teacher['Salary']) . "</td>";
                         echo "<td>" . htmlspecialchars($teacherClasses) . "</td>";
                         echo "<td>
-                <button onclick='showEditPopup(\"Teacher\", " . $teacher['UserID'] . ")'>Sửa</button>
-                <button onclick='confirmDelete(\"Teacher\", " . $teacher['UserID'] . ")'>Xóa</button>
+                <button onclick='showEditPopup(\"Teacher\", \"" . $teacher['UserID'] . "\")'>Sửa</button>
+                <button onclick='confirmDelete(\"Teacher\", \"" . $teacher['UserID'] . "\")'>Xóa</button>
                 </td>";
                         echo "</tr>";
                     }
@@ -282,8 +309,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "Chưa có dữ liệu") . "</td>";
                         echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "Chưa có dữ liệu") . "</td>";
                         echo "<td>
-                <button onclick='showEditPopup(\"Student\", " . $student['UserID'] . ")'>Sửa</button>
-                <button onclick='confirmDelete(\"Student\", " . $student['UserID'] . ")'>Xóa</button>
+                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'>Sửa</button>
+                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'>Xóa</button>
                 </td>";
                         echo "</tr>";
                     }
@@ -307,8 +334,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($parentChild) . "</td>";
                         echo "<td>" . htmlspecialchars($parent['UnpaidAmount'] ?? "Chưa có dữ liệu") . "</td>";
                         echo "<td>
-                <button onclick='showEditPopup(\"Parent\", " . $parent['UserID'] . ")'>Sửa</button>
-                <button onclick='confirmDelete(\"Parent\", " . $parent['UserID'] . ")'>Xóa</button>
+                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'>Sửa</button>
+                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'>Xóa</button>
                 </td>";
                         echo "</tr>";
                     }

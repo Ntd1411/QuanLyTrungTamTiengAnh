@@ -767,24 +767,27 @@ function deleteTeacher($id) {
     try {
         $conn = connectdb();
         
-        // Start transaction
-        $conn->beginTransaction();
-        
-        // Delete from users table first (trigger will handle teacher table)
-        $sql = "DELETE FROM users WHERE UserID = :id";
+        // Check if teacher has classes
+        $checkClassesSql = "SELECT COUNT(*) FROM classes WHERE TeacherID = ? AND Status = 'Đang hoạt động'";
+        $checkStmt = $conn->prepare($checkClassesSql);
+        $checkStmt->execute([$id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa giáo viên đang phụ trách lớp'];
+        }
+
+        // Call the stored procedure
+        $sql = "CALL DeleteTeacher(?)";
         $stmt = $conn->prepare($sql);
-        $result = $stmt->execute([':id' => $id]);
+        $result = $stmt->execute([$id]);
         
         if ($result) {
-            $conn->commit();
             return ['status' => 'success', 'message' => 'Xóa giáo viên thành công'];
         } else {
-            $conn->rollBack();
             return ['status' => 'error', 'message' => 'Xóa giáo viên thất bại'];
         }
-    } catch (Exception $e) {
-        $conn->rollBack();
-        return ['status' => 'error', 'message' => $e->getMessage()];
+    } catch (PDOException $e) {
+        error_log("Error in deleteTeacher: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Không thể xóa giáo viên: ' . $e->getMessage()];
     }
 }
 
@@ -792,24 +795,34 @@ function deleteStudent($id) {
     try {
         $conn = connectdb();
         
-        // Start transaction
-        $conn->beginTransaction();
-        
-        // Delete from users table first (trigger will handle student table)
-        $sql = "DELETE FROM users WHERE UserID = :id";
+        // Check if student has attendance records
+        $checkAttendanceSql = "SELECT COUNT(*) FROM attendance WHERE StudentID = ?";
+        $checkStmt = $conn->prepare($checkAttendanceSql);
+        $checkStmt->execute([$id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa học sinh có dữ liệu điểm danh'];
+        }
+
+        // Check if student has tuition records
+        $checkTuitionSql = "SELECT COUNT(*) FROM tuition WHERE StudentID = ?";
+        $checkStmt = $conn->prepare($checkTuitionSql);
+        $checkStmt->execute([$id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa học sinh có dữ liệu học phí'];
+        }
+
+        $sql = "CALL DeleteStudent(?)";
         $stmt = $conn->prepare($sql);
-        $result = $stmt->execute([':id' => $id]);
+        $result = $stmt->execute([$id]);
         
         if ($result) {
-            $conn->commit();
             return ['status' => 'success', 'message' => 'Xóa học sinh thành công'];
         } else {
-            $conn->rollBack();
             return ['status' => 'error', 'message' => 'Xóa học sinh thất bại'];
         }
-    } catch (Exception $e) {
-        $conn->rollBack();
-        return ['status' => 'error', 'message' => $e->getMessage()];
+    } catch (PDOException $e) {
+        error_log("Error in deleteStudent: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Không thể xóa học sinh: ' . $e->getMessage()];
     }
 }
 
@@ -817,24 +830,35 @@ function deleteParent($id) {
     try {
         $conn = connectdb();
         
-        // Start transaction
-        $conn->beginTransaction();
-        
-        // Delete from users table first (trigger will handle parent table)
-        $sql = "DELETE FROM users WHERE UserID = :id";
+        // Check if parent has children
+        $checkChildrenSql = "SELECT COUNT(*) FROM students WHERE ParentID = ?";
+        $checkStmt = $conn->prepare($checkChildrenSql);
+        $checkStmt->execute([$id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa phụ huynh còn có con trong hệ thống'];
+        }
+
+        // Check if parent has unpaid amount
+        $checkUnpaidSql = "SELECT UnpaidAmount FROM parents WHERE UserID = ?";
+        $checkStmt = $conn->prepare($checkUnpaidSql);
+        $checkStmt->execute([$id]);
+        $unpaid = $checkStmt->fetchColumn();
+        if ($unpaid > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa phụ huynh còn nợ học phí'];
+        }
+
+        $sql = "CALL DeleteParent(?)";
         $stmt = $conn->prepare($sql);
-        $result = $stmt->execute([':id' => $id]);
+        $result = $stmt->execute([$id]);
         
         if ($result) {
-            $conn->commit();
             return ['status' => 'success', 'message' => 'Xóa phụ huynh thành công'];
         } else {
-            $conn->rollBack();
             return ['status' => 'error', 'message' => 'Xóa phụ huynh thất bại'];
         }
-    } catch (Exception $e) {
-        $conn->rollBack();
-        return ['status' => 'error', 'message' => $e->getMessage()];
+    } catch (PDOException $e) {
+        error_log("Error in deleteParent: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Không thể xóa phụ huynh: ' . $e->getMessage()];
     }
 }
 

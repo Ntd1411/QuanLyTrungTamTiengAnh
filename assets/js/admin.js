@@ -314,6 +314,7 @@ function fillEditForm(type, data) {
 
         case 'Teacher':
             html = `
+            <input type="hidden" name="type" value="teacher">
                 <input type="hidden" name="action" value="updateTeacher">
                 <input type="hidden" name="id" value="${data.UserID}">
                 <div class="form-group">
@@ -347,6 +348,7 @@ function fillEditForm(type, data) {
 
         case 'Student':
             html = `
+            <input type="hidden" name="type" value="student">
                 <input type="hidden" name="action" value="updateStudent">
                 <input type="hidden" name="id" value="${data.UserID}">
                 <div class="form-group">
@@ -388,6 +390,7 @@ function fillEditForm(type, data) {
 
         case 'Parent':
             html = `
+            <input type="hidden" name="type" value="parent">
                 <input type="hidden" name="action" value="updateParent">
                 <input type="hidden" name="id" value="${data.UserID}">
                 <div class="form-group">

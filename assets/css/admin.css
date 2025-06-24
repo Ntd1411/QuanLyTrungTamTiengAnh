@@ -766,7 +766,7 @@ button:hover {
     z-index: -100;
     max-width: 1000px;
     width: 90%;
-    transition: 0.1s;
+    /* transition: 0.1s; */
 }
 
 .confirm-popup h3,
