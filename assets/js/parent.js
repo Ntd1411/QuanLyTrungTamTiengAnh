@@ -152,6 +152,29 @@ function updateProfile() {
     const oldPassword = document.getElementById('profile-old-password').value;
     const newPassword = document.getElementById('profile-new-password').value;
 
+    // Regex kiểm tra
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^0\d{9}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{6,}$/;
+
+    // Kiểm tra email
+    if (!emailRegex.test(newEmail)) {
+        alert('Email không hợp lệ, vui lòng nhập theo định dạng example@email.domainname!');
+        return;
+    }
+    // Kiểm tra số điện thoại
+    if (!phoneRegex.test(newPhone)) {
+        alert('Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!');
+        return;
+    }
+    // Kiểm tra mật khẩu mới nếu có nhập
+    if (oldPassword || newPassword) {
+        if (!passwordRegex.test(newPassword)) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
+            return;
+        }
+    }
+
     fetch('../php/update_parent_data.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -186,18 +209,26 @@ function payFees() {
     document.getElementById('pay-fee-modal').classList.add('show');
     const select = document.getElementById('fee-student');
     select.innerHTML = '';
-    parentData.children.forEach(child => {
+    // Lọc chỉ những con còn nợ học phí
+    const unpaidChildren = parentData.children.filter(child => (child.fee - child.paid - (child.discount || 0)) > 0);
+    unpaidChildren.forEach(child => {
         const option = document.createElement('option');
         option.value = child.id;
         option.textContent = child.name;
         select.appendChild(option);
     });
 
-    // Gán giá trị mặc định cho số tiền đóng khi mở form
-    updateFeeAmountAndNote();
-
-    // Khi chọn con khác thì cập nhật lại số tiền đóng
-    select.onchange = updateFeeAmountAndNote;
+    // Nếu không còn con nào nợ học phí, disable form
+    if (unpaidChildren.length === 0) {
+        select.innerHTML = '<option>Không có con nào còn nợ học phí</option>';
+        document.getElementById('fee-amount').value = 0;
+        document.getElementById('fee-amount').readOnly = true;
+        document.getElementById('fee-note').value = '';
+    } else {
+        // Gán giá trị mặc định cho số tiền đóng khi mở form
+        updateFeeAmountAndNote();
+        select.onchange = updateFeeAmountAndNote;
+    }
 }
 
 function updateFeeAmountAndNote() {
