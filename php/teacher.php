@@ -53,13 +53,13 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <div class="main-content-teacher">
         <!-- Home Section -->
         <div id="home-teacher" class="element active">
-            <h2>Chào mừng, <span id="teacher-name">Giáo viên</span></h2>
+            <h2>Chào mừng, giáo viên <span id="teacher-name">Giáo viên</span></h2>
             <div class="dashboard-summary">
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('schedule')">
                     <h3>Tổng số lớp</h3>
                     <p id="total-classes">0</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('my-classes')">
                     <h3>Tổng số học sinh</h3>
                     <p id="total-students">0</p>
                 </div>
@@ -67,6 +67,20 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <h3>Buổi dạy tháng này</h3>
                     <p id="monthly-sessions">0</p>
                 </div>
+            </div>
+            <h2>Nhật ký dạy tháng này</h2>
+            <div class="teaching-log-table table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ngày dạy</th>
+                            <th>Lớp</th>
+                            <th>Trạng thái</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teaching-log-body"></tbody>
+                </table>
             </div>
         </div>
 
@@ -107,6 +121,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         <div id="my-classes" class="element">
             <div class="classes-container">
                 <!-- Danh sách lớp sẽ được thêm vào đây bằng JavaScript -->
+            </div>
+            <div class="class-students-list" style="display:none; margin-top:24px;">
+                <h3>Danh sách học sinh</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Họ và tên</th>
+                                <th>Số buổi học</th>
+                                <th>Số buổi nghỉ</th>
+                                <th>Tỷ lệ tham gia</th>
+                                <th>Mã học sinh</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-class-students-table"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

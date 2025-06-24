@@ -34,15 +34,58 @@ if (!$student) {
     exit;
 }
 
+// Lấy tin nhắn/thông báo cho học sinh
+$sql = "SELECT MessageID, SenderID, Subject, Content, SendDate, IsRead
+        FROM messages
+        WHERE ReceiverID = ?
+        ORDER BY SendDate DESC
+        LIMIT 20";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$student['UserID']]);
+$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Xử lý dữ liệu tin nhắn cho frontend
+foreach ($messages as $i => $msg) {
+    $senderName = $msg['SenderID'];
+    // Thử lấy tên từ teachers
+    $stmtSender = $conn->prepare("SELECT FullName FROM teachers WHERE UserID = ?");
+    $stmtSender->execute([$msg['SenderID']]);
+    $rowSender = $stmtSender->fetch(PDO::FETCH_ASSOC);
+    if (!$rowSender) {
+        // Nếu không có, thử lấy từ students
+        $stmtSender = $conn->prepare("SELECT FullName FROM students WHERE UserID = ?");
+        $stmtSender->execute([$msg['SenderID']]);
+        $rowSender = $stmtSender->fetch(PDO::FETCH_ASSOC);
+    }
+    if (!$rowSender) {
+        // Nếu không có, thử lấy từ parents
+        $stmtSender = $conn->prepare("SELECT FullName FROM parents WHERE UserID = ?");
+        $stmtSender->execute([$msg['SenderID']]);
+        $rowSender = $stmtSender->fetch(PDO::FETCH_ASSOC);
+    }
+    if ($rowSender && $rowSender['FullName']) {
+        $senderName = $rowSender['FullName'];
+    }
+    $messages[$i] = [
+        'id' => $msg['MessageID'],
+        'subject' => $msg['Subject'],
+        'content' => $msg['Content'],
+        'from' => $senderName,
+        'date' => date('d/m/Y H:i', strtotime($msg['SendDate'])),
+        'read' => $msg['IsRead'] ? true : false
+    ];
+}
+unset($msg);
+
 // Lấy danh sách bạn cùng lớp
 $classmates = [];
 if ($student['ClassID']) {
-    $sql = "SELECT s.UserID, s.FullName,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND (a.Status = 'Có mặt' OR a.Status = 'Đi muộn')) AS attended,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND a.Status = 'Vắng mặt') AS absent,
-                (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID) AS total
-            FROM students s
-            WHERE s.ClassID = ?";
+    $sql = "SELECT s.UserID, s.FullName, s.BirthDate,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND (a.Status = 'Có mặt' OR a.Status = 'Đi muộn')) AS attended,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID AND a.Status = 'Vắng mặt') AS absent,
+            (SELECT COUNT(*) FROM attendance a WHERE a.StudentID = s.UserID) AS total
+        FROM students s
+        WHERE s.ClassID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$student['ClassID']]);
     $classmates = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -95,5 +138,6 @@ echo json_encode([
         'absent' => $absent,
         'history' => $history
     ],
-    'homework' => $homework
+    'homework' => $homework,
+    'messages' => $messages
 ]);

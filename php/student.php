@@ -4,8 +4,9 @@ ob_start();
 
 if (
     ((isset($_COOKIE['is_login']) && $_COOKIE['is_login'] == true && isset($_COOKIE['role']) && $_COOKIE['role'] == 2 && isset($_COOKIE['username']))
-    || (isset($_SESSION['role']) && $_SESSION['role'] == 2 && isset($_SESSION['username']))
-)) {
+        || (isset($_SESSION['role']) && $_SESSION['role'] == 2 && isset($_SESSION['username']))
+    )
+) {
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : $_COOKIE['username'];
 } else {
     echo "<script>alert('Vui lòng đăng nhập vào tài khoản học sinh để xem trang này');</script>";
@@ -16,6 +17,7 @@ if (
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +26,7 @@ if (
     <title>Student Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
 </head>
+
 <body>
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
@@ -36,7 +39,7 @@ if (
             <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
             <li><a href="#homework" onclick="showElement('homework'); return false;">Bài Tập</a></li>
             <li>
-                <a href="#account">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault()">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
@@ -67,16 +70,28 @@ if (
                     <p id="new-homework">0</p>
                 </div>
             </div>
+            <h2>Thông báo</h2>
+            <!-- Bảng thông báo -->
+            <div id="student-notifications" class="notification-container">
+                <div class="notification-list">
+                    <!-- Danh sách thông báo sẽ được thêm vào đây bằng JavaScript -->
+                </div>
+                <div class="notification-detail">
+                    <div class="notification-content">
+                        <!-- Nội dung chi tiết thông báo -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- My Class Section -->
         <div id="my-class" class="element">
             <div class="class-info-card">
                 <div class="info-group">
-                    <h3>Thông tin chung</h3>
-                    <p>Lớp: <span id="current-class">Lớp 3.1</span></p>
-                    <p>Giáo viên: <span id="teacher-name">Cô Thanh Hương</span></p>
-                    <p>Thời gian học: <span id="class-schedule">Thứ 2-4-6 (18:00-19:30)</span></p>
+                    <h3>Thông tin lớp học</h3>
+                    <p>Lớp: <span id="current-class"></span></p>
+                    <p>Giảng Viên: <span id="teacher-name"></span></p>
+                    <p>Lịch Học: <span id="class-schedule"></span></p>
                 </div>
                 <div class="classmates-list">
                     <h3>Danh sách học sinh trong lớp</h3>
@@ -86,9 +101,7 @@ if (
                                 <tr>
                                     <th>STT</th>
                                     <th>Họ và tên</th>
-                                    <th>Số buổi học</th>
-                                    <th>Số buổi nghỉ</th>
-                                    <th>Tỷ lệ tham gia</th>
+                                    <th>Ngày sinh</th>
                                 </tr>
                             </thead>
                             <tbody id="classmates-table"></tbody>
@@ -192,4 +205,5 @@ if (
     <script src="../assets/js/student.js"></script>
     <script src="../assets/js/update_page.js"></script>
 </body>
+
 </html>
