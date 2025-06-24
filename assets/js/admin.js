@@ -511,3 +511,17 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
         });
 });
 
+// Initialize Select2 when document is ready
+$(document).ready(function() {
+    $('.select2-dropdown').select2({
+        placeholder: 'Tìm kiếm người nhận...',
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "Không tìm thấy kết quả";
+            }
+        }
+    });
+});
+

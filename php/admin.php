@@ -26,6 +26,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <link rel="stylesheet" href="../assets/css/admin.css">
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -44,6 +47,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <li><a href="#manage-parents" onclick="showElement('manage-parents'); return false;">Phụ Huynh</a></li>
             <li><a href="#statistics" onclick="showElement('statistics'); return false;">Thống Kê</a></li>
             <li><a href="#promotions" onclick="showElement('promotions'); return false;">Quảng Cáo</a></li>
+            <li><a href="#noti" onclick="showElement('noti'); return false;">Thông báo</a></li>
 
             <li>
                 <a href="#account">Tài Khoản</a>
@@ -111,10 +115,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="quick-actions">
                     <h3>Thao tác nhanh</h3>
                     <div class="action-buttons">
-                        <button onclick="showElement('manage-classes')">Thêm lớp mới</button>
-                        <button onclick="showElement('manage-teachers')">Thêm giáo viên</button>
-                        <button onclick="showElement('manage-students')">Thêm học sinh</button>
-                        <button onclick="showElement('manage-parents')">Thêm phụ huynh</button>
+                        <button onclick="showElement('manage-classes')">Quản lý lớp</button>
+                        <button onclick="showElement('manage-teachers')">Quản lý giáo viên</button>
+                        <button onclick="showElement('manage-students')">Quản lý học sinh</button>
+                        <button onclick="showElement('manage-parents')">Quản lý phụ huynh</button>
                     </div>
                 </div>
             </div>
@@ -133,10 +137,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Giáo viên phụ trách:</label>
-                        <select name="teacherId" id="teacher" required>
+                        <select name="teacherId" class="select2-search" required>
                             <option value="">Chọn giáo viên</option>
                             <?php
-                            showOptionTeacherName();
+                            $teachers = getDataFromTable("teachers");
+                            if ($teachers) {
+                                foreach ($teachers as $teacher) {
+                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']}</option>";
+                                }
+                            }
                             ?>
                         </select>
                     </div>
@@ -161,7 +170,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Phòng học:</label>
-                        <select id="class-room" name="room" required>
+                        <select name="room" class="select2-search" required>
                             <option value="">Chọn phòng học</option>
                             <option value="P201">P201</option>
                             <option value="P202">P202</option>
@@ -302,22 +311,31 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-group">
                         <label>Lớp:</label>
-                        <select id="student-class" name="studentClass">
+                        <select name="studentClass" class="select2-search">
                             <option value="">Chọn lớp</option>
                             <?php
-                            showOptionClassName();
+                            $classes = getDataFromTable("classes");
+                            if ($classes) {
+                                foreach ($classes as $class) {
+                                    if($class['Status'] == "Đang hoạt động")
+                                    echo "<option value='{$class['ClassID']}'>{$class['ClassName']}</option>";
+                                }
+                            }
                             ?>
-
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Phụ huynh:</label>
-                        <select id="parent-id" name="parentID">
+                        <select name="parentID" class="select2-search">
                             <option value="">Chọn phụ huynh</option>
                             <?php
-                            showOptionParent();
+                            $parents = getDataFromTable("parents");
+                            if ($parents) {
+                                foreach ($parents as $parent) {
+                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']}</option>";
+                                }
+                            }
                             ?>
-
                         </select>
                     </div>
 
@@ -453,6 +471,97 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div id="promo-list"></div>
             </div>
 
+            <!-- Notification -->
+            <div id="noti" class="element">
+                <h2>Gửi thông báo</h2>
+                <form id="notification-form" class="notification-form">
+                    <div class="form-group">
+                        <label>Người nhận:</label>
+                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;" required>
+                            <option value="">Chọn người nhận</option>
+                            <?php
+                            // Get teachers
+                            $teachers = getDataFromTable("teachers");
+                            if ($teachers) {
+                                echo "<optgroup label='Giáo viên'>";
+                                foreach ($teachers as $teacher) {
+                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']} (GV)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get students
+                            $students = getDataFromTable("students");
+                            if ($students) {
+                                echo "<optgroup label='Học sinh'>";
+                                foreach ($students as $student) {
+                                    echo "<option value='{$student['UserID']}'>{$student['FullName']} (HS)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get parents
+                            $parents = getDataFromTable("parents");
+                            if ($parents) {
+                                echo "<optgroup label='Phụ huynh'>";
+                                foreach ($parents as $parent) {
+                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']} (PH)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Chủ đề:</label>
+                        <input type="text" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nội dung:</label>
+                        <textarea name="content" required rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Phương thức gửi:</label>
+                        <div class="send-methods">
+                            <label>
+                                <input type="checkbox" name="sendMethods[]" value="web" checked> Website
+                            </label>
+                            <label>
+                                <input type="checkbox" name="sendMethods[]" value="zalo"> Zalo
+                            </label>
+                            <label>
+                                <input type="checkbox" name="sendMethods[]" value="messenger"> Messenger
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Gửi thông báo</button>
+                        <button type="button" onclick="document.getElementById('notification-form').reset()">Làm mới</button>
+                    </div>
+                </form>
+
+                <div class="message-history">
+                    <h3>Lịch sử thông báo</h3>
+                    <div class="table-container">
+                        <table id="message-table">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Người nhận</th>
+                                    <th>Chủ đề</th>
+                                    <th>Nội dung</th>
+                                    <th>Phương thức gửi</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="message-table-body">
+                                <!-- Will be filled by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Add Account Info Section -->
             <div id="account-info" class="element">
                 <h2>Thông Tin Tài Khoản</h2>
@@ -565,6 +674,44 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/update_page.js"></script>
+    <script>
+        // Initialize Select2 for the recipient select element
+        $(document).ready(function () {
+            $('.select2-dropdown').select2({
+                placeholder: "Chọn người nhận",
+                allowClear: true,
+                minimumResultsForSearch: Infinity // Disable search box
+            });
+
+            $('.recipient-select').select2({
+                placeholder: "Tìm kiếm người nhận...",
+                allowClear: true,
+                minimumResultsForSearch: 2,
+                language: {
+                    noResults: function() {
+                        return "Không tìm thấy kết quả";
+                    },
+                    searching: function() {
+                        return "Đang tìm kiếm...";
+                    }
+                }
+            });
+
+            $('.select2-search').select2({
+                placeholder: "Tìm kiếm...",
+                allowClear: true,
+                width: '100%',
+                language: {
+                    noResults: function() {
+                        return "Không tìm thấy kết quả";
+                    },
+                    searching: function() {
+                        return "Đang tìm kiếm...";
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

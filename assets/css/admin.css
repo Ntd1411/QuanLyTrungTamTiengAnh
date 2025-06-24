@@ -84,7 +84,7 @@
     background: white;
 }
 
-.form-group input:focus,
+
 .form-group select:focus,
 .form-group textarea:focus {
     border-color: var(--primary-color);
@@ -824,4 +824,80 @@ button:hover {
     background: #6c757d;
     color: white;
     border: none;
+}
+
+/* Select2 Custom Styles for all dropdowns */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 38px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important;
+    padding-left: 12px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px !important;
+}
+
+.select2-dropdown {
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.select2-search__field {
+    height: 34px !important;
+    padding: 6px 12px !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--primary-color);
+}
+
+/* Send Methods Section */
+.send-methods {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.send-methods label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.send-methods label:hover {
+    border-color: var(--primary-color);
+    background-color: #fff5f5;
+}
+
+.send-methods input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--primary-color);
+}
+
+.send-methods label:has(input:checked) {
+    background-color: #fff5f5;
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .send-methods {
+        flex-direction: column;
+    }
 }
