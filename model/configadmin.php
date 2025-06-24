@@ -540,3 +540,346 @@ function changeAdminPassword($currentPassword, $newPassword, $confirmPassword) {
         $conn = null;
     }
 }
+
+function getClassById($id) {
+    try {
+        $conn = connectdb();
+        $sql = "SELECT * FROM classes WHERE ClassID = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $class = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($class) {
+            // Get teacher options
+            $teachers = getDataFromTable("teachers");
+            $teacherOptions = "";
+            foreach ($teachers as $teacher) {
+                $selected = ($teacher['UserID'] == $class['TeacherID']) ? 'selected' : '';
+                $teacherOptions .= "<option value='{$teacher['UserID']}' {$selected}>{$teacher['FullName']}</option>";
+            }
+            $class['teacherOptions'] = $teacherOptions;
+            return ['status' => 'success', 'data' => $class];
+        }
+        return ['status' => 'error', 'message' => 'Không tìm thấy lớp'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function getTeacherById($id) {
+    try {
+        $conn = connectdb();
+        $sql = "SELECT * FROM teachers WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $teacher = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $teacher ? ['status' => 'success', 'data' => $teacher] : 
+                        ['status' => 'error', 'message' => 'Không tìm thấy giáo viên'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function getStudentById($id) {
+    try {
+        $conn = connectdb();
+        $sql = "SELECT * FROM students WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($student) {
+            // Get class options
+            $classes = getDataFromTable("classes");
+            $classOptions = "";
+            foreach ($classes as $class) {
+                $selected = ($class['ClassID'] == $student['ClassID']) ? 'selected' : '';
+                $classOptions .= "<option value='{$class['ClassID']}' {$selected}>{$class['ClassName']}</option>";
+            }
+            $student['classOptions'] = $classOptions;
+
+            // Get parent options
+            $parents = getDataFromTable("parents");
+            $parentOptions = "";
+            foreach ($parents as $parent) {
+                $selected = ($parent['UserID'] == $student['ParentID']) ? 'selected' : '';
+                $parentOptions .= "<option value='{$parent['UserID']}' {$selected}>{$parent['FullName']}</option>";
+            }
+            $student['parentOptions'] = $parentOptions;
+
+            return ['status' => 'success', 'data' => $student];
+        }
+        return ['status' => 'error', 'message' => 'Không tìm thấy học sinh'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function getParentById($id) {
+    try {
+        $conn = connectdb();
+        $sql = "SELECT * FROM parents WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $parent = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $parent ? ['status' => 'success', 'data' => $parent] : 
+                        ['status' => 'error', 'message' => 'Không tìm thấy phụ huynh'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function updateClass($data) {
+    try {
+        $conn = connectdb();
+        $sql = "UPDATE classes SET 
+                ClassName = :className,
+                TeacherID = :teacherId,
+                Room = :room,
+                ClassTime = :classTime,
+                StartDate = :startDate,
+                EndDate = :endDate,
+                SchoolYear = :schoolYear,
+                Status = :status
+                WHERE ClassID = :id";
+                
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $data['id'],
+            ':className' => $data['className'],
+            ':teacherId' => $data['teacherId'],
+            ':room' => $data['room'],
+            ':classTime' => $data['classTime'],
+            ':startDate' => $data['startDate'],
+            ':endDate' => $data['endDate'],
+            ':schoolYear' => $data['schoolYear'],
+            ':status' => $data['status']
+        ]);
+
+        return $result ? 
+            ['status' => 'success', 'message' => 'Cập nhật lớp thành công'] :
+            ['status' => 'error', 'message' => 'Cập nhật lớp thất bại'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function updateTeacher($data) {
+    try {
+        $conn = connectdb();
+        $sql = "UPDATE teachers SET 
+                FullName = :fullName,
+                Email = :email,
+                Phone = :phone,
+                Gender = :gender,
+                BirthDate = :birthDate,
+                Salary = :salary
+                WHERE UserID = :id";
+                
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $data['id'],
+            ':fullName' => $data['fullName'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':gender' => $data['gender'],
+            ':birthDate' => $data['birthDate'],
+            ':salary' => $data['salary']
+        ]);
+
+        return $result ? 
+            ['status' => 'success', 'message' => 'Cập nhật giáo viên thành công'] :
+            ['status' => 'error', 'message' => 'Cập nhật giáo viên thất bại'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function updateStudent($data) {
+    try {
+        $conn = connectdb();
+        $sql = "UPDATE students SET 
+                FullName = :fullName,
+                Email = :email,
+                Phone = :phone,
+                Gender = :gender,
+                BirthDate = :birthDate,
+                ClassID = :classId,
+                ParentID = :parentId
+                WHERE UserID = :id";
+                
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $data['id'],
+            ':fullName' => $data['fullName'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':gender' => $data['gender'],
+            ':birthDate' => $data['birthDate'],
+            ':classId' => $data['classId'],
+            ':parentId' => $data['parentId']
+        ]);
+
+        return $result ? 
+            ['status' => 'success', 'message' => 'Cập nhật học sinh thành công'] :
+            ['status' => 'error', 'message' => 'Cập nhật học sinh thất bại'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function updateParent($data) {
+    try {
+        $conn = connectdb();
+        $sql = "UPDATE parents SET 
+                FullName = :fullName,
+                Email = :email,
+                Phone = :phone,
+                Gender = :gender,
+                BirthDate = :birthDate,
+                ZaloID = :zaloId,
+                UnpaidAmount = :unpaidAmount
+                WHERE UserID = :id";
+                
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $data['id'],
+            ':fullName' => $data['fullName'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':gender' => $data['gender'],
+            ':birthDate' => $data['birthDate'],
+            ':zaloId' => $data['zaloId'],
+            ':unpaidAmount' => $data['unpaidAmount']
+        ]);
+
+        return $result ? 
+            ['status' => 'success', 'message' => 'Cập nhật phụ huynh thành công'] :
+            ['status' => 'error', 'message' => 'Cập nhật phụ huynh thất bại'];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function deleteTeacher($id) {
+    try {
+        $conn = connectdb();
+        
+        // Start transaction
+        $conn->beginTransaction();
+        
+        // Delete from users table first (trigger will handle teacher table)
+        $sql = "DELETE FROM users WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([':id' => $id]);
+        
+        if ($result) {
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Xóa giáo viên thành công'];
+        } else {
+            $conn->rollBack();
+            return ['status' => 'error', 'message' => 'Xóa giáo viên thất bại'];
+        }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function deleteStudent($id) {
+    try {
+        $conn = connectdb();
+        
+        // Start transaction
+        $conn->beginTransaction();
+        
+        // Delete from users table first (trigger will handle student table)
+        $sql = "DELETE FROM users WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([':id' => $id]);
+        
+        if ($result) {
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Xóa học sinh thành công'];
+        } else {
+            $conn->rollBack();
+            return ['status' => 'error', 'message' => 'Xóa học sinh thất bại'];
+        }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function deleteParent($id) {
+    try {
+        $conn = connectdb();
+        
+        // Start transaction
+        $conn->beginTransaction();
+        
+        // Delete from users table first (trigger will handle parent table)
+        $sql = "DELETE FROM users WHERE UserID = :id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([':id' => $id]);
+        
+        if ($result) {
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Xóa phụ huynh thành công'];
+        } else {
+            $conn->rollBack();
+            return ['status' => 'error', 'message' => 'Xóa phụ huynh thất bại'];
+        }
+    } catch (Exception $e) {
+        $conn->rollBack();
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+function deleteClass($id) {
+    try {
+        $conn = connectdb();
+        
+        // Start transaction
+        $conn->beginTransaction();
+        
+        // Check if class has students
+        $checkStudentsSql = "SELECT COUNT(*) FROM students WHERE ClassID = :id";
+        $checkStmt = $conn->prepare($checkStudentsSql);
+        $checkStmt->execute([':id' => $id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa lớp vì còn học sinh trong lớp'];
+        }
+
+        // Check if class has attendance records
+        $checkAttendanceSql = "SELECT COUNT(*) FROM attendance WHERE ClassID = :id";
+        $checkStmt = $conn->prepare($checkAttendanceSql);
+        $checkStmt->execute([':id' => $id]);
+        if ($checkStmt->fetchColumn() > 0) {
+            return ['status' => 'error', 'message' => 'Không thể xóa lớp vì có dữ liệu điểm danh'];
+        }
+
+        // Delete the class
+        $sql = "DELETE FROM classes WHERE ClassID = :id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([':id' => $id]);
+        
+        if ($result) {
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Xóa lớp thành công'];
+        } else {
+            $conn->rollBack();
+            return ['status' => 'error', 'message' => 'Xóa lớp thất bại'];
+        }
+    } catch (Exception $e) {
+        if (isset($conn)) {
+            $conn->rollBack();
+        }
+        error_log("Error in deleteClass: " . $e->getMessage());
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+

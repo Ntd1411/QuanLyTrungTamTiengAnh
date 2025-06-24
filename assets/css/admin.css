@@ -2,7 +2,7 @@
     --primary-color: #E4312A;
     --border-color: #e0e0e0;
     --hover-color: #f5f5f5;
-    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main-content-admin {
@@ -362,7 +362,8 @@ tr:not(:last-child) {
 .table-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Reduced from 800px */
+    min-width: 600px;
+    /* Reduced from 800px */
 }
 
 .table-container th {
@@ -370,23 +371,29 @@ tr:not(:last-child) {
     color: white;
     font-weight: 500;
     text-align: left;
-    padding: 10px 12px; /* Reduced padding */
-    font-size: 0.8rem; /* Smaller font size */
+    padding: 10px 12px;
+    /* Reduced padding */
+    font-size: 0.8rem;
+    /* Smaller font size */
     white-space: nowrap;
 }
 
 .table-container td {
-    padding: 8px 12px; /* Reduced padding */
+    padding: 8px 12px;
+    /* Reduced padding */
     border-bottom: 1px solid #e1e8ef;
     color: #2c3e50;
-    font-size: 0.8rem; /* Smaller font size */
+    font-size: 0.8rem;
+    /* Smaller font size */
     white-space: nowrap;
 }
 
 /* Table Actions Adjustment */
 .table-actions button {
-    padding: 4px 8px; /* Smaller buttons */
-    font-size: 0.75rem; /* Smaller button text */
+    padding: 4px 8px;
+    /* Smaller buttons */
+    font-size: 0.75rem;
+    /* Smaller button text */
 }
 
 .table-actions {
@@ -432,7 +439,8 @@ tr:not(:last-child) {
         margin-top: 15px;
     }
 
-    th, td {
+    th,
+    td {
         padding: 10px;
     }
 
@@ -452,12 +460,12 @@ tr:not(:last-child) {
     .table-container {
         box-shadow: none;
     }
-    
+
     .table-container table {
         font-size: 0.85rem;
     }
-    
-    .table-container td, 
+
+    .table-container td,
     .table-container th {
         padding: 8px 10px;
     }
@@ -667,7 +675,7 @@ button:hover {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     gap: 15px;
@@ -700,7 +708,7 @@ button:hover {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .quick-actions h3 {
@@ -731,3 +739,89 @@ button:hover {
     transform: translateY(-2px);
 }
 
+/* popup edit */
+/* Popup styles */
+.popup-overlay-2 {
+    /* display: none; */
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -100;
+}
+
+.edit-popup {
+    /* display: none; */
+    opacity: 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 50px;
+    border-radius: 5px;
+    z-index: -100;
+    max-width: 1000px;
+    width: 90%;
+    transition: 0.1s;
+}
+
+.confirm-popup h3,
+.edit-popup h3 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--primary-color);
+    text-align: left;
+}
+
+#edit-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.confirm-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px 40px;
+    border-radius: 5px;
+    z-index: 10001;
+    text-align: center;
+}
+
+.popup-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.popup-buttons button {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.popup-buttons .confirm {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+
+.popup-buttons .cancel {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
