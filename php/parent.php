@@ -159,6 +159,14 @@ if (
                     <label>Zalo ID:</label>
                     <input type="text" id="profile-zalo">
                 </div>
+                <div class="form-group">
+                    <label>Mật khẩu cũ:</label>
+                    <input type="password" id="profile-old-password">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới:</label>
+                    <input type="password" id="profile-new-password">
+                </div>
                 <button onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
         </div>

@@ -1,6 +1,6 @@
 let studentData = {};
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     fetch('../php/get_student_data.php')
         .then(res => res.json())
         .then(data => {
@@ -33,6 +33,15 @@ function loadStudentDashboard() {
         ? studentData.homework.filter(hw => hw.status === 'Chưa hoàn thành').length
         : 0;
     document.getElementById('new-homework').textContent = newHomework;
+
+    // Đổi viền thành xanh lá nếu số buổi nghỉ bằng 0
+    const absentElem = document.getElementById('absent-sessions');
+    const absentCard = absentElem.closest('.summary-card');
+    if (absentElem.textContent === "0" || absentElem.textContent === 0) {
+        absentCard.classList.add('green-border');
+    } else {
+        absentCard.classList.remove('green-border');
+    }
 }
 
 // Load class information
@@ -113,11 +122,11 @@ function updateAttendanceProgress(attended, total) {
 
     // Update progress and value
     progressCircle.style.setProperty('--progress', progress + 'deg');
-    
+
     // Animate the percentage
     let currentValue = 0;
     const step = rate / 30; // Divide animation into 30 steps
-    
+
     const animateValue = () => {
         if (currentValue < rate) {
             currentValue += step;
@@ -126,7 +135,7 @@ function updateAttendanceProgress(attended, total) {
             requestAnimationFrame(animateValue);
         }
     };
-    
+
     animateValue();
 }
 
@@ -137,14 +146,40 @@ function loadHomework() {
 
     if (Array.isArray(studentData.homework)) {
         studentData.homework.forEach(hw => {
+            let statusClass = 'new';
+            if (hw.status === 'Đã hoàn thành') statusClass = 'done';
+            else if (hw.status === 'Chưa hoàn thành') statusClass = 'unfinished';
+
             const card = document.createElement('div');
-            card.className = `homework-card ${hw.status === 'Đã hoàn thành' ? 'done' : 'new'}`;
+            card.className = `homework-card ${statusClass} flex-row`;
             card.innerHTML = `
-                <h3>${hw.title}</h3>
-                <p>${hw.description}</p>
-                <p>Hạn nộp: ${hw.dueDate}</p>
-                <p>Trạng thái: ${hw.status}</p>
+                <div class="homework-info">
+                    <h3>${hw.title}</h3>
+                    <p>${hw.description}</p>
+                    <p>Hạn nộp: ${hw.dueDate}</p>
+                    <p>Trạng thái: ${hw.status}</p>
+                </div>
+                <div class="homework-submit">
+                    <input type="file" class="homework-file" accept=".pdf,.doc,.docx,.jpg,.png">
+                    <button class="submit-btn" disabled>Nộp</button>
+                </div>
             `;
+
+            // Chỉ cho nộp bài nếu bài tập chưa hoàn thành
+            if (hw.status === 'Chưa hoàn thành') {
+                const fileInput = card.querySelector('.homework-file');
+                const submitBtn = card.querySelector('.submit-btn');
+                fileInput.addEventListener('change', function () {
+                    submitBtn.disabled = !fileInput.files.length;
+                    if (submitBtn.disabled) {
+                        submitBtn.classList.remove('active');
+                    } else {
+                        submitBtn.classList.add('active');
+                    }
+                });
+                // Xử lý sự kiện submit
+            }
+
             homeworkList.appendChild(card);
         });
     }
@@ -162,33 +197,72 @@ function loadStudentProfile() {
 function updateProfile() {
     const newEmail = document.getElementById('profile-email').value;
     const newPhone = document.getElementById('profile-phone').value;
-    const newPassword = document.getElementById('profile-password').value;
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
 
-    // Here you would typically send this data to the server
-    studentData.email = newEmail;
-    studentData.phone = newPhone;
-    
-    alert('Thông tin đã được cập nhật');
+    // Kiểm tra định dạng
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^0\d{9}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{6,}$/;
+
+    if (!emailRegex.test(newEmail)) {
+        alert('Email không hợp lệ!');
+        return;
+    }
+    if (!phoneRegex.test(newPhone)) {
+        alert('Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!');
+        return;
+    }
+    if ((oldPassword || newPassword) && !passwordRegex.test(newPassword)) {
+        alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
+        return;
+    }
+
+    fetch('../php/update_student_data.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            email: newEmail,
+            phone: newPhone,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cập nhật thông tin thành công!');
+            if (oldPassword && newPassword) {
+                window.location.href = '../index.html';
+            }
+        } else {
+            alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+        }
+    })
+    .catch(err => {
+        alert('Có lỗi xảy ra khi cập nhật!');
+        console.error(err);
+    });
 }
 
 function updateAttendanceRate() {
     const attended = studentData.attendance.attended;
     const total = attended + studentData.attendance.absent;
     const rate = Math.round((attended / total) * 100);
-    
+
     // Cập nhật biểu đồ tròn
     const progressCircle = document.getElementById('attendance-rate');
     progressCircle.style.setProperty('--progress', rate + '%');
-    
+
     // Cập nhật giá trị
     const progressValue = progressCircle.querySelector('.progress-value');
     progressValue.textContent = rate + '%';
-    
+
     // Hiệu ứng số đếm
     let currentValue = 0;
     const duration = 1000;
     const increment = rate / (duration / 16);
-    
+
     const animate = () => {
         if (currentValue < rate) {
             currentValue += increment;
@@ -197,6 +271,6 @@ function updateAttendanceRate() {
             requestAnimationFrame(animate);
         }
     };
-    
+
     animate();
 }

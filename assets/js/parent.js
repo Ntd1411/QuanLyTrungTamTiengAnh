@@ -149,13 +149,59 @@ function updateProfile() {
     const newEmail = document.getElementById('profile-email').value;
     const newPhone = document.getElementById('profile-phone').value;
     const newZalo = document.getElementById('profile-zalo').value;
+    const oldPassword = document.getElementById('profile-old-password').value;
+    const newPassword = document.getElementById('profile-new-password').value;
 
-    // Here you would typically send this data to the server
-    parentData.email = newEmail;
-    parentData.phone = newPhone;
-    parentData.zalo = newZalo;
-    
-    alert('Thông tin đã được cập nhật');
+    // Regex kiểm tra
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^0\d{9}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{6,}$/;
+
+    // Kiểm tra email
+    if (!emailRegex.test(newEmail)) {
+        alert('Email không hợp lệ, vui lòng nhập theo định dạng example@email.domainname!');
+        return;
+    }
+    // Kiểm tra số điện thoại
+    if (!phoneRegex.test(newPhone)) {
+        alert('Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!');
+        return;
+    }
+    // Kiểm tra mật khẩu mới nếu có nhập
+    if (oldPassword || newPassword) {
+        if (!passwordRegex.test(newPassword)) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
+            return;
+        }
+    }
+
+    fetch('../php/update_parent_data.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            email: newEmail,
+            phone: newPhone,
+            zalo: newZalo,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cập nhật thông tin thành công!');
+            // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
+            if (oldPassword && newPassword) {
+                window.location.href = '../index.html';
+            }
+        } else {
+            alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+        }
+    })
+    .catch(err => {
+        alert('Có lỗi xảy ra khi cập nhật!');
+        console.error(err);
+    });
 }
 
 // Pay fee
@@ -163,18 +209,26 @@ function payFees() {
     document.getElementById('pay-fee-modal').classList.add('show');
     const select = document.getElementById('fee-student');
     select.innerHTML = '';
-    parentData.children.forEach(child => {
+    // Lọc chỉ những con còn nợ học phí
+    const unpaidChildren = parentData.children.filter(child => (child.fee - child.paid - (child.discount || 0)) > 0);
+    unpaidChildren.forEach(child => {
         const option = document.createElement('option');
         option.value = child.id;
         option.textContent = child.name;
         select.appendChild(option);
     });
 
-    // Gán giá trị mặc định cho số tiền đóng khi mở form
-    updateFeeAmountAndNote();
-
-    // Khi chọn con khác thì cập nhật lại số tiền đóng
-    select.onchange = updateFeeAmountAndNote;
+    // Nếu không còn con nào nợ học phí, disable form
+    if (unpaidChildren.length === 0) {
+        select.innerHTML = '<option>Không có con nào còn nợ học phí</option>';
+        document.getElementById('fee-amount').value = 0;
+        document.getElementById('fee-amount').readOnly = true;
+        document.getElementById('fee-note').value = '';
+    } else {
+        // Gán giá trị mặc định cho số tiền đóng khi mở form
+        updateFeeAmountAndNote();
+        select.onchange = updateFeeAmountAndNote;
+    }
 }
 
 function updateFeeAmountAndNote() {

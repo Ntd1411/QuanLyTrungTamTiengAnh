@@ -34,7 +34,7 @@ if (!$parent) {
 }
 
 // Lấy danh sách con
-$sql = "SELECT s.UserID, s.FullName, c.ClassName, s.AttendedClasses, s.AbsentClasses, t.FullName AS TeacherName
+$sql = "SELECT s.UserID, s.FullName, s.ClassID, c.ClassName, t.FullName AS TeacherName
         FROM students s
         LEFT JOIN classes c ON s.ClassID = c.ClassID
         LEFT JOIN teachers t ON c.TeacherID = t.UserID
@@ -73,12 +73,24 @@ foreach ($children as $child) {
     $stmt->execute([$child['UserID']]);
     $paymentHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Đếm số buổi học trong lớp hiện tại
+    $sql = "SELECT COUNT(*) FROM attendance WHERE StudentID = ? AND ClassID = ? AND (Status = 'Có mặt' OR Status = 'Đi muộn')";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID'], $child['ClassID']]);
+    $attended = (int)$stmt->fetchColumn();
+
+    // Đếm số buổi nghỉ trong lớp hiện tại
+    $sql = "SELECT COUNT(*) FROM attendance WHERE StudentID = ? AND ClassID = ? AND Status = 'Vắng mặt'";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID'], $child['ClassID']]);
+    $absent = (int)$stmt->fetchColumn();
+
     $childrenData[] = [
         'id' => $child['UserID'],
         'name' => $child['FullName'],
         'class' => $child['ClassName'],
-        'attended' => $child['AttendedClasses'],
-        'absent' => $child['AbsentClasses'],
+        'attended' => $attended,
+        'absent' => $absent,
         'teacher' => $child['TeacherName'],
         'fee' => (int)($feeData['fee'] ?? 0),
         'paid' => (int)($feeData['paid'] ?? 0),

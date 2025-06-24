@@ -50,19 +50,19 @@ if (
         <div id="home-student" class="element active">
             <h2>Chào mừng, <span id="student-name">Học sinh</span></h2>
             <div class="dashboard-summary">
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('my-class')">
                     <h3>Lớp học</h3>
                     <p id="class-name">Chưa trong lớp nào</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('attendance')">
                     <h3>Buổi đã học</h3>
                     <p id="attended-sessions">0</p>
                 </div>
-                <div class="summary-card warning">
+                <div class="summary-card warning" onclick="showElement('attendance')">
                     <h3>Buổi nghỉ</h3>
                     <p id="absent-sessions">0</p>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card" onclick="showElement('homework')">
                     <h3>Bài tập mới</h3>
                     <p id="new-homework">0</p>
                 </div>
@@ -169,8 +169,12 @@ if (
                     <input type="tel" id="profile-phone">
                 </div>
                 <div class="form-group">
+                    <label>Mật khẩu cũ:</label>
+                    <input type="password" id="old-password">
+                </div>
+                <div class="form-group">
                     <label>Mật khẩu mới:</label>
-                    <input type="password" id="profile-password">
+                    <input type="password" id="new-password">
                 </div>
                 <button onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
