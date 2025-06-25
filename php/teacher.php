@@ -68,7 +68,37 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <p id="monthly-sessions">0</p>
                 </div>
             </div>
-            <h2>Nhật ký dạy tháng này</h2>
+            <div class="log-header">
+                <h2>Nhật ký dạy tháng này</h2>
+                <button id="add-log-btn" class="add-log-btn">+ Thêm nhật ký</button>
+            </div>
+            <div id="add-log-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeAddLogModal()">&times;</span>
+                    <h3 id="add-log-header">Thêm nhật ký dạy</h3>
+                    <div class="form-group">
+                        <label>Lớp:</label>
+                        <select id="log-class-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày dạy:</label>
+                        <input type="date" id="log-date-input" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái:</label>
+                        <select id="log-status-select">
+                            <option value="Đã dạy">Đã dạy</option>
+                            <option value="Nghỉ">Nghỉ</option>
+                            <option value="Dời lịch">Dời lịch</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ghi chú:</label>
+                        <input type="text" id="log-note-input">
+                    </div>
+                    <button onclick="submitAddLog()">Lưu nhật ký</button>
+                </div>
+            </div>
             <div class="teaching-log-table table-container">
                 <table>
                     <thead>
