@@ -1,195 +1,353 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../assets/icon/logo_ver3.png" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/legal.css" />
+    <title>Chính sách Bảo mật - KMA English Center</title>
+  </head>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../assets/icon/logo_ver3.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/legal.css"> <title>Chính sách Bảo mật - KMA English Center</title>
-</head>
-
-<body>
+  <body>
     <header>
-        <img src="../assets/img/poster.jpg" alt="Logo Website">
+      <img src="../assets/img/poster.jpg" alt="Logo Website" />
     </header>
 
     <nav>
-        <ul class="menu">
+      <ul class="menu">
+        <li>
+          <a href="../index.html" onclick="showElement('home'); return false;"
+            >Trang Chủ</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
+          <ul class="submenu">
             <li>
-                <a href="../index.html" onclick="showElement('home'); return false;">Trang Chủ</a>
+              <a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a>
+            </li>
+            <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+            <li><a href="" onclick="event.preventDefault();">Liên Hệ</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
+          <ul class="submenu">
+            <li>
+              <a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a>
             </li>
             <li>
-                <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
-                <ul class="submenu">
-                    <li><a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
-                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
-                    <li><a href="" onclick="event.preventDefault();">Liên Hệ</a></li>
-                </ul>
+              <a href="#" onclick="event.preventDefault()">IELTS</a>
+              <ul class="sub-submenu">
+                <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+              </ul>
             </li>
             <li>
-                <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
-                <ul class="submenu">
-                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
-                    <li><a href="#" onclick="event.preventDefault()">IELTS</a>
-                        <ul class="sub-submenu">
-                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
-                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
-                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
-                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#" onclick="event.preventDefault()">TOEIC</a>
-                        <ul class="sub-submenu">
-                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
-                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
-                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
-                        </ul>
-                    </li>
-                </ul>
+              <a href="#" onclick="event.preventDefault()">TOEIC</a>
+              <ul class="sub-submenu">
+                <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+              </ul>
             </li>
-            <li>
-                <a href="../view/reference.html">Thư viện</a>
-            </li>
-            <li>
-                <a href="#" onclick="event.preventDefault()">Tin Tức</a>
-                <ul class="submenu">
-                    <li><a href="../view/news.html">Sự Kiện</a></li>
-                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
-                <ul class="submenu">
-                    <li><a href="../php/login.php">Đăng Nhập</a></li>
-                    <li><a href="../php/signup.php">Đăng Ký</a></li>
-                </ul>
-            </li>
-        </ul>
+          </ul>
+        </li>
+        <li>
+          <a href="../view/reference.html">Thư viện</a>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Tin Tức</a>
+          <ul class="submenu">
+            <li><a href="../view/news.html">Sự Kiện</a></li>
+            <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
+          <ul class="submenu">
+            <li><a href="../php/login.php">Đăng Nhập</a></li>
+            <li><a href="../php/signup.php">Đăng Ký</a></li>
+          </ul>
+        </li>
+      </ul>
     </nav>
 
-    <main class="main-content">
+    <div class="element active">
+      <main class="main-content">
         <div class="legal-content">
-            <h1>CHÍNH SÁCH BẢO MẬT CỦA KMA ENGLISH CENTER (KEC)</h1>
-            <p>Ngày có hiệu lực: 27 tháng 5 năm 2025</p>
+          <h1>CHÍNH SÁCH BẢO MẬT CỦA KMA ENGLISH CENTER (KEC)</h1>
+          <p>Ngày có hiệu lực: 27 tháng 5 năm 2025</p>
 
-            <p>Tại KMA English Center (KEC), chúng tôi cam kết bảo vệ quyền riêng tư của bạn. Chính sách Bảo mật này giải thích cách chúng tôi thu thập, sử dụng, tiết lộ và bảo vệ thông tin cá nhân của bạn khi bạn sử dụng các dịch vụ của chúng tôi, bao gồm website và các ứng dụng liên quan.</p>
+          <p>
+            Tại KMA English Center (KEC), chúng tôi cam kết bảo vệ quyền riêng
+            tư của bạn. Chính sách Bảo mật này giải thích cách chúng tôi thu
+            thập, sử dụng, tiết lộ và bảo vệ thông tin cá nhân của bạn khi bạn
+            sử dụng các dịch vụ của chúng tôi, bao gồm website và các ứng dụng
+            liên quan.
+          </p>
 
-            <h2>1. Thông tin chúng tôi thu thập</h2>
-            <p>Chúng tôi thu thập các loại thông tin khác nhau để cung cấp và cải thiện dịch vụ của mình cho bạn:</p>
+          <h2>1. Thông tin chúng tôi thu thập</h2>
+          <p>
+            Chúng tôi thu thập các loại thông tin khác nhau để cung cấp và cải
+            thiện dịch vụ của mình cho bạn:
+          </p>
 
-            <h3>Thông tin cá nhân bạn cung cấp trực tiếp:</h3>
-            <ul>
-                <li><strong>Thông tin liên hệ:</strong> Tên đầy đủ, ngày sinh, giới tính, địa chỉ email, số điện thoại, địa chỉ nhà.</li>
-                <li><strong>Thông tin học tập:</strong> Trình độ tiếng Anh hiện tại, mục tiêu học tập, lịch sử các khóa học đã đăng ký tại KEC, kết quả kiểm tra/đánh giá.</li>
-                <li><strong>Thông tin thanh toán:</strong> Thông tin liên quan đến các giao dịch tài chính (ví dụ: phương thức thanh toán, lịch sử thanh toán). KEC không lưu trữ thông tin thẻ tín dụng đầy đủ mà sử dụng các nhà cung cấp dịch vụ thanh toán an toàn.</li>
-                <li><strong>Thông tin khác:</strong> Bất kỳ thông tin nào khác bạn chọn cung cấp cho chúng tôi thông qua các biểu mẫu, khảo sát, liên hệ hỗ trợ hoặc trong quá trình tư vấn.</li>
-            </ul>
+          <h3>Thông tin cá nhân bạn cung cấp trực tiếp:</h3>
+          <ul>
+            <li>
+              <strong>Thông tin liên hệ:</strong> Tên đầy đủ, ngày sinh, giới
+              tính, địa chỉ email, số điện thoại, địa chỉ nhà.
+            </li>
+            <li>
+              <strong>Thông tin học tập:</strong> Trình độ tiếng Anh hiện tại,
+              mục tiêu học tập, lịch sử các khóa học đã đăng ký tại KEC, kết quả
+              kiểm tra/đánh giá.
+            </li>
+            <li>
+              <strong>Thông tin thanh toán:</strong> Thông tin liên quan đến các
+              giao dịch tài chính (ví dụ: phương thức thanh toán, lịch sử thanh
+              toán). KEC không lưu trữ thông tin thẻ tín dụng đầy đủ mà sử dụng
+              các nhà cung cấp dịch vụ thanh toán an toàn.
+            </li>
+            <li>
+              <strong>Thông tin khác:</strong> Bất kỳ thông tin nào khác bạn
+              chọn cung cấp cho chúng tôi thông qua các biểu mẫu, khảo sát, liên
+              hệ hỗ trợ hoặc trong quá trình tư vấn.
+            </li>
+          </ul>
 
-            <h3>Thông tin thu thập tự động:</h3>
-            <ul>
-                <li><strong>Dữ liệu sử dụng:</strong> Thông tin về cách bạn truy cập và sử dụng dịch vụ của chúng tôi, bao gồm địa chỉ IP, loại trình duyệt, hệ điều hành, thời gian truy cập, các trang bạn đã truy cập, thời gian lưu trú trên các trang đó, các hoạt động tương tác với nội dung và tính năng của chúng tôi.</li>
-                <li><strong>Cookies và công nghệ theo dõi:</strong> Chúng tôi sử dụng cookies và các công nghệ theo dõi tương tự để theo dõi hoạt động trên dịch vụ của chúng tôi và lưu trữ một số thông tin. Điều này giúp chúng tôi cải thiện trải nghiệm của bạn, phân tích xu hướng và cá nhân hóa nội dung.</li>
-            </ul>
+          <h3>Thông tin thu thập tự động:</h3>
+          <ul>
+            <li>
+              <strong>Dữ liệu sử dụng:</strong> Thông tin về cách bạn truy cập
+              và sử dụng dịch vụ của chúng tôi, bao gồm địa chỉ IP, loại trình
+              duyệt, hệ điều hành, thời gian truy cập, các trang bạn đã truy
+              cập, thời gian lưu trú trên các trang đó, các hoạt động tương tác
+              với nội dung và tính năng của chúng tôi.
+            </li>
+            <li>
+              <strong>Cookies và công nghệ theo dõi:</strong> Chúng tôi sử dụng
+              cookies và các công nghệ theo dõi tương tự để theo dõi hoạt động
+              trên dịch vụ của chúng tôi và lưu trữ một số thông tin. Điều này
+              giúp chúng tôi cải thiện trải nghiệm của bạn, phân tích xu hướng
+              và cá nhân hóa nội dung.
+            </li>
+          </ul>
 
-            <h2>2. Cách chúng tôi sử dụng thông tin của bạn</h2>
-            <p>Chúng tôi sử dụng thông tin cá nhân của bạn cho các mục đích sau:</p>
+          <h2>2. Cách chúng tôi sử dụng thông tin của bạn</h2>
+          <p>
+            Chúng tôi sử dụng thông tin cá nhân của bạn cho các mục đích sau:
+          </p>
 
-            <h3>Cung cấp và quản lý dịch vụ:</h3>
-            <ul>
-                <li>Đăng ký và quản lý tài khoản học viên của bạn.</li>
-                <li>Ghi danh bạn vào các khóa học và sắp xếp lịch học.</li>
-                <li>Xử lý các giao dịch thanh toán và cung cấp hóa đơn.</li>
-                <li>Cung cấp tài liệu học tập và hỗ trợ học tập.</li>
-                <li>Liên lạc với bạn về các thông tin liên quan đến khóa học, lịch học, thông báo quan trọng.</li>
-            </ul>
-            <h3>Cải thiện và phát triển dịch vụ:</h3>
-            <ul>
-                <li>Phân tích dữ liệu để hiểu cách học viên sử dụng dịch vụ của chúng tôi và nâng cao chất lượng khóa học, phương pháp giảng dạy.</li>
-                <li>Cá nhân hóa trải nghiệm học tập của bạn.</li>
-                <li>Phát triển các tính năng và dịch vụ mới.</li>
-            </ul>
-            <h3>Hỗ trợ khách hàng:</h3>
-            <ul>
-                <li>Trả lời các câu hỏi, yêu cầu và cung cấp hỗ trợ kỹ thuật.</li>
-                <li>Giải quyết các vấn đề và khiếu nại.</li>
-            </ul>
-            <h3>Tiếp thị và truyền thông:</h3>
-            <ul>
-                <li>Gửi cho bạn thông tin về các khóa học mới, ưu đãi đặc biệt, sự kiện và tin tức từ KEC mà chúng tôi tin rằng bạn có thể quan tâm (bạn có quyền từ chối nhận các thông tin này).</li>
-                <li>Thực hiện các chiến dịch tiếp thị và quảng cáo.</li>
-            </ul>
-            <h3>Tuân thủ pháp luật và bảo mật:</h3>
-            <ul>
-                <li>Tuân thủ các nghĩa vụ pháp lý, quy định và yêu cầu của chính phủ.</li>
-                <li>Ngăn chặn và phát hiện gian lận, lạm dụng và các hoạt động bất hợp pháp khác.</li>
-                <li>Bảo vệ quyền, tài sản hoặc sự an toàn của KEC, học viên của chúng tôi hoặc người khác.</li>
-            </ul>
+          <h3>Cung cấp và quản lý dịch vụ:</h3>
+          <ul>
+            <li>Đăng ký và quản lý tài khoản học viên của bạn.</li>
+            <li>Ghi danh bạn vào các khóa học và sắp xếp lịch học.</li>
+            <li>Xử lý các giao dịch thanh toán và cung cấp hóa đơn.</li>
+            <li>Cung cấp tài liệu học tập và hỗ trợ học tập.</li>
+            <li>
+              Liên lạc với bạn về các thông tin liên quan đến khóa học, lịch
+              học, thông báo quan trọng.
+            </li>
+          </ul>
+          <h3>Cải thiện và phát triển dịch vụ:</h3>
+          <ul>
+            <li>
+              Phân tích dữ liệu để hiểu cách học viên sử dụng dịch vụ của chúng
+              tôi và nâng cao chất lượng khóa học, phương pháp giảng dạy.
+            </li>
+            <li>Cá nhân hóa trải nghiệm học tập của bạn.</li>
+            <li>Phát triển các tính năng và dịch vụ mới.</li>
+          </ul>
+          <h3>Hỗ trợ khách hàng:</h3>
+          <ul>
+            <li>Trả lời các câu hỏi, yêu cầu và cung cấp hỗ trợ kỹ thuật.</li>
+            <li>Giải quyết các vấn đề và khiếu nại.</li>
+          </ul>
+          <h3>Tiếp thị và truyền thông:</h3>
+          <ul>
+            <li>
+              Gửi cho bạn thông tin về các khóa học mới, ưu đãi đặc biệt, sự
+              kiện và tin tức từ KEC mà chúng tôi tin rằng bạn có thể quan tâm
+              (bạn có quyền từ chối nhận các thông tin này).
+            </li>
+            <li>Thực hiện các chiến dịch tiếp thị và quảng cáo.</li>
+          </ul>
+          <h3>Tuân thủ pháp luật và bảo mật:</h3>
+          <ul>
+            <li>
+              Tuân thủ các nghĩa vụ pháp lý, quy định và yêu cầu của chính phủ.
+            </li>
+            <li>
+              Ngăn chặn và phát hiện gian lận, lạm dụng và các hoạt động bất hợp
+              pháp khác.
+            </li>
+            <li>
+              Bảo vệ quyền, tài sản hoặc sự an toàn của KEC, học viên của chúng
+              tôi hoặc người khác.
+            </li>
+          </ul>
 
-            <h2>3. Chia sẻ và tiết lộ thông tin của bạn</h2>
-            <p>Chúng tôi cam kết không bán hoặc cho thuê thông tin cá nhân của bạn cho bên thứ ba. Chúng tôi có thể chia sẻ thông tin của bạn trong các trường hợp sau:</p>
+          <h2>3. Chia sẻ và tiết lộ thông tin của bạn</h2>
+          <p>
+            Chúng tôi cam kết không bán hoặc cho thuê thông tin cá nhân của bạn
+            cho bên thứ ba. Chúng tôi có thể chia sẻ thông tin của bạn trong các
+            trường hợp sau:
+          </p>
 
-            <ul>
-                <li><strong>Với giáo viên và nhân viên KEC:</strong> Chỉ những nhân viên và giáo viên cần thiết mới được phép truy cập thông tin của bạn để thực hiện nhiệm vụ của họ (ví dụ: giáo viên cần biết tên, trình độ để giảng dạy).</li>
-                <li><strong>Với các nhà cung cấp dịch vụ bên thứ ba:</strong> Chúng tôi có thể hợp tác với các nhà cung cấp dịch vụ bên thứ ba để hỗ trợ các hoạt động của chúng tôi, chẳng hạn như xử lý thanh toán, lưu trữ dữ liệu, phân tích website, dịch vụ email marketing. Các nhà cung cấp này chỉ được phép sử dụng thông tin của bạn theo chỉ dẫn của chúng tôi và phải tuân thủ các nghĩa vụ bảo mật.</li>
-                <li><strong>Đối tác kinh doanh:</strong> Với sự đồng ý của bạn, chúng tôi có thể chia sẻ thông tin với các đối tác kinh doanh để cung cấp các ưu đãi hoặc dịch vụ chung.</li>
-                <li><strong>Tuân thủ pháp luật:</strong> Chúng tôi có thể tiết lộ thông tin của bạn nếu được yêu cầu bởi pháp luật, lệnh của tòa án hoặc khi chúng tôi tin rằng việc tiết lộ là cần thiết để bảo vệ quyền lợi, tài sản hoặc sự an toàn của KEC, học viên của chúng tôi hoặc công chúng.</li>
-                <li><strong>Chuyển giao kinh doanh:</strong> Trong trường hợp KEC sáp nhập, mua lại hoặc bán một phần hoặc toàn bộ tài sản, thông tin cá nhân của bạn có thể được chuyển giao cho bên mua.</li>
-            </ul>
+          <ul>
+            <li>
+              <strong>Với giáo viên và nhân viên KEC:</strong> Chỉ những nhân
+              viên và giáo viên cần thiết mới được phép truy cập thông tin của
+              bạn để thực hiện nhiệm vụ của họ (ví dụ: giáo viên cần biết tên,
+              trình độ để giảng dạy).
+            </li>
+            <li>
+              <strong>Với các nhà cung cấp dịch vụ bên thứ ba:</strong> Chúng
+              tôi có thể hợp tác với các nhà cung cấp dịch vụ bên thứ ba để hỗ
+              trợ các hoạt động của chúng tôi, chẳng hạn như xử lý thanh toán,
+              lưu trữ dữ liệu, phân tích website, dịch vụ email marketing. Các
+              nhà cung cấp này chỉ được phép sử dụng thông tin của bạn theo chỉ
+              dẫn của chúng tôi và phải tuân thủ các nghĩa vụ bảo mật.
+            </li>
+            <li>
+              <strong>Đối tác kinh doanh:</strong> Với sự đồng ý của bạn, chúng
+              tôi có thể chia sẻ thông tin với các đối tác kinh doanh để cung
+              cấp các ưu đãi hoặc dịch vụ chung.
+            </li>
+            <li>
+              <strong>Tuân thủ pháp luật:</strong> Chúng tôi có thể tiết lộ
+              thông tin của bạn nếu được yêu cầu bởi pháp luật, lệnh của tòa án
+              hoặc khi chúng tôi tin rằng việc tiết lộ là cần thiết để bảo vệ
+              quyền lợi, tài sản hoặc sự an toàn của KEC, học viên của chúng tôi
+              hoặc công chúng.
+            </li>
+            <li>
+              <strong>Chuyển giao kinh doanh:</strong> Trong trường hợp KEC sáp
+              nhập, mua lại hoặc bán một phần hoặc toàn bộ tài sản, thông tin cá
+              nhân của bạn có thể được chuyển giao cho bên mua.
+            </li>
+          </ul>
 
-            <h2>4. Bảo mật thông tin của bạn</h2>
-            <p>Chúng tôi thực hiện các biện pháp bảo mật hợp lý (vật lý, điện tử và quản lý) để bảo vệ thông tin cá nhân của bạn khỏi việc truy cập, sử dụng, tiết lộ, thay đổi hoặc phá hủy trái phép. Tuy nhiên, không có phương pháp truyền dữ liệu qua internet hoặc lưu trữ điện tử nào là an toàn 100%. Mặc dù chúng tôi cố gắng bảo vệ thông tin cá nhân của bạn, chúng tôi không thể đảm bảo an ninh tuyệt đối.</p>
+          <h2>4. Bảo mật thông tin của bạn</h2>
+          <p>
+            Chúng tôi thực hiện các biện pháp bảo mật hợp lý (vật lý, điện tử và
+            quản lý) để bảo vệ thông tin cá nhân của bạn khỏi việc truy cập, sử
+            dụng, tiết lộ, thay đổi hoặc phá hủy trái phép. Tuy nhiên, không có
+            phương pháp truyền dữ liệu qua internet hoặc lưu trữ điện tử nào là
+            an toàn 100%. Mặc dù chúng tôi cố gắng bảo vệ thông tin cá nhân của
+            bạn, chúng tôi không thể đảm bảo an ninh tuyệt đối.
+          </p>
 
-            <h2>5. Quyền của bạn đối với thông tin cá nhân</h2>
-            <p>Bạn có các quyền sau liên quan đến thông tin cá nhân của mình:</p>
+          <h2>5. Quyền của bạn đối với thông tin cá nhân</h2>
+          <p>Bạn có các quyền sau liên quan đến thông tin cá nhân của mình:</p>
 
-            <ul>
-                <li><strong>Truy cập và chỉnh sửa:</strong> Bạn có quyền yêu cầu truy cập và chỉnh sửa thông tin cá nhân của mình mà chúng tôi lưu giữ.</li>
-                <li><strong>Xóa:</strong> Bạn có thể yêu cầu chúng tôi xóa thông tin cá nhân của bạn trong một số trường hợp nhất định.</li>
-                <li><strong>Hạn chế xử lý:</strong> Bạn có thể yêu cầu chúng tôi hạn chế việc xử lý thông tin cá nhân của bạn.</li>
-                <li><strong>Phản đối xử lý:</strong> Bạn có quyền phản đối việc chúng tôi xử lý thông tin cá nhân của bạn cho một số mục đích nhất định (ví dụ: tiếp thị trực tiếp).</li>
-                <li><strong>Rút lại sự đồng ý:</strong> Nếu chúng tôi dựa vào sự đồng ý của bạn để xử lý thông tin cá nhân, bạn có quyền rút lại sự đồng ý đó bất cứ lúc nào. Việc rút lại sự đồng ý sẽ không ảnh hưởng đến tính hợp pháp của việc xử lý dựa trên sự đồng ý trước khi bị rút lại.</li>
-            </ul>
-            <p>Để thực hiện các quyền này, vui lòng liên hệ với chúng tôi theo thông tin liên hệ được cung cấp ở cuối Chính sách này. Chúng tôi có thể yêu cầu bạn xác minh danh tính trước khi xử lý yêu cầu của bạn.</p>
+          <ul>
+            <li>
+              <strong>Truy cập và chỉnh sửa:</strong> Bạn có quyền yêu cầu truy
+              cập và chỉnh sửa thông tin cá nhân của mình mà chúng tôi lưu giữ.
+            </li>
+            <li>
+              <strong>Xóa:</strong> Bạn có thể yêu cầu chúng tôi xóa thông tin
+              cá nhân của bạn trong một số trường hợp nhất định.
+            </li>
+            <li>
+              <strong>Hạn chế xử lý:</strong> Bạn có thể yêu cầu chúng tôi hạn
+              chế việc xử lý thông tin cá nhân của bạn.
+            </li>
+            <li>
+              <strong>Phản đối xử lý:</strong> Bạn có quyền phản đối việc chúng
+              tôi xử lý thông tin cá nhân của bạn cho một số mục đích nhất định
+              (ví dụ: tiếp thị trực tiếp).
+            </li>
+            <li>
+              <strong>Rút lại sự đồng ý:</strong> Nếu chúng tôi dựa vào sự đồng
+              ý của bạn để xử lý thông tin cá nhân, bạn có quyền rút lại sự đồng
+              ý đó bất cứ lúc nào. Việc rút lại sự đồng ý sẽ không ảnh hưởng đến
+              tính hợp pháp của việc xử lý dựa trên sự đồng ý trước khi bị rút
+              lại.
+            </li>
+          </ul>
+          <p>
+            Để thực hiện các quyền này, vui lòng liên hệ với chúng tôi theo
+            thông tin liên hệ được cung cấp ở cuối Chính sách này. Chúng tôi có
+            thể yêu cầu bạn xác minh danh tính trước khi xử lý yêu cầu của bạn.
+          </p>
 
-            <h2>6. Lưu giữ dữ liệu</h2>
-            <p>Chúng tôi sẽ lưu giữ thông tin cá nhân của bạn chỉ trong thời gian cần thiết để thực hiện các mục đích được nêu trong Chính sách Bảo mật này, trừ khi pháp luật yêu cầu hoặc cho phép thời gian lưu giữ dài hơn.</p>
+          <h2>6. Lưu giữ dữ liệu</h2>
+          <p>
+            Chúng tôi sẽ lưu giữ thông tin cá nhân của bạn chỉ trong thời gian
+            cần thiết để thực hiện các mục đích được nêu trong Chính sách Bảo
+            mật này, trừ khi pháp luật yêu cầu hoặc cho phép thời gian lưu giữ
+            dài hơn.
+          </p>
 
-            <h2>7. Cookies và công nghệ theo dõi</h2>
-            <h3>Cookies là gì:</h3>
-            <p>Cookies là các tệp dữ liệu nhỏ được đặt trên thiết bị của bạn khi bạn truy cập website. Chúng giúp website ghi nhớ thông tin về chuyến thăm của bạn, chẳng hạn như ngôn ngữ ưa thích và các cài đặt khác.</p>
-            <h3>Cách chúng tôi sử dụng cookies:</h3>
-            <p>Chúng tôi sử dụng cookies để:</p>
-            <ul>
-                <li>Hiểu và lưu tùy chọn của bạn cho những lần truy cập sau.</li>
-                <li>Tổng hợp dữ liệu tổng thể về lưu lượng truy cập trang web và tương tác trang web để cải thiện trải nghiệm.</li>
-                <li>Phân tích hiệu suất của các chiến dịch quảng cáo của chúng tôi.</li>
-            </ul>
-            <h3>Quản lý cookies:</h3>
-            <p>Bạn có thể kiểm soát và quản lý cookies thông qua cài đặt trình duyệt của mình. Tuy nhiên, việc tắt cookies có thể ảnh hưởng đến một số chức năng của website của chúng tôi.</p>
+          <h2>7. Cookies và công nghệ theo dõi</h2>
+          <h3>Cookies là gì:</h3>
+          <p>
+            Cookies là các tệp dữ liệu nhỏ được đặt trên thiết bị của bạn khi
+            bạn truy cập website. Chúng giúp website ghi nhớ thông tin về chuyến
+            thăm của bạn, chẳng hạn như ngôn ngữ ưa thích và các cài đặt khác.
+          </p>
+          <h3>Cách chúng tôi sử dụng cookies:</h3>
+          <p>Chúng tôi sử dụng cookies để:</p>
+          <ul>
+            <li>Hiểu và lưu tùy chọn của bạn cho những lần truy cập sau.</li>
+            <li>
+              Tổng hợp dữ liệu tổng thể về lưu lượng truy cập trang web và tương
+              tác trang web để cải thiện trải nghiệm.
+            </li>
+            <li>
+              Phân tích hiệu suất của các chiến dịch quảng cáo của chúng tôi.
+            </li>
+          </ul>
+          <h3>Quản lý cookies:</h3>
+          <p>
+            Bạn có thể kiểm soát và quản lý cookies thông qua cài đặt trình
+            duyệt của mình. Tuy nhiên, việc tắt cookies có thể ảnh hưởng đến một
+            số chức năng của website của chúng tôi.
+          </p>
 
-            <h2>8. Thay đổi Chính sách Bảo mật</h2>
-            <p>KEC có quyền sửa đổi hoặc cập nhật Chính sách Bảo mật này bất cứ lúc nào. Chúng tôi sẽ thông báo cho bạn về bất kỳ thay đổi quan trọng nào bằng cách đăng Chính sách mới trên website của chúng tôi hoặc thông qua các kênh thông báo khác. Việc bạn tiếp tục sử dụng dịch vụ sau khi các thay đổi có hiệu lực sẽ cấu thành sự chấp nhận của bạn đối với Chính sách đã sửa đổi.</p>
+          <h2>8. Thay đổi Chính sách Bảo mật</h2>
+          <p>
+            KEC có quyền sửa đổi hoặc cập nhật Chính sách Bảo mật này bất cứ lúc
+            nào. Chúng tôi sẽ thông báo cho bạn về bất kỳ thay đổi quan trọng
+            nào bằng cách đăng Chính sách mới trên website của chúng tôi hoặc
+            thông qua các kênh thông báo khác. Việc bạn tiếp tục sử dụng dịch vụ
+            sau khi các thay đổi có hiệu lực sẽ cấu thành sự chấp nhận của bạn
+            đối với Chính sách đã sửa đổi.
+          </p>
 
-            <h2>9. Liên hệ</h2>
-            <p>Nếu bạn có bất kỳ câu hỏi hoặc thắc mắc nào về Chính sách Bảo mật này hoặc cách chúng tôi xử lý thông tin cá nhân của bạn, vui lòng liên hệ với chúng tôi tại:</p>
+          <h2>9. Liên hệ</h2>
+          <p>
+            Nếu bạn có bất kỳ câu hỏi hoặc thắc mắc nào về Chính sách Bảo mật
+            này hoặc cách chúng tôi xử lý thông tin cá nhân của bạn, vui lòng
+            liên hệ với chúng tôi tại:
+          </p>
 
-            <div class="legal-contact-info">
-                <p><strong>KMA English Center (KEC)</strong></p>
-                <p>Địa chỉ: 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</p>
-                <p>Email: contact@actvn.edu.vn</p>
-                <p>Điện thoại: 9876 543 210</p>
-            </div>
+          <div class="legal-contact-info">
+            <p><strong>KMA English Center (KEC)</strong></p>
+            <p>Địa chỉ: 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</p>
+            <p>Email: contact@actvn.edu.vn</p>
+            <p>Điện thoại: 9876 543 210</p>
+          </div>
         </div>
-    </main>
-
+      </main>
+    </div>
     <footer>
-        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
-        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
-        <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
-        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+      <p>
+        <strong>Email:</strong> contact@actvn.edu.vn |
+        <strong>Website:</strong> www.actvn.edu.vn
+      </p>
+      <h3>
+        Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội
+      </h3>
+      <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
+      <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
     </footer>
-
-</body>
-
+  </body>
 </html>
