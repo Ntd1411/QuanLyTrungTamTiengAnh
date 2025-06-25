@@ -49,12 +49,13 @@ function loadNews() {
         .then(response => response.json())
         .then(news => {
             const newsContainer = document.querySelector('.news-list-grid');
+            // console.log(newsContainer);
             newsContainer.innerHTML = '';
             
             news.forEach(item => {
                 const newsHtml = `
                     <div class="news-item">
-                        <img src="../assets/img/news/${item.image}" alt="${item.title}" class="news-img">
+                        <img src="../assets/img/${item.image}" alt="${item.title}" class="news-img">
                         <div class="news-info">
                             <h3><a href="#" class="news-title-link">${item.title}</a></h3>
                             <p class="news-meta">
@@ -73,8 +74,20 @@ function loadNews() {
 }
 
 function formatDate(dateString) {
+    // Kiểm tra nếu ngày đã ở định dạng dd/mm/yyyy
+    if (dateString.includes('/')) {
+        return dateString; // Trả về nguyên bản vì đã đúng định dạng
+    }
+    
+    // Nếu là định dạng yyyy-mm-dd thì chuyển sang dd/mm/yyyy
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN');
+    if (isNaN(date)) return 'Ngày không hợp lệ';
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}/${month}/${year}`;
 }
 
 document.addEventListener('DOMContentLoaded', loadNews);

@@ -3,6 +3,7 @@
     --border-color: #e0e0e0;
     --hover-color: #f5f5f5;
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
 .main-content-admin {
@@ -751,6 +752,9 @@ button:hover {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: -100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .edit-popup {
@@ -766,6 +770,10 @@ button:hover {
     z-index: -100;
     max-width: 1000px;
     width: 90%;
+    max-height: 95vh; /* chiều cao tối đa 80% viewport height */
+    overflow-y: auto; /* cho phép cuộn dọc */
+    scrollbar-width: thin; /* thanh cuộn mỏng cho Firefox */
+    scrollbar-color: #888 #f1f1f1; /* màu thanh cuộn cho Firefox */
     /* transition: 0.1s; */
 }
 
@@ -941,3 +949,170 @@ button:hover {
 }
 
 /* css news */
+.newsList {
+    max-width: 100%;
+    margin-top: 30px;
+    display: grid;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+.news-item {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.news-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.news-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.news-info {
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.news-info h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevent title from wrapping */
+}
+
+.news-title-link {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.5s ease;
+    display: block; /* Ensure ellipsis works */
+}
+
+.news-title-link:hover {
+    color: var(--primary-color);
+}
+
+.news-meta {
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    overflow: hidden;
+}
+
+.news-date, .news-author {
+    display: inline-flex;
+    align-items: center;
+}
+
+.news-author {
+    max-width: 150px; /* Limit author name length */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: 1; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+}
+
+.news-excerpt {
+    color: #444;
+    max-width: 100%;
+    line-height: 1.6;
+    margin: 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word; /* Break long words */
+}
+
+.read-more {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-top: auto;
+    width: fit-content;
+    transition: all 0.2s ease;
+}
+
+.existPost {
+    margin-top: 50px !important;
+}
+
+.read-more:hover {
+    color: #c62828;
+    text-decoration: underline;
+}
+/* Responsive styles for news items */
+@media (max-width: 768px) {
+    .news-item {
+        grid-template-columns: 1fr;
+    }
+
+    .news-img {
+        height: 250px;
+    }
+
+
+}/* News Management Actions */
+.news-change {
+    max-width: 200px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin-right: 10px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    gap: 10px;
+}
+
+.news-change:last-child {
+    background: #dc3545;
+}
+
+.news-change:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    color: white;
+}
+
+.news-change:last-child:hover {
+    background: #c82333;
+}
+
+.news-actions {
+    display: flex;
+    margin-top: auto;
+    gap: 10px;
+}
+
+.news-edit-form {
+    grid-column: span 2;
+}

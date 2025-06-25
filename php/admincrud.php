@@ -251,7 +251,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     // Insert notification into messages table
                     $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
                             VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
-        
+
                     $stmt = $conn->prepare($sql);
                     $result = $stmt->execute([
                         ':receiverId' => $_POST['receiverId'],
@@ -276,7 +276,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 }
                             }
                         }
-            
+
                         echo json_encode([
                             'status' => 'success',
                             'message' => 'Thông báo đã được gửi thành công qua ' . implode(', ', $successMethods)
@@ -293,6 +293,111 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         'status' => 'error',
                         'message' => 'Lỗi hệ thống: ' . $e->getMessage()
                     ]);
+                }
+                exit;
+                break;
+
+            case 'updateNews':
+                if (empty($_POST['id']) || empty($_POST['title']) || empty($_POST['content']) || empty($_POST['excerpt'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
+                    exit;
+                }
+
+                try {
+                    $conn = connectdb();
+
+                    // Nếu có upload ảnh mới
+                    if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+                        $target_dir = "../assets/img/";
+                        $image_name = time() . '_' . basename($_FILES["image"]["name"]);
+                        $target_file = $target_dir . $image_name;
+
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                            // Lấy tên ảnh cũ để xóa
+                            $sql = "SELECT image FROM news WHERE id = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute([$_POST['id']]);
+                            $old_image = $stmt->fetchColumn();
+
+                            // Cập nhật với ảnh mới
+                            $sql = "UPDATE news SET title=?, content=?, excerpt=?, image=?, author=? WHERE id=?";
+                            $stmt = $conn->prepare($sql);
+                            $result = $stmt->execute([
+                                $_POST['title'],
+                                $_POST['content'],
+                                $_POST['excerpt'],
+                                $image_name,
+                                $_POST['author'],
+                                $_POST['id']
+                            ]);
+
+                            // Xóa ảnh cũ
+                            if ($result && $old_image && file_exists("../assets/img/" . $old_image)) {
+                                unlink("../assets/img/" . $old_image);
+                            }
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Lỗi upload file']);
+                            exit;
+                        }
+                    } else {
+                        // Cập nhật không có ảnh mới
+                        $sql = "UPDATE news SET title=?, content=?, excerpt=?, author=? WHERE id=?";
+                        $stmt = $conn->prepare($sql);
+                        $result = $stmt->execute([
+                            $_POST['title'],
+                            $_POST['content'],
+                            $_POST['excerpt'],
+                            $_POST['author'],
+                            $_POST['id']
+                        ]);
+                    }
+
+                    if ($result) {
+                        echo json_encode(['status' => 'success', 'message' => 'Cập nhật tin tức thành công']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Cập nhật tin tức thất bại']);
+                    }
+                } catch (PDOException $e) {
+                    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+                } finally {
+                    $conn = null;
+                }
+                exit;
+                break;
+
+            case "deletenews":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID tin tức']);
+                    exit;
+                }
+
+                try {
+                    $conn = connectdb();
+
+                    // Lấy tên file ảnh để xóa
+                    $sql = "SELECT image FROM news WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([$_POST['id']]);
+                    $image = $stmt->fetchColumn();
+
+                    // Xóa tin tức từ database
+                    $sql = "DELETE FROM news WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $result = $stmt->execute([$_POST['id']]);
+
+                    if ($result) {
+                        // Xóa file ảnh nếu tồn tại
+                        if ($image && file_exists("../assets/img/" . $image)) {
+                            unlink("../assets/img/" . $image);
+                        }
+                        echo json_encode(['status' => 'success', 'message' => 'Xóa tin tức thành công']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Không thể xóa tin tức']);
+                    }
+                } catch (PDOException $e) {
+                    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+                } finally {
+                    $conn = null;
                 }
                 exit;
                 break;
@@ -435,11 +540,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             LEFT JOIN parents p ON m.ReceiverID = p.UserID
                             WHERE m.SenderID = '0'
                             ORDER BY m.SendDate DESC";
-            
+
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
+
                     if ($messages != []) {
                         foreach ($messages as $message) {
                             echo "<tr>";
