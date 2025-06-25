@@ -261,19 +261,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     if ($result) {
                         $successMethods = [];
-                        foreach ($selectedMethods as $method) {
-                            switch ($method) {
-                                case 'web':
-                                    $successMethods[] = 'Website';
-                                    break;
-                                case 'zalo':
-                                    // Thêm code gửi Zalo ở đây nếu có
-                                    $successMethods[] = 'Zalo';
-                                    break;
-                                case 'messenger':
-                                    // Thêm code gửi Messenger ở đây nếu có
-                                    $successMethods[] = 'Messenger';
-                                    break;
+                        if (!empty($selectedMethods)) {
+                            foreach ($selectedMethods as $method) {
+                                switch ($method) {
+                                    case 'web':
+                                        $successMethods[] = 'Website';
+                                        break;
+                                    case 'zalo':
+                                        $successMethods[] = 'Zalo';
+                                        break;
+                                    case 'gmail':
+                                        $successMethods[] = 'Gmail';
+                                        break;
+                                }
                             }
                         }
             
@@ -420,22 +420,42 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 break;
 
             case "getMessages":
-                $messages = getDataFromTable("messages");
-                if ($messages != []) {
-                    foreach ($messages as $message) {
-
-                        if ($message['SenderID'] ==  0) {
+                try {
+                    $conn = connectdb();
+                    // Join with teachers, students, and parents tables to get receiver's name
+                    $sql = "SELECT m.*, 
+                            CASE 
+                                WHEN t.FullName IS NOT NULL THEN CONCAT(t.FullName, ' (', m.ReceiverID , ')')
+                                WHEN s.FullName IS NOT NULL THEN CONCAT(s.FullName, ' (', m.ReceiverID , ')')
+                                WHEN p.FullName IS NOT NULL THEN CONCAT(p.FullName, ' (', m.ReceiverID , ')')
+                            END as ReceiverName
+                            FROM messages m
+                            LEFT JOIN teachers t ON m.ReceiverID = t.UserID
+                            LEFT JOIN students s ON m.ReceiverID = s.UserID
+                            LEFT JOIN parents p ON m.ReceiverID = p.UserID
+                            WHERE m.SenderID = '0'
+                            ORDER BY m.SendDate DESC";
+            
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    if ($messages != []) {
+                        foreach ($messages as $message) {
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($message['SendDate']) . "</td>";
-                            echo "<td>" . htmlspecialchars($message['ReceiverID']) . "</td>";
+                            echo "<td>" . htmlspecialchars($message['ReceiverName']) . "</td>";
                             echo "<td>" . htmlspecialchars($message['Subject']) . "</td>";
                             echo "<td class='message-content'>" . htmlspecialchars($message['Content']) . "</td>";
-                            echo "<td>" . htmlspecialchars($message['IsRead'] ==  0 ? "Chưa đọc" : "Đã đọc") . "</td>";
+                            echo "<td>" . htmlspecialchars($message['IsRead'] == 0 ? "Chưa đọc" : "Đã đọc") . "</td>";
                             echo "</tr>";
                         }
+                    } else {
+                        echo "<tr><td colspan='5'>Không có dữ liệu</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                } catch (Exception $e) {
+                    error_log("Error loading messages: " . $e->getMessage());
+                    echo "<tr><td colspan='5'>Lỗi khi tải thông báo</td></tr>";
                 }
                 exit;
                 break;
