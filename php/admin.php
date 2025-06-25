@@ -462,7 +462,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
             <!-- Manage-news -->
             <div id="manage-news" class="element">
-                <h1>Quản lý tin tức</h1>
+                <h2>Quản lý tin tức</h2>
 
                 <form id="newsForm" action="../../php/add_news.php" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
@@ -482,7 +482,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <div class="form-group">
                         <label for="image">Hình ảnh:</label>
-                        <input type="file" id="image" name="image" accept="image/*" required>
+                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)" required>
+                        <div id="imagePreview" class="image-preview">
+                            <!-- Ảnh xem trước sẽ hiển thị ở đây -->
+                        </div>
                     </div>
 
                     <div class="form-group">

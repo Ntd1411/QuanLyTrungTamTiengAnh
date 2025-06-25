@@ -632,3 +632,56 @@ function formatDate(dateString) {
 }
 
 document.addEventListener('DOMContentLoaded', loadNews);
+
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    
+    // Xóa ảnh cũ nếu có
+    preview.innerHTML = '';
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // Tạo element img
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            
+            // Thêm ảnh vào preview
+            preview.appendChild(img);
+            preview.classList.add('has-image');
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        // Nếu không có file được chọn
+        preview.innerHTML = 'Chọn ảnh để xem trước';
+        preview.classList.remove('has-image');
+    }
+}
+
+// Thêm validate cho file ảnh
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const fileType = file.type;
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    
+    if (!validImageTypes.includes(fileType)) {
+        alert('Vui lòng chọn file ảnh hợp lệ (JPEG, PNG, GIF)');
+        this.value = ''; // Xóa file đã chọn
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = 'Chọn ảnh để xem trước';
+        preview.classList.remove('has-image');
+        return;
+    }
+    
+    // Kiểm tra kích thước file (ví dụ: max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước file không được vượt quá 5MB');
+        this.value = '';
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = 'Chọn ảnh để xem trước';
+        preview.classList.remove('has-image');
+        return;
+    }
+});
