@@ -158,7 +158,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="attendance-list">
                     <!-- Danh sách điểm danh sẽ được thêm vào đây -->
                 </div>
-                <button onclick="submitAttendance()">Lưu điểm danh</button>
+                <div class="button-center">
+                    <button onclick="submitAttendance()">Lưu điểm danh</button>
+                    <button onclick="viewAttendanceHistory()" style="margin-left:12px;">Xem lịch sử điểm danh</button>
+                </div>
+                <div id="attendance-history" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Họ và tên</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-history-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
