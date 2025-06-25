@@ -470,15 +470,13 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label for="title">Tiêu đề tin tức:</label>
                         <input type="text" id="title" name="title" required>
                     </div>
-
-                    <div class="form-group">
-                        <label for="content">Nội dung:</label>
-                        <textarea id="content" name="content" required></textarea>
-                    </div>
-
                     <div class="form-group">
                         <label for="excerpt">Tóm tắt:</label>
                         <textarea id="excerpt" name="excerpt" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Nội dung:</label>
+                        <textarea id="content" name="content" style="height: 200px;" required></textarea>
                     </div>
 
                     <div class="form-group">
@@ -661,14 +659,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
             </div>
 
-           
+
         </div>
     </div>
 
-    
+
     <!-- Pop Up-->
     <div class="popup-overlay-2"></div>
-    
+
     <div class="edit-popup" id="edit-popup">
         <h3>Chỉnh sửa thông tin</h3>
         <form id="edit-form">
@@ -680,7 +678,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <button onclick="closePopup()">Hủy</button>
         </div>
     </div>
-    
+
     <div class="confirm-popup" id="confirm-popup">
         <h3>Xác nhận xóa</h3>
         <p>Bạn có chắc chắn muốn xóa mục này?</p>
@@ -689,7 +687,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <button class="cancel" onclick="closePopup()">Hủy</button>
         </div>
     </div>
-    
+
     <!-- Footer -->
     <footer>
         <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>

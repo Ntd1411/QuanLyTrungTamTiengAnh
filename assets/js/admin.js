@@ -702,8 +702,8 @@ document.getElementById('image').addEventListener('change', function (e) {
     }
 
     // Kiểm tra kích thước file (ví dụ: max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước file không được vượt quá 5MB');
+    if (file.size > 10 * 1024 * 1024) {
+        alert('Kích thước file không được vượt quá 10MB');
         this.value = '';
         const preview = document.getElementById('imagePreview');
         preview.innerHTML = 'Chọn ảnh để xem trước';
@@ -745,13 +745,13 @@ function showEditNews(id) {
                     </div>
 
                     <div class="form-group">
-                        <label for="edit-content">Nội dung:</label>
-                        <textarea id="edit-content" name="content" required>${data.news.content}</textarea>
-                    </div>
-
-                    <div class="form-group">
                         <label for="edit-excerpt">Tóm tắt:</label>
                         <textarea id="edit-excerpt" name="excerpt" required>${data.news.excerpt}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Nội dung:</label>
+                        <textarea id="edit-content" style="height: 200px;"  name="content" required>${data.news.content}</textarea>
                     </div>
 
                     <div class="form-group">

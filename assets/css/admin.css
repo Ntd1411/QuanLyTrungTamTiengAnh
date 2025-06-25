@@ -991,20 +991,22 @@ button:hover {
 }
 
 .news-info h3 {
+    display: -webkit-box;          /* Thêm display: -webkit-box */
+    -webkit-box-orient: vertical;
     margin: 0;
     font-size: 1.5rem;
     color: #2c3e50;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap; /* Prevent title from wrapping */
+    -webkit-line-clamp: 2;
+    white-space: pre-wrap; /* Prevent title from wrapping */
 }
 
 .news-title-link {
     text-decoration: none;
     color: inherit;
     transition: color 0.5s ease;
-    display: block; /* Ensure ellipsis works */
 }
 
 .news-title-link:hover {
@@ -1026,6 +1028,8 @@ button:hover {
 }
 
 .news-author {
+    display: -webkit-box;          /* Thêm display: -webkit-box */
+    -webkit-box-orient: vertical;
     max-width: 150px; /* Limit author name length */
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1035,6 +1039,8 @@ button:hover {
 }
 
 .news-excerpt {
+    display: -webkit-box;          /* Thêm display: -webkit-box */
+    -webkit-box-orient: vertical;
     color: #444;
     max-width: 100%;
     line-height: 1.6;
@@ -1115,4 +1121,11 @@ button:hover {
 
 .news-edit-form {
     grid-column: span 2;
+}
+
+
+textarea {
+    overflow-y: auto;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
