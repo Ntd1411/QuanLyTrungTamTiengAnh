@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = connectdb();
 
     // Xử lý upload ảnh
-    $target_dir = "../assets/img/";
+    $target_dir = "../assets/imgnews/";
     $image_name = time() . '_' . basename($_FILES["image"]["name"]);
     $target_file = $target_dir . $image_name;
 
