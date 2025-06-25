@@ -43,3 +43,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+function loadNews() {
+    fetch('../php/getnews.php')
+        .then(response => response.json())
+        .then(news => {
+            const newsContainer = document.querySelector('.news-list-grid');
+            newsContainer.innerHTML = '';
+            
+            news.forEach(item => {
+                const newsHtml = `
+                    <div class="news-item">
+                        <img src="../assets/img/news/${item.image}" alt="${item.title}" class="news-img">
+                        <div class="news-info">
+                            <h3><a href="#" class="news-title-link">${item.title}</a></h3>
+                            <p class="news-meta">
+                                <span class="news-date">${formatDate(item.date)}</span> | 
+                                <span class="news-author">${item.author}</span>
+                            </p>
+                            <p class="news-excerpt">${item.excerpt}</p>
+                            <a href="#" class="read-more">Đọc thêm</a>
+                        </div>
+                    </div>
+                `;
+                newsContainer.innerHTML += newsHtml;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+}
+
+document.addEventListener('DOMContentLoaded', loadNews);

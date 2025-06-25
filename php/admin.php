@@ -46,11 +46,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <li><a href="#manage-students" onclick="showElement('manage-students'); return false;">Học Sinh</a></li>
             <li><a href="#manage-parents" onclick="showElement('manage-parents'); return false;">Phụ Huynh</a></li>
             <li><a href="#statistics" onclick="showElement('statistics'); return false;">Thống Kê</a></li>
-            <li><a href="#promotions" onclick="showElement('promotions'); return false;">Quảng Cáo</a></li>
-            <li><a href="#noti" onclick="showElement('noti'); return false;">Thông báo</a></li>
+            <li><a href="#manage-news" onclick="showElement('manage-news'); return false;">Tin tức</a></li>
+            <li><a href="#noti" onclick="showElement('noti');  return false;">Thông báo</a></li>
 
             <li>
-                <a href="#account">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault(); return false;">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#account-info" onclick="showElement('account-info'); return false;">Thông tin tài khoản</a>
                     </li>
@@ -317,8 +317,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             $classes = getDataFromTable("classes");
                             if ($classes) {
                                 foreach ($classes as $class) {
-                                    if($class['Status'] == "Đang hoạt động")
-                                    echo "<option value='{$class['ClassID']}'>{$class['ClassName']}</option>";
+                                    if ($class['Status'] == "Đang hoạt động")
+                                        echo "<option value='{$class['ClassID']}'>{$class['ClassName']}</option>";
                                 }
                             }
                             ?>
@@ -460,15 +460,42 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
             </div>
 
-            <!-- Promotions -->
-            <div id="promotions" class="element">
-                <h2>Quản Lý Quảng Cáo</h2>
-                <div class="form-group">
-                    <label>Nội dung quảng cáo:</label>
-                    <textarea id="promo-content" placeholder="Nhập nội dung quảng cáo"></textarea>
+            <!-- Manage-news -->
+            <div id="manage-news" class="element">
+                <h1>Quản lý tin tức</h1>
+
+                <form id="newsForm" action="../../php/add_news.php" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Tiêu đề tin tức:</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Nội dung:</label>
+                        <textarea id="content" name="content" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="excerpt">Tóm tắt:</label>
+                        <textarea id="excerpt" name="excerpt" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Hình ảnh:</label>
+                        <input type="file" id="image" name="image" accept="image/*" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author">Tác giả:</label>
+                        <input type="text" id="author" name="author" required>
+                    </div>
+
+                    <button type="submit">Đăng bài</button>
+                </form>
+
+                <div id="newsList" class="newsList">
+                    <!-- Danh sách tin tức sẽ được load từ database -->
                 </div>
-                <button onclick="addPromotion()">Thêm quảng cáo</button>
-                <div id="promo-list"></div>
             </div>
 
             <!-- Notification -->
@@ -524,13 +551,13 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label>Phương thức gửi:</label>
                         <div class="send-methods">
                             <label>
-                                <input type="checkbox" name="sendMethods" value="web" checked> Website
+                                <input type="checkbox" name="sendMethods[]" value="web" checked> Website
                             </label>
                             <label>
-                                <input type="checkbox" name="sendMethods" value="zalo"> Zalo
+                                <input type="checkbox" name="sendMethods[]" value="zalo"> Zalo
                             </label>
                             <label>
-                                <input type="checkbox" name="sendMethods" value="messenger"> Messenger
+                                <input type="checkbox" name="sendMethods[]" value="gmail"> Gmail
                             </label>
                         </div>
                     </div>
@@ -675,7 +702,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <script src="../assets/js/update_page.js"></script>
     <script>
         // Initialize Select2 for the recipient select element
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.select2-dropdown').select2({
                 placeholder: "Chọn người nhận",
                 allowClear: true,
