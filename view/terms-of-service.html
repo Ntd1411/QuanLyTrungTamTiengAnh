@@ -1,170 +1,319 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../assets/icon/logo_ver3.png" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/legal.css" />
+    <title>Điều khoản Dịch vụ - KMA English Center</title>
+  </head>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../assets/icon/logo_ver3.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/legal.css"> <title>Điều khoản Dịch vụ - KMA English Center</title>
-</head>
-
-<body>
+  <body>
     <header>
-        <img src="../assets/img/poster.jpg" alt="Logo Website">
+      <img src="../assets/img/poster.jpg" alt="Logo Website" />
     </header>
 
     <nav>
-        <ul class="menu">
+      <ul class="menu">
+        <li>
+          <a href="../index.html" onclick="showElement('home'); return false;"
+            >Trang Chủ</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
+          <ul class="submenu">
             <li>
-                <a href="../index.html" onclick="showElement('home'); return false;">Trang Chủ</a>
+              <a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a>
+            </li>
+            <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
+            <li><a href="" onclick="event.preventDefault();">Liên Hệ</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
+          <ul class="submenu">
+            <li>
+              <a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a>
             </li>
             <li>
-                <a href="#" onclick="event.preventDefault()">Giới Thiệu</a>
-                <ul class="submenu">
-                    <li><a href="../view/teachter_intro.html">Đội Ngũ Giảng Viên</a></li>
-                    <li><a href="../view/faq.html">Câu Hỏi Thường Gặp (FAQ)</a></li>
-                    <li><a href="" onclick="event.preventDefault();">Liên Hệ</a></li>
-                </ul>
+              <a href="#" onclick="event.preventDefault()">IELTS</a>
+              <ul class="sub-submenu">
+                <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
+                <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
+                <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
+                <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
+              </ul>
             </li>
             <li>
-                <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
-                <ul class="submenu">
-                    <li><a href="../view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
-                    <li><a href="#" onclick="event.preventDefault()">IELTS</a>
-                        <ul class="sub-submenu">
-                            <li><a href="../view/ielts_basic.html">IELTS cơ bản</a></li>
-                            <li><a href="../view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>
-                            <li><a href="../view/ielts_5.5_6.5.html">IELTS 5.5-6.5</a></li>
-                            <li><a href="../view/ielts_6.5+.html">IELTS 6.5+</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#" onclick="event.preventDefault()">TOEIC</a>
-                        <ul class="sub-submenu">
-                            <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
-                            <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
-                            <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
-                        </ul>
-                    </li>
-                </ul>
+              <a href="#" onclick="event.preventDefault()">TOEIC</a>
+              <ul class="sub-submenu">
+                <li><a href="../view/toeic_550_650.html">550-650 TOEIC</a></li>
+                <li><a href="../view/toeic_650_800.html">650-800 TOEIC</a></li>
+                <li><a href="../view/toeic_800+.html">800+ TOEIC</a></li>
+              </ul>
             </li>
-            <li>
-                <a href="../view/reference.html">Thư viện</a>
-            </li>
-            <li>
-                <a href="#" onclick="event.preventDefault()">Tin Tức</a>
-                <ul class="submenu">
-                    <li><a href="../view/news.html">Sự Kiện</a></li>
-                    <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
-                <ul class="submenu">
-                    <li><a href="../php/login.php">Đăng Nhập</a></li>
-                    <li><a href="../php/signup.php">Đăng Ký</a></li>
-                </ul>
-            </li>
-        </ul>
+          </ul>
+        </li>
+        <li>
+          <a href="../view/reference.html">Thư viện</a>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Tin Tức</a>
+          <ul class="submenu">
+            <li><a href="../view/news.html">Sự Kiện</a></li>
+            <li><a href="#student-news">Học Viên Xuất Sắc</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" onclick="event.preventDefault()">Tài Khoản</a>
+          <ul class="submenu">
+            <li><a href="../php/login.php">Đăng Nhập</a></li>
+            <li><a href="../php/signup.php">Đăng Ký</a></li>
+          </ul>
+        </li>
+      </ul>
     </nav>
-
-    <main class="main-content">
+    <div class="element active">
+      <main class="main-content">
         <div class="legal-content">
-            <h1>ĐIỀU KHOẢN DỊCH VỤ CỦA KMA ENGLISH CENTER (KEC)</h1>
-            <p>Cập nhật lần cuối: 27 tháng 5 năm 2025</p>
+          <h1>ĐIỀU KHOẢN DỊCH VỤ CỦA KMA ENGLISH CENTER (KEC)</h1>
+          <p>Cập nhật lần cuối: 27 tháng 5 năm 2025</p>
 
-            <p>Chào mừng bạn đến với KMA English Center (KEC)! Chúng tôi cung cấp các khóa học và dịch vụ giáo dục tiếng Anh chất lượng cao. Các Điều khoản Dịch vụ này ("Điều khoản") quy định việc bạn sử dụng các dịch vụ và website của chúng tôi. Bằng cách đăng ký hoặc sử dụng bất kỳ dịch vụ nào của KEC, bạn đồng ý tuân thủ và bị ràng buộc bởi các Điều khoản này. Vui lòng đọc kỹ trước khi sử dụng dịch vụ của chúng tôi.</p>
+          <p>
+            Chào mừng bạn đến với KMA English Center (KEC)! Chúng tôi cung cấp
+            các khóa học và dịch vụ giáo dục tiếng Anh chất lượng cao. Các Điều
+            khoản Dịch vụ này ("Điều khoản") quy định việc bạn sử dụng các dịch
+            vụ và website của chúng tôi. Bằng cách đăng ký hoặc sử dụng bất kỳ
+            dịch vụ nào của KEC, bạn đồng ý tuân thủ và bị ràng buộc bởi các
+            Điều khoản này. Vui lòng đọc kỹ trước khi sử dụng dịch vụ của chúng
+            tôi.
+          </p>
 
-            <h2>1. Chấp nhận Điều khoản</h2>
-            <h3>Đồng ý ràng buộc:</h3>
-            <p>Bằng việc truy cập, duyệt, đăng ký hoặc sử dụng các dịch vụ của KEC (bao gồm nhưng không giới hạn ở các khóa học trực tiếp, trực tuyến, tài liệu học tập, sự kiện, website, ứng dụng di động nếu có), bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý với tất cả các Điều khoản này.</p>
-            <h3>Người đủ tuổi:</h3>
-            <p>Bạn xác nhận rằng bạn đã đủ 18 tuổi hoặc đã có sự đồng ý hợp pháp của cha mẹ/người giám hộ để ký kết thỏa thuận này. Nếu bạn là người dưới 18 tuổi, cha mẹ hoặc người giám hộ của bạn phải đọc và đồng ý với các Điều khoản này thay mặt bạn.</p>
+          <h2>1. Chấp nhận Điều khoản</h2>
+          <h3>Đồng ý ràng buộc:</h3>
+          <p>
+            Bằng việc truy cập, duyệt, đăng ký hoặc sử dụng các dịch vụ của KEC
+            (bao gồm nhưng không giới hạn ở các khóa học trực tiếp, trực tuyến,
+            tài liệu học tập, sự kiện, website, ứng dụng di động nếu có), bạn
+            xác nhận rằng bạn đã đọc, hiểu và đồng ý với tất cả các Điều khoản
+            này.
+          </p>
+          <h3>Người đủ tuổi:</h3>
+          <p>
+            Bạn xác nhận rằng bạn đã đủ 18 tuổi hoặc đã có sự đồng ý hợp pháp
+            của cha mẹ/người giám hộ để ký kết thỏa thuận này. Nếu bạn là người
+            dưới 18 tuổi, cha mẹ hoặc người giám hộ của bạn phải đọc và đồng ý
+            với các Điều khoản này thay mặt bạn.
+          </p>
 
-            <h2>2. Dịch vụ của KEC</h2>
-            <h3>Mô tả dịch vụ:</h3>
-            <p>KEC cung cấp các khóa học tiếng Anh đa dạng, từ cấp độ cơ bản đến nâng cao, luyện thi chứng chỉ, tiếng Anh giao tiếp, tiếng Anh doanh nghiệp, v.v. Các dịch vụ có thể bao gồm các lớp học trực tiếp, lớp học trực tuyến, tài liệu học tập điện tử, hoạt động ngoại khóa và hỗ trợ học tập.</p>
-            <h3>Thay đổi dịch vụ:</h3>
-            <p>KEC có quyền điều chỉnh, tạm ngừng hoặc chấm dứt bất kỳ dịch vụ nào (hoặc bất kỳ phần nào của dịch vụ) mà không cần thông báo trước. Chúng tôi sẽ cố gắng thông báo cho bạn về bất kỳ thay đổi lớn nào một cách hợp lý.</p>
-            <h3>Nội dung khóa học:</h3>
-            <p>KEC cam kết cung cấp nội dung khóa học chất lượng và cập nhật. Tuy nhiên, chúng tôi không đảm bảo rằng nội dung sẽ luôn hoàn hảo, không có lỗi hoặc phù hợp với mọi nhu cầu cụ thể của từng cá nhân.</p>
+          <h2>2. Dịch vụ của KEC</h2>
+          <h3>Mô tả dịch vụ:</h3>
+          <p>
+            KEC cung cấp các khóa học tiếng Anh đa dạng, từ cấp độ cơ bản đến
+            nâng cao, luyện thi chứng chỉ, tiếng Anh giao tiếp, tiếng Anh doanh
+            nghiệp, v.v. Các dịch vụ có thể bao gồm các lớp học trực tiếp, lớp
+            học trực tuyến, tài liệu học tập điện tử, hoạt động ngoại khóa và hỗ
+            trợ học tập.
+          </p>
+          <h3>Thay đổi dịch vụ:</h3>
+          <p>
+            KEC có quyền điều chỉnh, tạm ngừng hoặc chấm dứt bất kỳ dịch vụ nào
+            (hoặc bất kỳ phần nào của dịch vụ) mà không cần thông báo trước.
+            Chúng tôi sẽ cố gắng thông báo cho bạn về bất kỳ thay đổi lớn nào
+            một cách hợp lý.
+          </p>
+          <h3>Nội dung khóa học:</h3>
+          <p>
+            KEC cam kết cung cấp nội dung khóa học chất lượng và cập nhật. Tuy
+            nhiên, chúng tôi không đảm bảo rằng nội dung sẽ luôn hoàn hảo, không
+            có lỗi hoặc phù hợp với mọi nhu cầu cụ thể của từng cá nhân.
+          </p>
 
-            <h2>3. Đăng ký và Thanh toán</h2>
-            <h3>Thông tin đăng ký:</h3>
-            <p>Bạn phải cung cấp thông tin chính xác, đầy đủ và cập nhật khi đăng ký các khóa học hoặc dịch vụ tại KEC. Bạn chịu trách nhiệm duy trì tính bảo mật của thông tin tài khoản của mình.</p>
-            <h3>Phí và Thanh toán:</h3>
-            <p>Tất cả các khoản phí khóa học và dịch vụ phải được thanh toán đầy đủ theo lịch trình đã thỏa thuận. KEC có thể thay đổi mức phí bất cứ lúc nào, tuy nhiên, những thay đổi này sẽ không ảnh hưởng đến các khóa học đã được thanh toán đầy đủ.</p>
-            <h3>Chính sách hoàn tiền:</h3>
-            <p>Chính sách hoàn tiền của KEC sẽ được công bố rõ ràng và bạn có thể yêu cầu được cung cấp chính sách này trước khi đăng ký. Thông thường, việc hoàn tiền sẽ tuân theo các điều kiện cụ thể về thời gian và lý do hủy bỏ.</p>
+          <h2>3. Đăng ký và Thanh toán</h2>
+          <h3>Thông tin đăng ký:</h3>
+          <p>
+            Bạn phải cung cấp thông tin chính xác, đầy đủ và cập nhật khi đăng
+            ký các khóa học hoặc dịch vụ tại KEC. Bạn chịu trách nhiệm duy trì
+            tính bảo mật của thông tin tài khoản của mình.
+          </p>
+          <h3>Phí và Thanh toán:</h3>
+          <p>
+            Tất cả các khoản phí khóa học và dịch vụ phải được thanh toán đầy đủ
+            theo lịch trình đã thỏa thuận. KEC có thể thay đổi mức phí bất cứ
+            lúc nào, tuy nhiên, những thay đổi này sẽ không ảnh hưởng đến các
+            khóa học đã được thanh toán đầy đủ.
+          </p>
+          <h3>Chính sách hoàn tiền:</h3>
+          <p>
+            Chính sách hoàn tiền của KEC sẽ được công bố rõ ràng và bạn có thể
+            yêu cầu được cung cấp chính sách này trước khi đăng ký. Thông
+            thường, việc hoàn tiền sẽ tuân theo các điều kiện cụ thể về thời
+            gian và lý do hủy bỏ.
+          </p>
 
-            <h2>4. Quy tắc Ứng xử và Trách nhiệm của Học viên</h2>
-            <h3>Hành vi tôn trọng:</h3>
-            <p>Học viên phải thể hiện sự tôn trọng đối với giáo viên, nhân viên KEC và các học viên khác. Mọi hành vi quấy rối, phân biệt đối xử, đe dọa hoặc phá hoại sẽ không được dung thứ.</p>
-            <h3>Tuân thủ nội quy:</h3>
-            <p>Học viên phải tuân thủ nội quy lớp học, nội quy trung tâm và các hướng dẫn của giáo viên và nhân viên KEC.</p>
-            <h3>Tham gia tích cực:</h3>
-            <p>Học viên được khuyến khích tham gia tích cực vào các buổi học, hoàn thành bài tập và tận dụng tối đa các tài nguyên mà KEC cung cấp.</p>
-            <h3>Tài sản trí tuệ:</h3>
-            <p>Nghiêm cấm sao chép, phân phối hoặc sử dụng bất kỳ tài liệu giảng dạy, tài liệu học tập, hoặc nội dung nào khác của KEC cho mục đích thương mại mà không có sự cho phép bằng văn bản của KEC.</p>
-            <h3>Thiết bị và kết nối (đối với lớp học trực tuyến):</h3>
-            <p>Học viên tham gia lớp học trực tuyến phải đảm bảo có thiết bị (máy tính, máy tính bảng, điện thoại), kết nối internet ổn định và môi trường học tập phù hợp. KEC không chịu trách nhiệm về các vấn đề phát sinh do lỗi kết nối hoặc thiết bị của học viên.</p>
+          <h2>4. Quy tắc Ứng xử và Trách nhiệm của Học viên</h2>
+          <h3>Hành vi tôn trọng:</h3>
+          <p>
+            Học viên phải thể hiện sự tôn trọng đối với giáo viên, nhân viên KEC
+            và các học viên khác. Mọi hành vi quấy rối, phân biệt đối xử, đe dọa
+            hoặc phá hoại sẽ không được dung thứ.
+          </p>
+          <h3>Tuân thủ nội quy:</h3>
+          <p>
+            Học viên phải tuân thủ nội quy lớp học, nội quy trung tâm và các
+            hướng dẫn của giáo viên và nhân viên KEC.
+          </p>
+          <h3>Tham gia tích cực:</h3>
+          <p>
+            Học viên được khuyến khích tham gia tích cực vào các buổi học, hoàn
+            thành bài tập và tận dụng tối đa các tài nguyên mà KEC cung cấp.
+          </p>
+          <h3>Tài sản trí tuệ:</h3>
+          <p>
+            Nghiêm cấm sao chép, phân phối hoặc sử dụng bất kỳ tài liệu giảng
+            dạy, tài liệu học tập, hoặc nội dung nào khác của KEC cho mục đích
+            thương mại mà không có sự cho phép bằng văn bản của KEC.
+          </p>
+          <h3>Thiết bị và kết nối (đối với lớp học trực tuyến):</h3>
+          <p>
+            Học viên tham gia lớp học trực tuyến phải đảm bảo có thiết bị (máy
+            tính, máy tính bảng, điện thoại), kết nối internet ổn định và môi
+            trường học tập phù hợp. KEC không chịu trách nhiệm về các vấn đề
+            phát sinh do lỗi kết nối hoặc thiết bị của học viên.
+          </p>
 
-            <h2>5. Giới hạn Trách nhiệm</h2>
-            <h3>Không đảm bảo kết quả:</h3>
-            <p>KEC cam kết cung cấp chất lượng giảng dạy tốt nhất, nhưng chúng tôi không đảm bảo kết quả học tập cụ thể cho từng học viên. Kết quả phụ thuộc vào nỗ lực cá nhân, sự tham gia và các yếu tố khác.</p>
-            <h3>Miễn trừ trách nhiệm:</h3>
-            <p>Trong phạm vi tối đa được pháp luật cho phép, KEC sẽ không chịu trách nhiệm về bất kỳ thiệt hại trực tiếp, gián tiếp, ngẫu nhiên, đặc biệt hoặc do hậu quả nào phát sinh từ việc bạn sử dụng hoặc không thể sử dụng dịch vụ của chúng tôi, bao gồm nhưng không giới hạn ở mất mát dữ liệu, mất mát lợi nhuận hoặc gián đoạn kinh doanh.</p>
-            <h3>Sự cố kỹ thuật:</h3>
-            <p>KEC sẽ cố gắng khắc phục mọi sự cố kỹ thuật liên quan đến các nền tảng trực tuyến của mình một cách nhanh chóng. Tuy nhiên, chúng tôi không chịu trách nhiệm về bất kỳ sự chậm trễ hoặc gián đoạn nào gây ra bởi các yếu tố nằm ngoài tầm kiểm soát hợp lý của chúng tôi (ví dụ: lỗi mạng internet, mất điện).</p>
+          <h2>5. Giới hạn Trách nhiệm</h2>
+          <h3>Không đảm bảo kết quả:</h3>
+          <p>
+            KEC cam kết cung cấp chất lượng giảng dạy tốt nhất, nhưng chúng tôi
+            không đảm bảo kết quả học tập cụ thể cho từng học viên. Kết quả phụ
+            thuộc vào nỗ lực cá nhân, sự tham gia và các yếu tố khác.
+          </p>
+          <h3>Miễn trừ trách nhiệm:</h3>
+          <p>
+            Trong phạm vi tối đa được pháp luật cho phép, KEC sẽ không chịu
+            trách nhiệm về bất kỳ thiệt hại trực tiếp, gián tiếp, ngẫu nhiên,
+            đặc biệt hoặc do hậu quả nào phát sinh từ việc bạn sử dụng hoặc
+            không thể sử dụng dịch vụ của chúng tôi, bao gồm nhưng không giới
+            hạn ở mất mát dữ liệu, mất mát lợi nhuận hoặc gián đoạn kinh doanh.
+          </p>
+          <h3>Sự cố kỹ thuật:</h3>
+          <p>
+            KEC sẽ cố gắng khắc phục mọi sự cố kỹ thuật liên quan đến các nền
+            tảng trực tuyến của mình một cách nhanh chóng. Tuy nhiên, chúng tôi
+            không chịu trách nhiệm về bất kỳ sự chậm trễ hoặc gián đoạn nào gây
+            ra bởi các yếu tố nằm ngoài tầm kiểm soát hợp lý của chúng tôi (ví
+            dụ: lỗi mạng internet, mất điện).
+          </p>
 
-            <h2>6. Quyền sở hữu trí tuệ</h2>
-            <p>Tất cả nội dung và tài liệu được cung cấp bởi KEC, bao gồm nhưng không giới hạn ở giáo trình, bài giảng, video, âm thanh, hình ảnh, phần mềm và website, là tài sản độc quyền của KEC hoặc các bên cấp phép cho KEC và được bảo vệ bởi luật sở hữu trí tuệ.</p>
-            <p>Bạn không được phép sao chép, phân phối, sửa đổi, tạo ra các tác phẩm phái sinh, hiển thị công khai, thực hiện công khai, tái xuất bản, tải xuống, lưu trữ hoặc truyền tải bất kỳ tài liệu nào từ dịch vụ của KEC trừ khi được KEC cho phép rõ ràng bằng văn bản.</p>
+          <h2>6. Quyền sở hữu trí tuệ</h2>
+          <p>
+            Tất cả nội dung và tài liệu được cung cấp bởi KEC, bao gồm nhưng
+            không giới hạn ở giáo trình, bài giảng, video, âm thanh, hình ảnh,
+            phần mềm và website, là tài sản độc quyền của KEC hoặc các bên cấp
+            phép cho KEC và được bảo vệ bởi luật sở hữu trí tuệ.
+          </p>
+          <p>
+            Bạn không được phép sao chép, phân phối, sửa đổi, tạo ra các tác
+            phẩm phái sinh, hiển thị công khai, thực hiện công khai, tái xuất
+            bản, tải xuống, lưu trữ hoặc truyền tải bất kỳ tài liệu nào từ dịch
+            vụ của KEC trừ khi được KEC cho phép rõ ràng bằng văn bản.
+          </p>
 
-            <h2>7. Liên kết đến các trang web bên thứ ba</h2>
-            <p>Dịch vụ của KEC có thể chứa các liên kết đến các trang web hoặc dịch vụ của bên thứ ba không thuộc sở hữu hoặc kiểm soát của KEC.</p>
-            <p>KEC không chịu trách nhiệm về nội dung, chính sách bảo mật hoặc các hoạt động của bất kỳ trang web hoặc dịch vụ bên thứ ba nào. Bạn tự chịu rủi ro khi truy cập các trang web đó.</p>
+          <h2>7. Liên kết đến các trang web bên thứ ba</h2>
+          <p>
+            Dịch vụ của KEC có thể chứa các liên kết đến các trang web hoặc dịch
+            vụ của bên thứ ba không thuộc sở hữu hoặc kiểm soát của KEC.
+          </p>
+          <p>
+            KEC không chịu trách nhiệm về nội dung, chính sách bảo mật hoặc các
+            hoạt động của bất kỳ trang web hoặc dịch vụ bên thứ ba nào. Bạn tự
+            chịu rủi ro khi truy cập các trang web đó.
+          </p>
 
-            <h2>8. Chấm dứt</h2>
-            <h3>Chấm dứt bởi KEC:</h3>
-            <p>KEC có quyền đình chỉ hoặc chấm dứt quyền truy cập của bạn vào tất cả hoặc bất kỳ phần nào của dịch vụ của chúng tôi bất cứ lúc nào, vì bất kỳ lý do gì, bao gồm nhưng không giới hạn ở việc vi phạm các Điều khoản này, hoặc nếu KEC tin rằng hành vi của bạn có hại cho KEC hoặc các học viên khác.</p>
-            <h3>Chấm dứt bởi Học viên:</h3>
-            <p>Bạn có thể ngừng sử dụng dịch vụ của KEC bất cứ lúc nào. Việc chấm dứt sẽ tuân theo chính sách hoàn tiền của KEC.</p>
+          <h2>8. Chấm dứt</h2>
+          <h3>Chấm dứt bởi KEC:</h3>
+          <p>
+            KEC có quyền đình chỉ hoặc chấm dứt quyền truy cập của bạn vào tất
+            cả hoặc bất kỳ phần nào của dịch vụ của chúng tôi bất cứ lúc nào, vì
+            bất kỳ lý do gì, bao gồm nhưng không giới hạn ở việc vi phạm các
+            Điều khoản này, hoặc nếu KEC tin rằng hành vi của bạn có hại cho KEC
+            hoặc các học viên khác.
+          </p>
+          <h3>Chấm dứt bởi Học viên:</h3>
+          <p>
+            Bạn có thể ngừng sử dụng dịch vụ của KEC bất cứ lúc nào. Việc chấm
+            dứt sẽ tuân theo chính sách hoàn tiền của KEC.
+          </p>
 
-            <h2>9. Luật điều chỉnh và Giải quyết tranh chấp</h2>
-            <p>Các Điều khoản này sẽ được điều chỉnh và giải thích theo luật pháp Việt Nam.</p>
-            <p>Mọi tranh chấp phát sinh từ hoặc liên quan đến các Điều khoản này sẽ được giải quyết trước hết thông qua đàm phán thiện chí giữa các bên. Nếu không thể giải quyết được thông qua đàm phán, tranh chấp sẽ được đưa ra Tòa án có thẩm quyền tại Việt Nam.</p>
+          <h2>9. Luật điều chỉnh và Giải quyết tranh chấp</h2>
+          <p>
+            Các Điều khoản này sẽ được điều chỉnh và giải thích theo luật pháp
+            Việt Nam.
+          </p>
+          <p>
+            Mọi tranh chấp phát sinh từ hoặc liên quan đến các Điều khoản này sẽ
+            được giải quyết trước hết thông qua đàm phán thiện chí giữa các bên.
+            Nếu không thể giải quyết được thông qua đàm phán, tranh chấp sẽ được
+            đưa ra Tòa án có thẩm quyền tại Việt Nam.
+          </p>
 
-            <h2>10. Các điều khoản chung</h2>
-            <h3>Tính toàn vẹn:</h3>
-            <p>Các Điều khoản này cấu thành toàn bộ thỏa thuận giữa bạn và KEC liên quan đến việc sử dụng dịch vụ của chúng tôi.</p>
-            <h3>Khả năng phân chia:</h3>
-            <p>Nếu bất kỳ điều khoản nào của các Điều khoản này bị coi là không hợp lệ hoặc không thể thực thi, điều khoản đó sẽ được hiểu theo cách giải thích tối đa có thể thực thi và các điều khoản còn lại sẽ vẫn có hiệu lực và hiệu lực đầy đủ.</p>
-            <h3>Từ bỏ quyền:</h3>
-            <p>Việc KEC không thực thi bất kỳ quyền hoặc điều khoản nào của các Điều khoản này sẽ không cấu thành sự từ bỏ quyền hoặc điều khoản đó.</p>
+          <h2>10. Các điều khoản chung</h2>
+          <h3>Tính toàn vẹn:</h3>
+          <p>
+            Các Điều khoản này cấu thành toàn bộ thỏa thuận giữa bạn và KEC liên
+            quan đến việc sử dụng dịch vụ của chúng tôi.
+          </p>
+          <h3>Khả năng phân chia:</h3>
+          <p>
+            Nếu bất kỳ điều khoản nào của các Điều khoản này bị coi là không hợp
+            lệ hoặc không thể thực thi, điều khoản đó sẽ được hiểu theo cách
+            giải thích tối đa có thể thực thi và các điều khoản còn lại sẽ vẫn
+            có hiệu lực và hiệu lực đầy đủ.
+          </p>
+          <h3>Từ bỏ quyền:</h3>
+          <p>
+            Việc KEC không thực thi bất kỳ quyền hoặc điều khoản nào của các
+            Điều khoản này sẽ không cấu thành sự từ bỏ quyền hoặc điều khoản đó.
+          </p>
 
-            <h2>11. Thay đổi Điều khoản Dịch vụ</h2>
-            <p>KEC có quyền sửa đổi hoặc cập nhật các Điều khoản này bất cứ lúc nào. Chúng tôi sẽ thông báo cho bạn về bất kỳ thay đổi quan trọng nào bằng cách đăng các Điều khoản mới trên website của chúng tôi hoặc thông qua các kênh thông báo khác. Việc bạn tiếp tục sử dụng dịch vụ sau khi các thay đổi có hiệu lực sẽ cấu thành sự chấp nhận của bạn đối với các Điều khoản đã sửa đổi.</p>
+          <h2>11. Thay đổi Điều khoản Dịch vụ</h2>
+          <p>
+            KEC có quyền sửa đổi hoặc cập nhật các Điều khoản này bất cứ lúc
+            nào. Chúng tôi sẽ thông báo cho bạn về bất kỳ thay đổi quan trọng
+            nào bằng cách đăng các Điều khoản mới trên website của chúng tôi
+            hoặc thông qua các kênh thông báo khác. Việc bạn tiếp tục sử dụng
+            dịch vụ sau khi các thay đổi có hiệu lực sẽ cấu thành sự chấp nhận
+            của bạn đối với các Điều khoản đã sửa đổi.
+          </p>
 
-            <h2>12. Liên hệ</h2>
-            <p>Nếu bạn có bất kỳ câu hỏi nào về các Điều khoản Dịch vụ này, vui lòng liên hệ với chúng tôi tại:</p>
-
-            <div class="legal-contact-info">
-                <p><strong>KMA English Center (KEC)</strong></p>
-                <p>Địa chỉ: 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</p>
-                <p>Email: contact@actvn.edu.vn</p>
-                <p>Điện thoại: 9876 543 210</p>
-            </div>
+          <h2>12. Liên hệ</h2>
+          <p>
+            Nếu bạn có bất kỳ câu hỏi nào về các Điều khoản Dịch vụ này, vui
+            lòng liên hệ với chúng tôi tại:
+          </p>
+          <div class="legal-contact-info">
+            <p><strong>KMA English Center (KEC)</strong></p>
+            <p>Địa chỉ: 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</p>
+            <p>Email: contact@actvn.edu.vn</p>
+            <p>Điện thoại: 9876 543 210</p>
+          </div>
         </div>
-    </main>
+      </main>
+    </div>
 
     <footer>
-        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
-        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
-        <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
-        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+      <p>
+        <strong>Email:</strong> contact@actvn.edu.vn |
+        <strong>Website:</strong> www.actvn.edu.vn
+      </p>
+      <h3>
+        Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội
+      </h3>
+      <p>Điện thoại: 9876 543 210 | 0123 456 789</p>
+      <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
     </footer>
-
-</body>
-
+  </body>
 </html>
