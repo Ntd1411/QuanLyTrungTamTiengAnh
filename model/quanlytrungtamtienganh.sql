@@ -638,6 +638,9 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
+--
+--Tạo bảng tin tức
+--
 CREATE TABLE news (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
@@ -648,6 +651,24 @@ CREATE TABLE news (
     date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+--
+-- Tạo bảng phiên dạy
+--
+CREATE TABLE teaching_sessions (
+  SessionID int(11) NOT NULL AUTO_INCREMENT,
+  TeacherID varchar(10) NOT NULL,
+  ClassID int(11) NOT NULL,
+  SessionDate date NOT NULL,
+  Status enum('Đã dạy','Nghỉ','Dời lịch') DEFAULT 'Đã dạy',
+  Note text DEFAULT NULL,
+  CreatedAt timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (SessionID),
+  KEY TeacherID (TeacherID),
+  KEY ClassID (ClassID),
+  CONSTRAINT teaching_sessions_ibfk_1 FOREIGN KEY (TeacherID) REFERENCES teachers (UserID),
+  CONSTRAINT teaching_sessions_ibfk_2 FOREIGN KEY (ClassID) REFERENCES classes (ClassID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Thêm dữ liệu mẫu cho bảng news
 INSERT INTO news (title, content, excerpt, image, author, date) VALUES

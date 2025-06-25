@@ -71,6 +71,49 @@
     background: #f8f9fa;
 }
 
+/* Add Log Form */
+#add-log-header{
+    margin-bottom: 10px;
+}
+
+.log-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.add-log-btn {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.add-log-btn:hover { background: #942020; }
+
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    padding: 32px 24px 24px 24px;
+    border-radius: 8px;
+    min-width: 320px;
+    position: relative;
+}
+.close-modal {
+    position: absolute;
+    right: 16px; top: 12px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
 /* Classes Container */
 .classes-container {
     display: grid;

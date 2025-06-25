@@ -77,6 +77,53 @@ function loadTeachingLog() {
     });
 }
 
+//Popup Log Form
+// Hiện popup
+document.getElementById('add-log-btn').onclick = function () {
+    // Đổ danh sách lớp vào select
+    const select = document.getElementById('log-class-select');
+    select.innerHTML = '';
+    teacherData.classes.forEach(cls => {
+        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName}</option>`;
+    });
+    document.getElementById('log-date-input').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('add-log-modal').style.display = 'flex';
+};
+
+// Đóng popup
+function closeAddLogModal() {
+    document.getElementById('add-log-modal').style.display = 'none';
+}
+
+// Lưu nhật ký
+function submitAddLog() {
+    const classId = document.getElementById('log-class-select').value;
+    const date = document.getElementById('log-date-input').value;
+    const status = document.getElementById('log-status-select').value;
+    const note = document.getElementById('log-note-input').value;
+
+    fetch('../php/add_teaching_log.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classId, status, note, date })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã thêm nhật ký!');
+                closeAddLogModal();
+                // Reload teaching log nếu muốn
+                location.reload();
+            } else {
+                alert('Thêm nhật ký thất bại!');
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi thêm nhật ký!');
+            console.error(err);
+        });
+}
+
 // Load class selection
 function loadClassSelect() {
     const classSelects = document.querySelectorAll('#class-select, #notification-class');
@@ -254,19 +301,19 @@ function deleteAttendance(studentId) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ classId, date, studentId })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Đã xóa điểm danh!');
-            viewAttendanceHistory(); // Refresh lại bảng
-        } else {
-            alert('Xóa thất bại: ' + (data.message || 'Lỗi không xác định'));
-        }
-    })
-    .catch(err => {
-        alert('Lỗi khi xóa điểm danh!');
-        console.error(err);
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã xóa điểm danh!');
+                viewAttendanceHistory(); // Refresh lại bảng
+            } else {
+                alert('Xóa thất bại: ' + (data.message || 'Lỗi không xác định'));
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi xóa điểm danh!');
+            console.error(err);
+        });
 }
 
 // Send notification
