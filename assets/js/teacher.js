@@ -141,9 +141,17 @@ function loadAttendanceList(classId) {
         const item = document.createElement('div');
         item.className = 'attendance-item';
         item.innerHTML = `
-            <input type="checkbox" id="student-${student.UserID || student.id}">
-            <label for="student-${student.UserID || student.id}">${student.FullName || student.name}</label>
+            <span class="student-name">${student.FullName || student.name}</span>
+            <div class="attendance-actions">
+                <select class="attendance-status">
+                    <option value="present">Có mặt</option>
+                    <option value="absent">Vắng mặt</option>
+                    <option value="late">Đi muộn</option>
+                </select>
+                <input type="text" class="attendance-note" placeholder="Ghi chú">
+            </div>
         `;
+        item.dataset.studentId = student.UserID || student.id;
         attendanceList.appendChild(item);
     });
 }
@@ -158,17 +166,107 @@ function submitAttendance() {
         return;
     }
 
+    const statusMap = {
+        present: 'Có mặt',
+        absent: 'Vắng mặt',
+        late: 'Đi muộn'
+    };
+
     const attendanceData = [];
-    document.querySelectorAll('.attendance-item input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('.attendance-item').forEach(item => {
+        const studentId = item.dataset.studentId;
+        const statusValue = item.querySelector('.attendance-status').value;
+        const status = statusMap[statusValue] || '';
+        const note = item.querySelector('.attendance-note').value;
         attendanceData.push({
-            studentId: checkbox.id.split('-')[1],
-            present: checkbox.checked
+            studentId,
+            status,
+            note
         });
     });
 
-    // Here you would typically send this data to the server
-    console.log('Attendance submitted:', { classId, date, attendanceData });
-    alert('Điểm danh đã được lưu');
+    fetch('../php/save_attendance.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classId, date, attendanceData })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Điểm danh đã được lưu');
+            } else {
+                alert('Lưu điểm danh thất bại: ' + (data.message || 'Lỗi không xác định'));
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi lưu điểm danh!');
+            console.error(err);
+        });
+}
+
+// View attendance history
+function viewAttendanceHistory() {
+    const classId = document.getElementById('class-select').value;
+    const date = document.getElementById('attendance-date').value;
+    if (!classId || !date) {
+        alert('Vui lòng chọn lớp và ngày');
+        return;
+    }
+
+    fetch(`../php/get_attendance_history.php?classId=${classId}&date=${date}`)
+        .then(res => res.json())
+        .then(data => {
+            const historyDiv = document.getElementById('attendance-history');
+            const historyBody = document.getElementById('attendance-history-body');
+            historyBody.innerHTML = '';
+            if (!data || data.length === 0) {
+                historyBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Không có dữ liệu điểm danh cho ngày này</td></tr>';
+            } else {
+                data.forEach(row => {
+                    historyBody.innerHTML += `
+                        <tr>
+                            <td>${row.FullName}</td>
+                            <td>${row.Status}</td>
+                            <td>${row.Note || ''}</td>
+                            <td>
+                                <button class="delete-attendance-btn" data-student-id="${row.StudentID}" onclick="deleteAttendance('${row.StudentID}')">Xóa</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            historyDiv.style.display = 'block';
+        })
+        .catch(err => {
+            alert('Không thể tải lịch sử điểm danh!');
+            console.error(err);
+        });
+}
+
+function deleteAttendance(studentId) {
+    const classId = document.getElementById('class-select').value;
+    const date = document.getElementById('attendance-date').value;
+    if (!classId || !date || !studentId) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa điểm danh của học sinh này?')) return;
+
+    fetch('../php/delete_attendance.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classId, date, studentId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Đã xóa điểm danh!');
+            viewAttendanceHistory(); // Refresh lại bảng
+        } else {
+            alert('Xóa thất bại: ' + (data.message || 'Lỗi không xác định'));
+        }
+    })
+    .catch(err => {
+        alert('Lỗi khi xóa điểm danh!');
+        console.error(err);
+    });
 }
 
 // Send notification
