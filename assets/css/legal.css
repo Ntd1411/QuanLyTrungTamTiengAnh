@@ -1,0 +1,123 @@
+/* assets/css/legal.css */
+
+/* Định nghĩa biến màu chính (nếu chưa có trong style.css hoặc muốn ghi đè) */
+:root {
+    --primary-color: #E4312A; /* Màu đỏ thương hiệu KEC */
+    --text-color: #333;
+    --heading-color: #2c3e50;
+    --bg-color: #f8f9fa;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background-color: #f0f0f0; /* Giữ màu nền tổng thể như style.css */
+    width: 90%; /* Giữ chiều rộng tổng thể như style.css */
+    max-width: 1200px; /* Giữ max-width tổng thể như style.css */
+    margin: auto; /* Căn giữa như style.css */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Bóng đổ tổng thể như style.css */
+}
+
+.legal-content {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin: 30px 0;
+}
+
+.legal-content h1 {
+    color: var(--primary-color);
+    font-size: 2.2em;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 15px;
+    line-height: 1.2;
+}
+
+.legal-content h2 {
+    color: var(--heading-color);
+    font-size: 1.6em;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.legal-content h3 {
+    color: var(--heading-color);
+    font-size: 1.2em;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.legal-content p {
+    margin-bottom: 15px;
+    text-align: justify; /* Căn đều 2 bên cho đoạn văn */
+}
+
+.legal-content ul {
+    list-style: disc inside; /* Dùng dấu chấm tròn */
+    margin-bottom: 15px;
+    padding-left: 20px; /* Thụt lề cho danh sách */
+}
+
+.legal-content ol {
+    list-style: decimal inside; /* Dùng số thứ tự */
+    margin-bottom: 15px;
+    padding-left: 20px; /* Thụt lề cho danh sách */
+}
+
+.legal-content ul li,
+.legal-content ol li {
+    margin-bottom: 8px;
+}
+
+.legal-content strong {
+    font-weight: bold;
+}
+
+.legal-content em {
+    font-style: italic;
+}
+
+/* Responsive cơ bản */
+@media (max-width: 768px) {
+    .legal-content {
+        padding: 20px 25px;
+        margin: 20px 0;
+    }
+    .legal-content h1 {
+        font-size: 1.8em;
+    }
+    .legal-content h2 {
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    .legal-content {
+        padding: 15px 15px;
+    }
+    .legal-content h1 {
+        font-size: 1.5em;
+    }
+    .legal-content h2 {
+        font-size: 1.2em;
+    }
+}
+
+/* Kiểu cho thông tin liên hệ cuối cùng */
+.legal-contact-info {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border-color);
+    text-align: center;
+}
+
+.legal-contact-info p {
+    margin-bottom: 8px;
+}

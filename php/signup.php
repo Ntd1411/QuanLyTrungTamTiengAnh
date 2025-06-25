@@ -186,7 +186,7 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
                     <div>
 
                         <input type="checkbox" id="check" name="check">
-                        <label for="check">Đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo
+                        <label for="check">Đồng ý với <a href="../view/terms-of-service.html">Điều khoản dịch vụ</a> và <a href="../view/privacy-policy.html">Chính sách bảo
                                 mật</a></label>
                     </div>
                     <div id="error-message" style="color: red; background-color: antiquewhite; margin-bottom: 5px;line-height: 2rem; width: 100%;"></div>
