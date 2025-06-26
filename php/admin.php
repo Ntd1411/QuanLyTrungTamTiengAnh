@@ -27,6 +27,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
@@ -469,20 +470,18 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label for="title">Tiêu đề tin tức:</label>
                         <input type="text" id="title" name="title" required>
                     </div>
-
-                    <div class="form-group">
-                        <label for="content">Nội dung:</label>
-                        <textarea id="content" name="content" required></textarea>
-                    </div>
-
                     <div class="form-group">
                         <label for="excerpt">Tóm tắt:</label>
                         <textarea id="excerpt" name="excerpt" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="content">Nội dung:</label>
+                        <textarea id="content" name="content" style="height: 200px;" required></textarea>
+                    </div>
 
                     <div class="form-group">
                         <label for="image">Hình ảnh:</label>
-                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)" required>
+                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this, 'imagePreview')" required>
                         <div id="imagePreview" class="image-preview">
                             <!-- Ảnh xem trước sẽ hiển thị ở đây -->
                         </div>
@@ -495,8 +494,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <button type="submit">Đăng bài</button>
                 </form>
-
+                <h2 class="existPost">Bài viết đã có</h2>
                 <div id="newsList" class="newsList">
+
                     <!-- Danh sách tin tức sẽ được load từ database -->
                 </div>
             </div>
@@ -556,11 +556,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <label>
                                 <input type="checkbox" name="sendMethods[]" value="web" checked> Website
                             </label>
-                            <label>
-                                <input type="checkbox" name="sendMethods[]" value="zalo"> Zalo
+                            <label class="disabled" title="Chưa triển khai">
+                                <input type="checkbox" name="sendMethods[]"   value="zalo" disabled> Zalo
                             </label>
-                            <label>
-                                <input type="checkbox" name="sendMethods[]" value="gmail"> Gmail
+                            <label class="disabled" title="Chưa triển khai" >
+                                <input type="checkbox" name="sendMethods[]"  value="gmail" disabled> Gmail
                             </label>
                         </div>
                     </div>
@@ -659,25 +659,12 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
             </div>
 
-            <!-- Popup -->
-            <div class="popup-overlay" id="popup-overlay"></div>
-            <div class="popup" id="popup">
-                <h3>Quảng cáo lớp mới</h3>
-                <p id="popup-content"></p>
-                <button onclick="closePopup()">Đóng</button>
-            </div>
+
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
-        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
-        <p>Điện thoại: (024) 3854 2211 | Fax: (024) 3854 2344</p>
-        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
-    </footer>
 
-    <!-- Thêm vào cuối body trước các script -->
+    <!-- Pop Up-->
     <div class="popup-overlay-2"></div>
 
     <div class="edit-popup" id="edit-popup">
@@ -685,6 +672,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         <form id="edit-form">
             <!-- Form sẽ được điền động bởi JavaScript -->
         </form>
+        <form id="edit-news"></form>
         <div class="popup-buttons">
             <button type="submit" form="edit-form">Lưu</button>
             <button onclick="closePopup()">Hủy</button>
@@ -699,6 +687,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <button class="cancel" onclick="closePopup()">Hủy</button>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
+        <h3>Học Viện Kỹ Thuật Mật Mã - 141 Chiến Thắng, Tân Triều, Thanh Trì, Hà Nội</h3>
+        <p>Điện thoại: (024) 3854 2211 | Fax: (024) 3854 2344</p>
+        <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
+    </footer>
 
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/main.js"></script>

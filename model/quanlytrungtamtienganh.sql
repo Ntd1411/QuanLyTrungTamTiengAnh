@@ -671,3 +671,38 @@ CREATE TABLE teaching_sessions (
   CONSTRAINT teaching_sessions_ibfk_1 FOREIGN KEY (TeacherID) REFERENCES teachers (UserID),
   CONSTRAINT teaching_sessions_ibfk_2 FOREIGN KEY (ClassID) REFERENCES classes (ClassID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Thêm dữ liệu mẫu cho bảng news
+INSERT INTO news (title, content, excerpt, image, author, date) VALUES
+(
+    'Khai giảng Trại hè Tiếng Anh 2025 - Vui học, vui khám phá!',
+    'Trại hè Tiếng Anh KEC 2025 chính thức khai giảng, mang đến một mùa hè sôi động, bổ ích với vô vàn hoạt động lý thú kết hợp học tập và trải nghiệm thực tế...',
+    'Trại hè Tiếng Anh KEC 2025 chính thức khai giảng, mang đến một mùa hè sôi động, bổ ích với vô vàn hoạt động lý thú kết hợp học tập và trải nghiệm thực tế...',
+    'summercamp.jpg',
+    'KEC Team',
+    '2025-06-10'
+),
+(
+    'Chúc mừng học viên Nguyễn Văn A đạt IELTS 7.5 Overall!',
+    'KEC xin gửi lời chúc mừng chân thành nhất đến học viên Nguyễn Văn A đã xuất sắc đạt 7.5 IELTS chỉ sau 6 tháng học tại trung tâm. Cùng tìm hiểu bí quyết thành công của bạn...',
+    'KEC xin gửi lời chúc mừng chân thành nhất đến học viên Nguyễn Văn A đã xuất sắc đạt 7.5 IELTS chỉ sau 6 tháng học tại trung tâm. Cùng tìm hiểu bí quyết thành công của bạn...',
+    'ielts7-5.jpg',
+    'Ban Tuyển sinh',
+    '2025-06-05'
+),
+(
+    '5 mẹo học từ vựng tiếng Anh hiệu quả không thể bỏ qua',
+    'Bạn gặp khó khăn khi ghi nhớ từ vựng? Đừng lo, bài viết này sẽ chia sẻ 5 chiến lược đã được kiểm chứng giúp bạn mở rộng vốn từ nhanh chóng và hiệu quả...',
+    'Bạn gặp khó khăn khi ghi nhớ từ vựng? Đừng lo, bài viết này sẽ chia sẻ 5 chiến lược đã được kiểm chứng giúp bạn mở rộng vốn từ nhanh chóng và hiệu quả...',
+    'hocTA.jpg',
+    'Cô Lan Anh',
+    '2025-06-01'
+),
+(
+    'Cập nhật cấu trúc đề thi TOEIC Reading mới nhất 2025',
+    'Những thay đổi quan trọng trong phần thi Reading của kỳ thi TOEIC năm 2025 mà bạn cần biết để chuẩn bị tốt nhất cho bài thi của mình...',
+    'Những thay đổi quan trọng trong phần thi Reading của kỳ thi TOEIC năm 2025 mà bạn cần biết để chuẩn bị tốt nhất cho bài thi của mình...',
+    'toeic.png',
+    'Thầy Duy Hưng',
+    '2025-05-28'
+);

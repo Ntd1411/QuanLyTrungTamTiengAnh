@@ -238,6 +238,7 @@ document.getElementById('admin-password-form').addEventListener('submit', functi
 
 // Các hàm xử lý popup
 function showEditPopup(type, id) {
+
     fetch(`admincrud.php?action=get${type}&id=${id}`)
         .then(response => response.json())
         .then(data => {
@@ -475,6 +476,8 @@ function deleteItem(type, id) {
                     case 'Teacher': loadTeachers(); break;
                     case 'Student': loadStudents(); break;
                     case 'Parent': loadParents(); break;
+                    case 'news': loadNews(); break;
+                    default : break;
                 }
             } else {
                 alert('Lỗi: ' + data.message);
@@ -504,6 +507,8 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
                     case 'teacher': loadTeachers(); break;
                     case 'student': loadStudents(); break;
                     case 'parent': loadParents(); break;
+                    case 'news' : loadNews(); break;
+                    default : break;
                 }
             } else {
                 alert('Lỗi: ' + data.message);
@@ -512,16 +517,16 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
 });
 
 // Add notification form handler
-document.getElementById('notification-form').addEventListener('submit', function(e) {
+document.getElementById('notification-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
     const formData = new FormData(this);
     formData.append('action', 'sendNotification');
 
     // Lấy các phương thức gửi đã chọn
     const selectedMethods = Array.from(document.querySelectorAll('input[name="sendMethods[]"]:checked'))
-                               .map(checkbox => checkbox.value);
-    
+        .map(checkbox => checkbox.value);
+
     // Thêm vào formData dưới dạng JSON string
     formData.append('sendMethods', JSON.stringify(selectedMethods));
 
@@ -529,45 +534,45 @@ document.getElementById('notification-form').addEventListener('submit', function
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert(data.message);
-            this.reset();
-            loadMessages();
-            $('.recipient-select').val(null).trigger('change');
-        } else {
-            alert('Lỗi: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi gửi thông báo');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                this.reset();
+                loadMessages();
+                $('.recipient-select').val(null).trigger('change');
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi gửi thông báo');
+        });
 });
 
 function loadMessages() {
     fetch('admincrud.php?action=getMessages')
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById('message-table-body').innerHTML = html;
-    })
-    .catch(error => {
-        console.error('Error loading messages:', error);
-    });
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('message-table-body').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading messages:', error);
+        });
 }
 
 // Load messages when page loads 
 document.addEventListener('DOMContentLoaded', loadMessages);
 
 // Initialize Select2 when document is ready
-$(document).ready(function() {
+$(document).ready(function () {
     $('.select2-dropdown').select2({
         placeholder: 'Tìm kiếm người nhận...',
         allowClear: true,
         width: '100%',
         language: {
-            noResults: function() {
+            noResults: function () {
                 return "Không tìm thấy kết quả";
             }
         }
@@ -575,26 +580,28 @@ $(document).ready(function() {
 });
 
 
-document.getElementById('newsForm').addEventListener('submit', function(e){
+document.getElementById('newsForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const form = new FormData(this);
+    form.append('action', 'addPost');
 
-    fetch('adminnews.php', { 
+    fetch('admincrud.php', {
         method: 'post',
-        body: form}
+        body: form
+    }
     )
-    .then (response => response.json())
-    .then (data => {
-        if(data.status === "success"){
-            alert(data.message);
-            loadNews();
-        } else if(data.status === "fail") {
-            alert(data.message);
-        }
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert(data.message);
+                loadNews();
+            } else if (data.status === "fail") {
+                alert(data.message);
+            }
 
-    })
-    .catch (error => alert("Có lỗi xảy ra khi đăng bài!"))
+        })
+        .catch(error => alert("Có lỗi xảy ra khi đăng bài!"))
 })
 
 function loadNews() {
@@ -602,9 +609,9 @@ function loadNews() {
         .then(response => response.json())
         .then(news => {
             const newsContainer = document.querySelector('.newsList');
-            console.log(newsContainer);
+            // console.log(newsContainer);
             newsContainer.innerHTML = '';
-            
+
             news.forEach(item => {
                 const newsHtml = `
                     <div class="news-item">
@@ -616,7 +623,14 @@ function loadNews() {
                                 <span class="news-author">${item.author}</span>
                             </p>
                             <p class="news-excerpt">${item.excerpt}</p>
-                            <a href="#" class="read-more">Đọc thêm</a>
+                            <div class="button-group">
+                                <a href="#" class="news-change" onclick="showEditNews(${item.id}); event.preventDefault(); return false;">
+                                    <i class="fa-solid fa-wrench"></i> Sửa bài viết
+                                </a>
+                                <a href="#" class="news-change" onclick="confirmDelete('news' ,${item.id}); event.preventDefault(); return false;">
+                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -627,31 +641,43 @@ function loadNews() {
 }
 
 function formatDate(dateString) {
+    // Kiểm tra nếu ngày đã ở định dạng dd/mm/yyyy
+    if (dateString.includes('/')) {
+        return dateString; // Trả về nguyên bản vì đã đúng định dạng
+    }
+
+    // Nếu là định dạng yyyy-mm-dd thì chuyển sang dd/mm/yyyy
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN');
+    if (isNaN(date)) return 'Ngày không hợp lệ';
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
 }
 
 document.addEventListener('DOMContentLoaded', loadNews);
 
-function previewImage(input) {
-    const preview = document.getElementById('imagePreview');
-    
+function previewImage(input, idcontainer) {
+    const preview = document.getElementById(idcontainer);
+
     // Xóa ảnh cũ nếu có
     preview.innerHTML = '';
-    
+
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        
-        reader.onload = function(e) {
+
+        reader.onload = function (e) {
             // Tạo element img
             const img = document.createElement('img');
             img.src = e.target.result;
-            
+
             // Thêm ảnh vào preview
             preview.appendChild(img);
             preview.classList.add('has-image');
         }
-        
+
         reader.readAsDataURL(input.files[0]);
     } else {
         // Nếu không có file được chọn
@@ -661,11 +687,11 @@ function previewImage(input) {
 }
 
 // Thêm validate cho file ảnh
-document.getElementById('image').addEventListener('change', function(e) {
+document.getElementById('image').addEventListener('change', function (e) {
     const file = e.target.files[0];
     const fileType = file.type;
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    
+
     if (!validImageTypes.includes(fileType)) {
         alert('Vui lòng chọn file ảnh hợp lệ (JPEG, PNG, GIF)');
         this.value = ''; // Xóa file đã chọn
@@ -674,10 +700,10 @@ document.getElementById('image').addEventListener('change', function(e) {
         preview.classList.remove('has-image');
         return;
     }
-    
+
     // Kiểm tra kích thước file (ví dụ: max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước file không được vượt quá 5MB');
+    if (file.size > 20 * 1024 * 1024) {
+        alert('Kích thước file không được vượt quá 20MB');
         this.value = '';
         const preview = document.getElementById('imagePreview');
         preview.innerHTML = 'Chọn ảnh để xem trước';
@@ -685,3 +711,73 @@ document.getElementById('image').addEventListener('change', function(e) {
         return;
     }
 });
+
+function showEditNews(id) {
+    const form = new FormData();
+    form.append('action', 'getNews');
+    form.append('id', id);
+    fetch(`admincrud.php`,
+        {
+            method: 'post',
+            body: form
+        }
+    )
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const overlay = document.querySelector('.popup-overlay-2');
+                const popup = document.getElementById('edit-popup');
+                overlay.style.opacity = 1;
+                overlay.style.zIndex = 10001;
+                popup.style.display = 'block';
+                popup.style.opacity = 1;
+                popup.style.zIndex = 10001;
+
+                // Fill form with news data
+                document.getElementById('edit-form').innerHTML = `
+                <div class="news-edit-form">
+                    <input type="hidden" name="type" value="news">
+                    <input type="hidden" name="action" value="updateNews">
+                    <input type="hidden" name="id" value="${data.news.id}">
+                    <div class="form-group">
+                        <label for="edit-title">Tiêu đề tin tức:</label>
+                        <input type="text" id="edit-title" name="title" value="${data.news.title}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-excerpt">Tóm tắt:</label>
+                        <textarea id="edit-excerpt" name="excerpt" required>${data.news.excerpt}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Nội dung:</label>
+                        <textarea id="edit-content" style="height: 200px;"  name="content" required>${data.news.content}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-image">Chọn hình ảnh mới (để trống nếu không thay đổi):</label>
+                        <input type="file" id="edit-image" name="image" accept="image/*" onchange="previewImage(this, 'edit-image-preview')">
+                        <div id="edit-image-preview" class="image-preview">
+                            <img src="../assets/img/${data.news.image}" alt="${data.news.title}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-author">Tác giả:</label>
+                        <input type="text" id="edit-author" name="author" value="${data.news.author}" required>
+                    </div>
+                </div>`;
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi lấy thông tin bài viết');
+        });
+}
+
+
+
+
+
