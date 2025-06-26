@@ -26,6 +26,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+
+
                 $className = $_POST['className'];
                 $classYear = $_POST['schoolYear'];
                 $teacher = $_POST['teacherId'];
@@ -33,6 +35,37 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $endDate = $_POST['endDate'];
                 $classTime = $_POST['classTime'];
                 $classRoom = $_POST['room'];
+                $classTuition = $_POST['classTuition'] ?? 0;
+
+                // Kiểm tra ngày bắt đầu phải nhỏ hơn ngày kết thúc
+                if (strtotime($startDate) >= strtotime($endDate)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc'
+                    ]);
+                    exit;
+                }
+
+                // Validate school year (4 digits and positive)
+                if (!preg_match('/^\d{4}$/', $_POST['schoolYear']) || intval($_POST['schoolYear']) <= 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Năm học phải là số dương và có 4 chữ số'
+                    ]);
+                    exit;
+                }
+
+                // Validate tuition (must be positive)
+                $classTuition = $_POST['classTuition'] ?? 0;
+                if (!is_numeric($classTuition) || floatval($classTuition) < 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Học phí phải là số dương'
+                    ]);
+                    exit;
+                }
+
+
 
                 $result = addClass(
                     $className,
@@ -41,7 +74,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $startDate,
                     $endDate,
                     $classTime,
-                    $classRoom
+                    $classRoom,
+                    $classTuition
                 );
                 echo json_encode($result);
                 exit;
@@ -56,6 +90,63 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Validate username (chỉ chứa chữ và số)
+                if (!preg_match('/^[a-zA-Z0-9]+$/', $_POST['teacherUsername'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập chỉ được chứa chữ cái và số'
+                    ]);
+                    exit;
+                }
+
+                // Validate password (6 ký tự)
+                $teacherPassword = empty($_POST['teacherPassword']) ? "123456" : $_POST['teacherPassword'];
+                if (strlen($teacherPassword) < 6) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
+                    ]);
+                    exit;
+                }
+
+                // Validate email
+                if (!filter_var($_POST['teacherEmail'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone (chỉ chứa số)
+                if (!preg_match('/^[0-9]+$/', $_POST['teacherPhone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số'
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate (không lớn hơn ngày hiện tại)
+                $birthdate = strtotime($_POST['teacherBirthdate']);
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Validate salary (số dương)
+                if (!is_numeric($_POST['teacherSalary']) || floatval($_POST['teacherSalary']) <= 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Lương phải là số dương'
+                    ]);
+                    exit;
+                }
+
                 $teacherFullName = $_POST['teacherFullName'];
                 $teacherUsername = $_POST['teacherUsername'];
                 $teacherPassword = empty($_POST['teacherPassword']) ? "123456" : $_POST['teacherPassword'];
@@ -64,6 +155,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $teacherPhone = $_POST['teacherPhone'];
                 $teacherBirthdate = $_POST['teacherBirthdate'];
                 $teacherSalary = $_POST['teacherSalary'];
+
+
 
                 $result = addTeacher(
                     $teacherFullName,
@@ -88,6 +181,55 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Validate email format
+                if (!filter_var($_POST['studentEmail'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone number (only numbers)
+                if (!preg_match('/^[0-9]+$/', $_POST['studentPhone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số' 
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate (not greater than current date)
+                $birthdate = strtotime($_POST['studentDate']);
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Validate discount
+                $studentDiscount = $_POST['studentDiscount'] ?? 0;
+                if (!is_numeric($studentDiscount) || $studentDiscount < 0 || $studentDiscount > 100) {
+                    echo json_encode([
+                        'status' => 'error', 
+                        'message' => 'Giảm giá phải là số từ 0 đến 100'
+                    ]);
+                    exit;
+                }
+
+                // Validate password (6 ký tự)
+                $studentPassword = empty($_POST['studentPassword']) ? "123456" : $_POST['studentPassword'];
+                if (strlen($studentPassword) < 6) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
+                    ]);
+                    exit;
+                }
+
                 $studentFullName = $_POST['studentFullName'];
                 $studentUsername = $_POST['studentUsername'];
                 $studentPassword = empty($_POST['studentPassword']) ? "123456" : $_POST['studentPassword'];
@@ -95,19 +237,20 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $studentEmail = $_POST['studentEmail'];
                 $studentPhone = $_POST['studentPhone'];
                 $studentDate = $_POST['studentDate'];
-                $studentClass = $_POST['studentClass'] ?? "Chưa có dữ liệu";
-                $studentParentID = $_POST['parentID'] ?? "Chưa có dữ liệu";
+                $studentClass = $_POST['studentClass'] ?? null;
+                $parentIds = $_POST['parentID'] ?? [];
 
                 $result = addStudent(
                     $studentFullName,
-                    $studentDate,
+                    $studentDate, 
                     $studentGender,
                     $studentUsername,
                     $studentPassword,
                     $studentEmail,
                     $studentPhone,
                     $studentClass,
-                    $studentParentID
+                    $parentIds,
+                    $studentDiscount
                 );
                 echo json_encode($result);
                 exit;
@@ -122,6 +265,45 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Validate password length (minimum 6 characters)
+                $parentPassword = empty($_POST['parentPassword']) ? "123456" : $_POST['parentPassword'];
+                if (strlen($parentPassword) < 6) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
+                    ]);
+                    exit;
+                }
+
+                // Validate email format
+                if (!filter_var($_POST['parentEmail'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone number (numbers only)
+                if (!preg_match('/^[0-9]+$/', $_POST['parentPhone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số'
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate (not greater than current date)  
+                $birthdate = strtotime($_POST['parentBirthdate']);
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error', 
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
                 $parentFullName = $_POST['parentFullName'];
                 $parentUserName = $_POST['parentUserName'];
                 $parentPassword = empty($_POST['parentPassword']) ? "123456" : $_POST['parentPassword'];
@@ -129,8 +311,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $parentEmail = $_POST['parentEmail'];
                 $parentPhone = $_POST['parentPhone'];
                 $parentBirthdate = $_POST['parentBirthdate'];
-                $parentZalo = $_POST['parentZalo'] ?? "Chưa có dữ liệu";
-                $parentUnpaid = $_POST['parentUnpaid'] ?? "0";
+                $parentZalo = $_POST['parentZalo'] ?? null;
+                $isShowTeacher = isset($_POST['isShowTeacher']) ? $_POST['isShowTeacher'] : 0;
 
 
                 $result = addParent(
@@ -142,7 +324,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $parentEmail,
                     $parentPhone,
                     $parentZalo,
-                    $parentUnpaid
+                    $isShowTeacher
                 );
                 echo json_encode($result);
                 exit;
@@ -203,14 +385,84 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
                     exit;
                 }
+
+                // Validate school year (4 digits and positive)
+                if (!preg_match('/^\d{4}$/', $_POST['schoolYear']) || intval($_POST['schoolYear']) <= 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Năm học phải là số dương và có 4 chữ số'
+                    ]);
+                    exit;
+                }
+
+                // Validate dates
+                if (strtotime($_POST['startDate']) >= strtotime($_POST['endDate'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc'
+                    ]);
+                    exit;
+                }
+
+                // Validate tuition
+                if (!is_numeric($_POST['classTuition']) || floatval($_POST['classTuition']) < 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Học phí phải là số dương'
+                    ]);
+                    exit;
+                }
+
                 $result = updateClass($_POST);
                 echo json_encode($result);
                 exit;
                 break;
 
             case "updateTeacher":
-                if (empty($_POST['id']) || empty($_POST['fullName']) || empty($_POST['email'])) {
-                    echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
+                // Validate required fields
+                if (
+                    empty($_POST['id']) || empty($_POST['fullName']) || empty($_POST['email']) ||
+                    empty($_POST['gender']) || empty($_POST['phone']) || empty($_POST['birthDate']) ||
+                    !isset($_POST['salary'])
+                ) {
+                    echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                    exit;
+                }
+                // Validate email format
+                if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone number (only numbers)
+                if (!preg_match('/^[0-9]+$/', $_POST['phone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số'
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate (not greater than current date)
+                $birthdate = strtotime($_POST['birthDate']);
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Validate salary (must be positive number)
+                if (!is_numeric($_POST['salary']) || floatval($_POST['salary']) < 0) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Lương phải là số dương'
+                    ]);
                     exit;
                 }
                 $result = updateTeacher($_POST);
@@ -223,6 +475,47 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
                     exit;
                 }
+
+                // Validate email format
+                if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone number (only numbers)
+                if (!preg_match('/^[0-9]+$/', $_POST['phone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số'
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate
+                $birthdate = strtotime($_POST['birthDate']);
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Validate discount
+                if (!is_numeric($_POST['studentDiscount']) || 
+                    $_POST['studentDiscount'] < 0 || 
+                    $_POST['studentDiscount'] > 100) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Giảm giá phải là số từ 0 đến 100'
+                    ]);
+                    exit;
+                }
+
                 $result = updateStudent($_POST);
                 echo json_encode($result);
                 exit;
@@ -233,6 +526,36 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
                     exit;
                 }
+
+                // Validate email format
+                if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email không đúng định dạng'
+                    ]);
+                    exit;
+                }
+
+                // Validate phone number
+                if (!preg_match('/^[0-9]+$/', $_POST['phone'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Số điện thoại chỉ được chứa số'
+                    ]);
+                    exit;
+                }
+
+                // Validate birthdate
+                $birthdate = strtotime($_POST['birthDate']); 
+                $today = strtotime(date('Y-m-d'));
+                if ($birthdate > $today) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
                 $result = updateParent($_POST);
                 echo json_encode($result);
                 exit;
@@ -470,7 +793,6 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 exit;
                 break;
-            
         }
     }
 
@@ -486,11 +808,12 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($class['ClassID']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
-                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . " (" .$class['TeacherID']. ")" . "</td>";
                         echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['Room']) . "</td>";
+                        echo "<td>" . number_format($class['Tuition'], 0, ',', '.') . " VNĐ</td>";
                         echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
                         echo "<td>
                         <button onclick='showEditPopup(\"Class\" ," . $class['ClassID'] . ")'>Sửa</button>
@@ -514,7 +837,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($teacher['Email']) . "</td>";
                         echo "<td>" . htmlspecialchars($teacher['Phone']) . "</td>";
                         echo "<td>" . htmlspecialchars($teacher['BirthDate']) . "</td>";
-                        echo "<td>" . htmlspecialchars($teacher['Salary']) . "</td>";
+                        echo "<td>" . number_format($teacher['Salary'], 0, ',', '.') . " VNĐ</td>";
                         echo "<td>" . htmlspecialchars($teacherClasses) . "</td>";
                         echo "<td>
                 <button onclick='showEditPopup(\"Teacher\", \"" . $teacher['UserID'] . "\")'>Sửa</button>
@@ -527,53 +850,94 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 exit;
             case "getStudents":
-                $students = getDataFromTable("students");
-                if ($students != []) {
-                    foreach ($students as $student) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($student['UserID']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['FullName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['Gender']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['Email']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['Phone']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['BirthDate']) . "</td>";
-                        echo "<td>" . htmlspecialchars($student['ClassID'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>" . htmlspecialchars($student['ParentID'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>
-                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'>Sửa</button>
-                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'>Xóa</button>
-                </td>";
-                        echo "</tr>";
+                try {
+                    $conn = connectdb();
+                    // Get students with their info including tuition discount
+                    $sql = "SELECT s.*, c.ClassName, c.SchoolYear,
+                           GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
+                           t.Discount as TuitionDiscount
+                           FROM students s
+                           LEFT JOIN classes c ON s.ClassID = c.ClassID
+                           LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
+                           LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
+                           GROUP BY s.UserID";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if ($students) {
+                        foreach ($students as $student) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($student['UserID']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['FullName']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['Gender']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['Email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['Phone']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['BirthDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($student['ClassName']) . " (" .$student['SchoolYear']. ")" . "</td>";
+                            echo "<td>" . htmlspecialchars($student['Parents'] ?? "Chưa có phụ huynh") . "</td>";
+                            echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "0") . "</td>";
+                            echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "0") . "</td>";
+                            echo "<td>" . htmlspecialchars($student['TuitionDiscount'] ? $student['TuitionDiscount'] . '%' : '0%') . "</td>";
+                            echo "<td>
+                                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'>Sửa</button>
+                                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'>Xóa</button>
+                                </td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                } catch (PDOException $e) {
+                    error_log("Error in getStudents: " . $e->getMessage());
+                    echo "<tr><td colspan='11'>Lỗi khi tải dữ liệu</td></tr>";
                 }
                 exit;
             case "getParents":
-                $parents = getDataFromTable("parents");
-                if ($parents != []) {
-                    foreach ($parents as $parent) {
-                        $parentChild = getChild($parent['UserID']);
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($parent['UserID']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['FullName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['Gender']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['Email']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>" . htmlspecialchars($parentChild) . "</td>";
-                        echo "<td>" . htmlspecialchars($parent['UnpaidAmount'] ?? "Chưa có dữ liệu") . "</td>";
-                        echo "<td>
-                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'>Sửa</button>
-                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'>Xóa</button>
-                </td>";
-                        echo "</tr>";
+                try {
+                    $conn = connectdb();
+                    $sql = "SELECT p.*, 
+                            GROUP_CONCAT(DISTINCT s.UserID SEPARATOR ', ') as Children,
+                            COALESCE(SUM(CASE 
+                                WHEN t.Status = 'Chưa đóng' THEN t.Amount * (1 - t.Discount/100)
+                                ELSE 0 
+                            END), 0) as UnpaidAmount
+                            FROM parents p
+                            LEFT JOIN student_parent_keys spk ON p.UserID = spk.parent_id
+                            LEFT JOIN students s ON spk.student_id = s.UserID
+                            LEFT JOIN tuition t ON s.UserID = t.StudentID
+                            GROUP BY p.UserID";
+
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    $parents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if ($parents) {
+                        foreach ($parents as $parent) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($parent['UserID']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['FullName']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['Gender']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['Email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có") . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['Children'] ?? "Chưa có con") . "</td>"; 
+                            echo "<td>" . number_format($parent['UnpaidAmount'], 0, ',', '.') . " VNĐ" . "</td>";
+                            echo "<td>" . ($parent['isShowTeacher'] ? 'Có' : 'Không') . "</td>";
+                            echo "<td>
+                                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'>Sửa</button>
+                                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'>Xóa</button>
+                                </td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='10'>Không có dữ liệu</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                } catch (PDOException $e) {
+                    error_log("Error in getParents: " . $e->getMessage());
+                    echo "<tr><td colspan='10'>Lỗi khi tải dữ liệu</td></tr>";
                 }
                 exit;
             case "loadStatistics":
@@ -673,7 +1037,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
-            default : 
+            default:
                 echo json_encode(["status" => 'error', 'message' => "Đã có lỗi xảy ra"]);
                 exit;
                 break;

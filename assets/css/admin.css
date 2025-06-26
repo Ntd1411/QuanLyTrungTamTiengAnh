@@ -834,6 +834,26 @@ button:hover {
     border: none;
 }
 
+/* Fix Select2 dropdown z-index only in edit popup */
+.edit-popup .select2-container--open .select2-dropdown {
+    z-index: 100000 !important; 
+}
+
+.edit-popup .select2-container {
+    z-index: 100000 !important;
+}
+
+/* Additional fixes for Select2 in modal */
+.select2-container--open {
+    z-index: 100000 !important;
+}
+
+.select2-dropdown {
+    z-index: 100000 !important;
+}
+
+
+
 /* Select2 Custom Styles for all dropdowns */
 .select2-container {
     width: 100% !important;
@@ -858,8 +878,8 @@ button:hover {
 }
 
 .select2-search__field {
-    height: 34px !important;
-    padding: 6px 12px !important;
+    /* height: 34px !important; */
+    /* padding: 6px 12px !important; */
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -1138,3 +1158,8 @@ textarea {
     background-color: #e4e4e4 !important;
     border-color: #ddd !important;
 }
+
+
+.student-form .select2-container--default .select2-selection--multiple {
+    /* line-height: 35px !important;*/
+} 

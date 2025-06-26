@@ -644,7 +644,8 @@ input.error {
 }
 
 .statistics__time {
-    display: flex !important;
+    display: flex;
+    margin-top: 30px;
     align-items: center;
     gap: 30px;
 }
