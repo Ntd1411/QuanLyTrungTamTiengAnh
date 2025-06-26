@@ -40,7 +40,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
             <li><a href="#notifications" onclick="showElement('notifications'); return false;">Thông Báo</a></li>
             <li>
-                <a href="#account">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
                     <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
@@ -257,11 +257,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="form-group">
                     <label>Loại thông báo:</label>
                     <select id="notification-type-select">
-                        <option value="Loại thông báo">Loại thông báo</option>
+                        <option value="Khác">Khác</option>
                         <option value="Bài tập về nhà">Bài tập về nhà</option>
                         <option value="Nghỉ học">Nghỉ học</option>
                         <option value="Kiểm tra">Kiểm tra</option>
-                        <option value="Khác">Khác</option>
                     </select>
                 </div>
                 <div class="form-group" id="homework-deadline-group">

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Load dashboard data
 function loadParentDashboard() {
     document.getElementById('parent-name').textContent = parentData.name;
-    document.getElementById('total-children').textContent = parentData.children.length;
+    document.getElementById('total-children').textContent = parentData.numChildren;
     document.getElementById('unpaid-amount').textContent = parentData.unpaid.toLocaleString() + ' VNĐ';
     document.getElementById('new-messages').textContent = parentData.messages.filter(m => !m.read).length;
 

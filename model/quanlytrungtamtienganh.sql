@@ -707,10 +707,6 @@ INSERT INTO news (title, content, excerpt, image, author, date) VALUES
     '2025-05-28'
 );
 
-
-
-
-
 -- Phần mới update--------------------------------------------------------------------------
 
 

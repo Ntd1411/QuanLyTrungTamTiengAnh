@@ -35,10 +35,11 @@ if (!$parent) {
 
 // Lấy danh sách con
 $sql = "SELECT s.UserID, s.FullName, s.ClassID, c.ClassName, t.FullName AS TeacherName
-        FROM students s
+        FROM student_parent_keys spk
+        JOIN students s ON spk.student_id = s.UserID
         LEFT JOIN classes c ON s.ClassID = c.ClassID
         LEFT JOIN teachers t ON c.TeacherID = t.UserID
-        WHERE s.ParentID = ?";
+        WHERE spk.parent_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$parent['UserID']]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -100,6 +101,9 @@ foreach ($children as $child) {
     ];
 }
 
+// Đếm số lượng con
+$numChildren = count($childrenData);
+
 // Lấy tin nhắn
 $sql = "SELECT m.MessageID AS id, u.Username AS `from`, m.Subject AS subject, m.Content AS content, DATE(m.SendDate) AS date, m.IsRead AS `read`
         FROM messages m
@@ -124,6 +128,7 @@ echo json_encode([
     'phone' => $parent['Phone'],
     'zalo' => $parent['ZaloID'],
     'unpaid' => $totalUnpaid,
+    'numChildren' => $numChildren,
     'children' => $childrenData,
     'messages' => $messages
 ]);
