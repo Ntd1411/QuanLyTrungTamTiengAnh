@@ -181,13 +181,17 @@ function updateProfile() {
     }
     // Kiểm tra mật khẩu mới nếu có nhập
     if (oldPassword || newPassword) {
+        if (!oldPassword || !newPassword) {
+            alert('Vui lòng nhập đầy đủ cả mật khẩu cũ và mật khẩu mới!');
+            return;
+        }
         if (!passwordRegex.test(newPassword)) {
             alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
             return;
         }
     }
 
-    fetch('../php/update_parent_data.php', {
+    fetch('../php/update_information.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -195,16 +199,17 @@ function updateProfile() {
             phone: newPhone,
             zalo: newZalo,
             oldPassword: oldPassword,
-            newPassword: newPassword
+            newPassword: newPassword,
+            role: 'parent'
         })
     })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert('Cập nhật thông tin thành công!');
+                alert('Cập nhật thông tin thành công, vui lòng đăng nhập lại!');
                 // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
                 if (oldPassword && newPassword) {
-                    window.location.href = '../index.html';
+                    window.location.href = './logout.php';
                 }
             } else {
                 alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));

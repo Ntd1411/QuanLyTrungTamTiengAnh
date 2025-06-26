@@ -273,27 +273,34 @@ function updateProfile() {
         alert('Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!');
         return;
     }
-    if ((oldPassword || newPassword) && !passwordRegex.test(newPassword)) {
-        alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
-        return;
+    if (oldPassword || newPassword) {
+        if (!oldPassword || !newPassword) {
+            alert('Vui lòng nhập đầy đủ cả mật khẩu cũ và mật khẩu mới!');
+            return;
+        }
+        if (!passwordRegex.test(newPassword)) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
+            return;
+        }
     }
 
-    fetch('../php/update_student_data.php', {
+    fetch('../php/update_information.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             email: newEmail,
             phone: newPhone,
             oldPassword: oldPassword,
-            newPassword: newPassword
+            newPassword: newPassword,
+            role: 'student'
         })
     })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert('Cập nhật thông tin thành công!');
+                alert('Cập nhật thông tin thành công, vui lòng đăng nhập lại!');
                 if (oldPassword && newPassword) {
-                    window.location.href = '../index.html';
+                    window.location.href = './logout.php';
                 }
             } else {
                 alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
