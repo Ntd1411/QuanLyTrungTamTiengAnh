@@ -982,9 +982,6 @@ BEGIN
 END $$
 DELIMITER ;
 
-
-
-
 -- Thêm cột isShowTeacher vào bảng parents
 ALTER TABLE parents 
 ADD COLUMN isShowTeacher BOOLEAN DEFAULT FALSE;
