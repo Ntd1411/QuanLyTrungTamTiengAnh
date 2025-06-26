@@ -235,8 +235,10 @@ CREATE TABLE `messages` (
   `Subject` varchar(100) NOT NULL,
   `Content` text NOT NULL,
   `SendDate` datetime NOT NULL,
-  `IsRead` tinyint(1) DEFAULT 0,
-  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+  `IsRead` tinyint(1) NOT NULL DEFAULT 0,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`MessageID`),
+  CONSTRAINT chk_isread CHECK (`IsRead` IN (0,1))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
