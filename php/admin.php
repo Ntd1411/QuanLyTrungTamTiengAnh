@@ -144,7 +144,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             $teachers = getDataFromTable("teachers");
                             if ($teachers) {
                                 foreach ($teachers as $teacher) {
-                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']}</option>";
+                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']} ({$teacher['UserID']})</option>";
                                 }
                             }
                             ?>
@@ -179,6 +179,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <option value="P204">P204</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Học phí (VNĐ):</label>
+                        <input type="number" name="classTuition" id="class-tuition" placeholder="Nhập học phí">
+                    </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('class-form').reset()">Làm mới</button>
                         <button type="submit">Thêm lớp</button>
@@ -197,6 +201,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Ngày kết thúc</th>
                                 <th>Giờ học</th>
                                 <th>Phòng học</th>
+                                <th>Học phí</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
@@ -319,25 +324,29 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             if ($classes) {
                                 foreach ($classes as $class) {
                                     if ($class['Status'] == "Đang hoạt động")
-                                        echo "<option value='{$class['ClassID']}'>{$class['ClassName']}</option>";
+                                        echo "<option value='{$class['ClassID']}'>{$class['ClassName']} ({$class['SchoolYear']})</option>";
                                 }
                             }
                             ?>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Phụ huynh:</label>
-                        <select name="parentID" class="select2-search">
+                        <label>Phụ huynh (có thể chọn nhiều):</label>
+                        <select name="parentID[]" class="select2-search" multiple>
                             <option value="">Chọn phụ huynh</option>
                             <?php
                             $parents = getDataFromTable("parents");
                             if ($parents) {
                                 foreach ($parents as $parent) {
-                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']}</option>";
+                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']} ({$parent['UserID']})</option>";
                                 }
                             }
                             ?>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Giảm học phí (%):</label>
+                        <input type="number" name="studentDiscount" id="student-discount" min="0" max="100" step="1" placeholder="0-100">
                     </div>
 
                     <div class="form-actions">
@@ -360,6 +369,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Phụ huynh</th>
                                 <th>Số buổi học</th>
                                 <th>Số buổi nghỉ</th>
+                                <th>Giảm học phí</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -409,8 +419,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <input type="text" name="parentZalo" id="parent-zalo" placeholder="Nhập Zalo ID">
                     </div>
                     <div class="form-group">
-                        <label>Số tiền chưa đóng (VNĐ):</label>
-                        <input type="number" name="parentUnpaid" id="parent-unpaid">
+                        <label>Hiển thị thông tin giáo viên:</label>
+                        <select name="isShowTeacher" id="parent-show-teacher">
+                            <option value="0">Không cho phép xem</option>
+                            <option value="1">Cho phép xem</option>
+                        </select>
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>
@@ -431,6 +444,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Zalo ID</th>
                                 <th>Con</th>
                                 <th>Số tiền chưa đóng</th>
+                                <th>Xem thông tin GV</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -443,12 +457,72 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div id="statistics" class="element">
                 <h2>Thống Kê</h2>
                 <div class="form-group">
-                    <div class="statistics__time">
+                    <div class="filter-type">
+                        <label>Chọn cách thống kê:</label>
+                        <select id="stats-filter-type" onchange="changeFilterType()">
+                            <option value="custom">Tùy chọn</option>
+                            <option value="month">Theo tháng</option>
+                            <option value="quarter">Theo quý</option>
+                            <option value="year">Theo năm</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-filter" class="statistics__time">
                         <span>Từ</span>
                         <input type="date" id="stats-start" required>
                         <span>đến</span>
                         <input type="date" id="stats-end" required>
                     </div>
+
+                    <div id="month-filter" class="statistics__time" style="display:none;">
+                        <select id="stats-month">
+                            <?php 
+                                for($i = 1; $i <= 12; $i++) {
+                                    echo "<option value='$i'>Tháng $i</option>";
+                                }
+                            ?>
+                        </select>
+                        <select id="stats-year-month">
+                            <?php 
+                                $currentYear = date('Y');
+                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                    $selected = ($i == $currentYear) ? 'selected' : '';
+                                    echo "<option value='$i' $selected>Năm $i</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div id="quarter-filter" class="statistics__time" style="display:none;">
+                        <select id="stats-quarter">
+                            <option value="1">Quý 1 (Tháng 1-3)</option>
+                            <option value="2">Quý 2 (Tháng 4-6)</option>
+                            <option value="3">Quý 3 (Tháng 7-9)</option>
+                            <option value="4">Quý 4 (Tháng 10-12)</option>
+                        </select>
+                        <select id="stats-year-quarter">
+                            <?php 
+                                $currentYear = date('Y');
+                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                    $selected = ($i == $currentYear) ? 'selected' : '';
+                                    echo "<option value='$i' $selected>Năm $i</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div id="year-filter" class="statistics__time" style="display:none;">
+                        <select id="stats-year">
+                            <?php 
+                                $currentYear = date('Y');
+                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                    $selected = ($i == $currentYear) ? 'selected' : '';
+                                    echo "<option value='$i' $selected>Năm $i</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+
                     <div class="button-container">
                         <button onclick="loadStatistics()">Xem thống kê</button>
                     </div>

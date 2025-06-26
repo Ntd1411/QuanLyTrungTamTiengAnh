@@ -15,6 +15,9 @@ document.getElementById('class-form').addEventListener('submit', function (e) {
                 alert(data.message);
                 e.target.reset();
                 loadClasses(); // Gọi hàm load lại danh sách
+                loadStudents();
+                loadParents();
+                loadTeachers();
             } else {
                 alert('Lỗi: ' + (data.message || 'Không thể thêm lớp'));
             }
@@ -58,6 +61,9 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
             if (data.status === 'success') {
                 alert(data.message);
                 this.reset();
+                loadStudents();
+                loadParents();
+                loadClasses();
                 loadTeachers();
             } else {
                 alert('Lỗi: ' + (data.message || 'Không thể thêm giáo viên'));
@@ -103,6 +109,9 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
                 alert(data.message);
                 this.reset();
                 loadStudents();
+                loadParents();
+                loadClasses();
+                loadTeachers();
             } else {
                 alert('Lỗi: ' + (data.message || 'Không thể thêm học sinh'));
             }
@@ -145,7 +154,10 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
             if (data.status === 'success') {
                 alert(data.message);
                 this.reset();
+                loadStudents();
                 loadParents();
+                loadClasses();
+                loadTeachers();
             } else {
                 alert('Lỗi: ' + (data.message || 'Không thể thêm phụ huynh'));
             }
@@ -172,42 +184,87 @@ function loadParents() {
 // Gọi loadParents khi trang được tải
 document.addEventListener('DOMContentLoaded', loadParents);
 
+function changeFilterType() {
+    const filterType = document.getElementById('stats-filter-type').value;
+    
+    // Hide all filters first
+    document.getElementById('custom-filter').style.display = 'none';
+    document.getElementById('month-filter').style.display = 'none';
+    document.getElementById('quarter-filter').style.display = 'none';
+    document.getElementById('year-filter').style.display = 'none';
+    
+    // Show selected filter
+    document.getElementById(`${filterType}-filter`).style.display = 'flex';
+}
+
 function loadStatistics() {
-    const startDate = document.getElementById('stats-start').value;
-    const endDate = document.getElementById('stats-end').value;
+    const filterType = document.getElementById('stats-filter-type').value;
+    let startDate, endDate;
+    
+    switch(filterType) {
+        case 'custom':
+            startDate = document.getElementById('stats-start').value;
+            endDate = document.getElementById('stats-end').value;
+            break;
+            
+        case 'month':
+            const month = parseInt(document.getElementById('stats-month').value);
+            const yearMonth = document.getElementById('stats-year-month').value;
+            // Start date is first day of month
+            startDate = `${yearMonth}-${month.toString().padStart(2, '0')}-01`;
+            // End date is last day of month
+            const lastDay = new Date(yearMonth, month, 0).getDate();
+            endDate = `${yearMonth}-${month.toString().padStart(2, '0')}-${lastDay}`;
+            break;
+            
+        case 'quarter':
+            const quarter = parseInt(document.getElementById('stats-quarter').value);
+            const yearQuarter = document.getElementById('stats-year-quarter').value;
+            const startMonth = ((quarter - 1) * 3 + 1).toString().padStart(2, '0');
+            const endMonth = (quarter * 3).toString().padStart(2, '0');
+            startDate = `${yearQuarter}-${startMonth}-01`;
+            // End date is last day of the last month in quarter
+            const lastDayQuarter = new Date(yearQuarter, quarter * 3, 0).getDate();
+            endDate = `${yearQuarter}-${endMonth}-${lastDayQuarter}`;
+            break;
+            
+        case 'year':
+            const year = document.getElementById('stats-year').value;
+            startDate = `${year}-01-01`;
+            endDate = `${year}-12-31`;
+            break;
+    }
 
     if (!startDate || !endDate) {
-        alert('Vui lòng chọn thời gian bắt đầu và kết thúc');
+        alert('Vui lòng chọn thời gian thống kê');
         return;
     }
 
-    if (startDate > endDate) {
-        alert('Thời gian bắt đầu không thể sau thời gian kết thúc');
-        return;
-    }
+    console.log(startDate);
+    console.log(endDate);
 
     fetch(`admincrud.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET'
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                document.getElementById('total-expected').textContent =
-                    new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
-                document.getElementById('total-collected').textContent =
-                    new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
-                document.getElementById('students-increased').textContent =
-                    data.data.studentsIncreased;
-                document.getElementById('students-decreased').textContent =
-                    data.data.studentsDecreased;
-            } else {
-                alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi tải thống kê');
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('total-expected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
+            document.getElementById('total-collected').textContent = 
+                new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
+            document.getElementById('students-increased').textContent = 
+                data.data.studentsIncreased;
+            document.getElementById('students-decreased').textContent = 
+                data.data.studentsDecreased;
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi tải thống kê');
+    });
 }
 
 // Add password change handler
@@ -283,13 +340,22 @@ function fillEditForm(type, data) {
                 </div>
                 <div class="form-group">
                     <label>Giáo viên:</label>
-                    <select name="teacherId" required>
+                    <select name="teacherId" class="select2-edit" required>
                         ${data.teacherOptions}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Phòng học:</label>
-                    <input type="text" name="room" value="${data.Room}" required>
+                    <select name="room" class="select2-edit" required>
+                        <option value="P201" ${data.Room === 'P201' ? 'selected' : ''}>P201</option>
+                        <option value="P202" ${data.Room === 'P202' ? 'selected' : ''}>P202</option>
+                        <option value="P203" ${data.Room === 'P203' ? 'selected' : ''}>P203</option>
+                        <option value="P204" ${data.Room === 'P204' ? 'selected' : ''}>P204</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Học phí:</label>
+                    <input type="number" name="classTuition" value="${data.Tuition}" required>
                 </div>
                 <div class="form-group">
                     <label>Giờ học:</label>
@@ -311,6 +377,27 @@ function fillEditForm(type, data) {
                         <option value="Tạm ngưng" ${data.Status === 'Tạm ngưng' ? 'selected' : ''}>Tạm ngưng</option>
                     </select>
                 </div>`;
+
+            // Initialize Select2 after form content is set
+            setTimeout(() => {
+                $('.select2-edit').select2({
+                    width: '100%',
+                    dropdownParent: $('.edit-popup'),
+                    placeholder: "Tìm kiếm...",
+                    allowClear: true,
+                    language: {
+                        noResults: function() {
+                            return "Không tìm thấy kết quả";
+                        },
+                        searching: function() {
+                            return "Đang tìm kiếm...";
+                        }
+                    }
+                });
+                
+                // Prevent dropdown from being cut off
+                $('.edit-popup .select2-container').css('z-index', 100000);
+            }, 100);
             break;
 
         case 'Teacher':
@@ -350,43 +437,63 @@ function fillEditForm(type, data) {
         case 'Student':
             html = `
             <input type="hidden" name="type" value="student">
-                <input type="hidden" name="action" value="updateStudent">
-                <input type="hidden" name="id" value="${data.UserID}">
-                <div class="form-group">
-                    <label>Họ tên:</label>
-                    <input type="text" name="fullName" value="${data.FullName}" required>
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" name="email" value="${data.Email}" required>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại:</label>
-                    <input type="tel" name="phone" value="${data.Phone}" required>
-                </div>
-                <div class="form-group">
-                    <label>Giới tính:</label>
-                    <select name="gender" required>
-                        <option value="Nam" ${data.Gender === 'Nam' ? 'selected' : ''}>Nam</option>
-                        <option value="Nữ" ${data.Gender === 'Nữ' ? 'selected' : ''}>Nữ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Ngày sinh:</label>
-                    <input type="date" name="birthDate" value="${data.BirthDate}" required>
-                </div>
-                <div class="form-group">
-                    <label>Lớp:</label>
-                    <select name="classId" required>
-                        ${data.classOptions}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Phụ huynh:</label>
-                    <select name="parentId" required>
-                        ${data.parentOptions}
-                    </select>
-                </div>`;
+            <input type="hidden" name="action" value="updateStudent">
+            <input type="hidden" name="id" value="${data.UserID}">
+            <div class="form-group">
+                 <label>Họ tên:</label>
+                <input type="text" name="fullName" value="${data.FullName}" required>
+            </div>
+            <div class="form-group">
+             <label>Email:</label>
+                <input type="email" name="email" value="${data.Email}" required>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="tel" name="phone" value="${data.Phone}" required>
+            </div>
+            <div class="form-group">
+                <label>Giới tính:</label>
+                <select name="gender" required>
+                    <option value="Nam" ${data.Gender === 'Nam' ? 'selected' : ''}>Nam</option>
+                    <option value="Nữ" ${data.Gender === 'Nữ' ? 'selected' : ''}>Nữ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ngày sinh:</label>
+                <input type="date" name="birthDate" value="${data.BirthDate}" required>
+            </div>
+            <div class="form-group">
+                <label>Lớp:</label>
+                <select name="classId" class="select2-edit" required>
+                    ${data.classOptions}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Phụ huynh:</label>
+                <select name="parentIds[]" class="select2-multiple" multiple>
+                    ${data.parentOptions}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Giảm học phí (%):</label>
+                <input type="number" name="studentDiscount" min="0" max="100" step="1" value="${data.TuitionDiscount || 0}" required>
+            </div>`;
+
+            // Initialize Select2 after form content is set
+            setTimeout(() => {
+                $('.select2-multiple').select2({
+                    width: '100%',
+                    placeholder: 'Chọn phụ huynh...',
+                    allowClear: true,
+                    dropdownParent: $('#edit-popup')
+                });
+                $('.select2-edit').select2({
+                    width: '100%',
+                    placeholder: 'Chọn lớp...',
+                    allowClear: true,
+                    dropdownParent: $('#edit-popup')
+                });
+            }, 100);
             break;
 
         case 'Parent':
@@ -422,8 +529,11 @@ function fillEditForm(type, data) {
                     <input type="text" name="zaloId" value="${data.ZaloID || ''}" placeholder="Nhập Zalo ID">
                 </div>
                 <div class="form-group">
-                    <label>Số tiền chưa đóng:</label>
-                    <input type="number" name="unpaidAmount" value="${data.UnpaidAmount || 0}">
+                    <label>Hiển thị thông tin giáo viên:</label>
+                    <select name="isShowTeacher">
+                        <option value="1" ${data.isShowTeacher == 1 ? 'selected' : ''}>Cho phép xem</option>
+                        <option value="0" ${data.isShowTeacher == 0 ? 'selected' : ''}>Không cho phép xem</option> 
+                    </select>
                 </div>`;
             break;
     }
@@ -466,19 +576,16 @@ function deleteItem(type, id) {
         body: form
     })
         .then(res => res.json())
-        .then(data => {
+        .then (data => {
             if (data.status === 'success') {
                 alert('Xóa thành công!');
                 closePopup();
                 // Reload data
-                switch (type) {
-                    case 'Class': loadClasses(); break;
-                    case 'Teacher': loadTeachers(); break;
-                    case 'Student': loadStudents(); break;
-                    case 'Parent': loadParents(); break;
-                    case 'news': loadNews(); break;
-                    default : break;
-                }
+                loadStudents();
+                loadParents();
+                loadClasses();
+                loadTeachers();
+                loadNews();
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -502,14 +609,11 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
                 alert('Cập nhật thành công!');
                 closePopup();
                 // Reload data
-                switch (type) {
-                    case 'class': loadClasses(); break;
-                    case 'teacher': loadTeachers(); break;
-                    case 'student': loadStudents(); break;
-                    case 'parent': loadParents(); break;
-                    case 'news' : loadNews(); break;
-                    default : break;
-                }
+                loadStudents();
+                loadParents();
+                loadClasses();
+                loadTeachers();
+                loadNews();
             } else {
                 alert('Lỗi: ' + data.message);
             }
