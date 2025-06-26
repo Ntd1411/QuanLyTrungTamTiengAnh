@@ -76,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $conn = null;
                 }
             }
-        } else if ($_POST['action'] == 'deletePost') {
         }
     }
 }

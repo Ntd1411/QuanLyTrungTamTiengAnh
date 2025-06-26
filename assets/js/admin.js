@@ -783,42 +783,7 @@ function showEditNews(id) {
         });
 }
 
-// function confirmDeleteNews(id) {
-//     const overlay = document.querySelector('.popup-overlay-2');
-//     const popup = document.getElementById('confirm-popup');
-//     overlay.style.opacity = 1;
-//     overlay.style.zIndex = 10000;
-//     popup.style.display = 'block';
 
-//     document.getElementById('confirm-yes').onclick = () => {
-//         deleteNews(id);
-//     };
-// }
-
-// function deleteNews(id) {
-//     const form = new FormData();
-//     form.append('action', 'deletePost');
-//     form.append('id', id);
-
-//     fetch('adminnews.php', {
-//         method: 'POST',
-//         body: form
-//     })
-//         .then(res => res.json())
-//         .then(data => {
-//             if (data.status === 'success') {
-//                 alert('Xóa bài viết thành công!');
-//                 closePopup();
-//                 loadNews();
-//             } else {
-//                 alert('Lỗi: ' + data.message);
-//             }
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//             alert('Có lỗi xảy ra khi xóa bài viết');
-//         });
-// }
 
 
 
