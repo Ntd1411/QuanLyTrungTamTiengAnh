@@ -937,7 +937,7 @@ button:hover {
 .image-preview img {
     max-width: 100%;
     max-height: 300px;
-    display: none;
+    /* display: none; */
 }
 
 .image-preview.has-image {
@@ -991,7 +991,7 @@ button:hover {
 }
 
 .news-info h3 {
-    display: -webkit-box;          /* Thêm display: -webkit-box */
+    display: -webkit-box;          
     -webkit-box-orient: vertical;
     margin: 0;
     font-size: 1.5rem;

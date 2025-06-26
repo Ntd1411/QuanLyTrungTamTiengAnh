@@ -586,7 +586,7 @@ document.getElementById('newsForm').addEventListener('submit', function (e) {
     const form = new FormData(this);
     form.append('action', 'addPost');
 
-    fetch('adminnews.php', {
+    fetch('admincrud.php', {
         method: 'post',
         body: form
     }
@@ -702,8 +702,8 @@ document.getElementById('image').addEventListener('change', function (e) {
     }
 
     // Kiểm tra kích thước file (ví dụ: max 5MB)
-    if (file.size > 10 * 1024 * 1024) {
-        alert('Kích thước file không được vượt quá 10MB');
+    if (file.size > 20 * 1024 * 1024) {
+        alert('Kích thước file không được vượt quá 20MB');
         this.value = '';
         const preview = document.getElementById('imagePreview');
         preview.innerHTML = 'Chọn ảnh để xem trước';
@@ -716,7 +716,7 @@ function showEditNews(id) {
     const form = new FormData();
     form.append('action', 'getNews');
     form.append('id', id);
-    fetch(`adminnews.php`,
+    fetch(`admincrud.php`,
         {
             method: 'post',
             body: form
@@ -755,17 +755,11 @@ function showEditNews(id) {
                     </div>
 
                     <div class="form-group">
-                        <label>Ảnh hiện tại:</label>
-                        <div class="current-image">
-                            <img src="../assets/img/${data.news.image}" alt="${data.news.title}" style="max-width: 200px; margin: 10px 0;">
-                            <p class="image-name">${data.news.image}</p>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         <label for="edit-image">Chọn hình ảnh mới (để trống nếu không thay đổi):</label>
                         <input type="file" id="edit-image" name="image" accept="image/*" onchange="previewImage(this, 'edit-image-preview')">
-                        <div id="edit-image-preview" class="image-preview"></div>
+                        <div id="edit-image-preview" class="image-preview">
+                            <img src="../assets/img/${data.news.image}" alt="${data.news.title}">
+                        </div>
                     </div>
 
                     <div class="form-group">
