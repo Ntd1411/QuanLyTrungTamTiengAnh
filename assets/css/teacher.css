@@ -187,6 +187,10 @@
     min-height: 100px;
 }
 
+#form-group-button{
+    width: 100%;
+}
+
 /* Attendance List */
 .attendance-list {
     margin: 20px 0;

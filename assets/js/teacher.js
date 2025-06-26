@@ -477,11 +477,63 @@ function loadTeacherProfile() {
 function updateProfile() {
     const newPhone = document.getElementById('profile-phone').value;
     const newPassword = document.getElementById('profile-new-password').value;
+    const oldPassword = document.getElementById('profile-old-password').value;
+    const email = document.getElementById('profile-email').value;
 
-    // Here you would typically send this data to the server
-    teacherData.phone = newPhone;
-    console.log('Profile updated:', { newPhone, newPassword });
-    alert('Thông tin đã được cập nhật');
+    // Regex kiểm tra
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^0\d{9}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{6,}$/;
+
+    // Kiểm tra email
+    if (!emailRegex.test(email)) {
+        alert('Email không hợp lệ, vui lòng nhập theo định dạng example@email.domainname!');
+        return;
+    }
+    // Kiểm tra số điện thoại
+    if (!phoneRegex.test(newPhone)) {
+        alert('Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!');
+        return;
+    }
+    // Kiểm tra mật khẩu mới nếu có nhập
+    if (oldPassword || newPassword) {
+        if (!oldPassword || !newPassword) {
+            alert('Vui lòng nhập đầy đủ cả mật khẩu cũ và mật khẩu mới!');
+            return;
+        }
+        if (!passwordRegex.test(newPassword)) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự và chỉ gồm chữ, số!');
+            return;
+        }
+    }
+
+    fetch('../php/update_information.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            phone: newPhone,
+            email: email,
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+            role: 'teacher'
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Cập nhật thông tin thành công, vui lòng đăng nhập lại!');
+                // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
+                if (oldPassword && newPassword) {
+                    window.location.href = './logout.php';
+                }
+            } else {
+                alert(data.message || 'Cập nhật thất bại!');
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi cập nhật!');
+            console.error(err);
+        });
 }
 
 // View schedule

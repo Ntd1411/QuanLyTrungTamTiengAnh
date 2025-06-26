@@ -291,10 +291,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <input type="tel" id="profile-phone">
                 </div>
                 <div class="form-group">
+                    <label>Mật khẩu cũ:</label>
+                    <input type="password" id="profile-old-password">
+                </div>
+                <div class="form-group">
                     <label>Mật khẩu mới:</label>
                     <input type="password" id="profile-new-password">
                 </div>
-                <button onclick="updateProfile()">Cập nhật thông tin</button>
+                <button id="form-group-button" onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
         </div>
     </div>
