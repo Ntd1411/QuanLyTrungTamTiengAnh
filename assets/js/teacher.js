@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
             loadTeacherProfile();
             viewSchedule();
             loadTeachingLog();
+            loadTeacherReceivedNotifications();
+            loadTeacherSentNotifications();
         })
         .catch(err => {
             alert('Không thể tải dữ liệu giáo viên!');
@@ -316,22 +318,152 @@ function deleteAttendance(studentId) {
         });
 }
 
-// Send notification
-function sendNotification() {
-    const classId = document.getElementById('notification-class').value;
-    const type = document.getElementById('notification-type').value;
-    const content = document.getElementById('notification-content').value;
-    const sendZalo = document.getElementById('notify-zalo').checked;
-    const sendSMS = document.getElementById('notify-sms').checked;
+// Popup Notification Form
+document.getElementById('send-notification-btn').onclick = function () {
+    const select = document.getElementById('notification-class-select');
+    select.innerHTML = '';
+    teacherData.classes.forEach(cls => {
+        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName}</option>`;
+    });
+    document.getElementById('homework-deadline-group').style.display = 'none';
+    document.getElementById('homework-deadline-input').value = '';
+    document.getElementById('notification-content-input').value = '';
+    document.getElementById('send-notification-modal').style.display = 'flex';
+};
 
-    if (!classId || !content) {
-        alert('Vui lòng chọn lớp và nhập nội dung');
+// Hiện/ẩn trường hạn nộp khi chọn loại thông báo
+document.getElementById('notification-type-select').addEventListener('change', function () {
+    const deadlineGroup = document.getElementById('homework-deadline-group');
+    if (this.value === 'Bài tập về nhà') {
+        deadlineGroup.style.display = 'block';
+    } else {
+        deadlineGroup.style.display = 'none';
+    }
+});
+
+function closeSendNotificationModal() {
+    document.getElementById('send-notification-modal').style.display = 'none';
+}
+
+// Send notification
+function submitSendNotification() {
+    const classId = document.getElementById('notification-class-select').value;
+    const type = document.getElementById('notification-type-select').value;
+    const content = document.getElementById('notification-content-input').value.trim();
+    const deadline = document.getElementById('homework-deadline-input').value;
+
+    if (!classId || !type || !content) {
+        alert('Vui lòng nhập đầy đủ thông tin');
         return;
     }
 
-    // Here you would typically send this data to the server
-    console.log('Notification sent:', { classId, type, content, sendZalo, sendSMS });
-    alert('Thông báo đã được gửi');
+    fetch('../php/send_notification.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classId, type, content })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Nếu là bài tập về nhà, thêm vào bảng homework
+                if (type === 'Bài tập về nhà') {
+                    fetch('../php/add_homework.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            classId,
+                            title: 'Bài tập về nhà',
+                            description: content,
+                            duedate: deadline // gửi hạn nộp
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(hw => {
+                            if (hw.success) {
+                                alert('Đã gửi thông báo và thêm bài tập về nhà!');
+                            } else {
+                                alert('Đã gửi thông báo, nhưng thêm bài tập về nhà thất bại!');
+                            }
+                            closeSendNotificationModal();
+                            loadTeacherSentNotifications();
+                        });
+                } else {
+                    alert('Đã gửi thông báo!');
+                    closeSendNotificationModal();
+                    loadTeacherSentNotifications();
+                }
+            } else {
+                alert('Gửi thông báo thất bại!');
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi gửi thông báo!');
+            console.error(err);
+        });
+}
+
+// Load received notifications
+function loadTeacherReceivedNotifications() {
+    const list = document.getElementById('teacher-received-list');
+    const detail = document.getElementById('teacher-received-detail');
+    list.innerHTML = '';
+    detail.innerHTML = '<div style="color:#888;text-align:center;padding:16px;">Chọn một thông báo để xem chi tiết</div>';
+
+    (teacherData.received_notifications || []).forEach((msg, idx) => {
+        const item = document.createElement('div');
+        item.className = 'message-item' + (msg.IsRead == 0 ? ' unread' : '');
+        item.innerHTML = `
+            <div class="message-title">${msg.Type || msg.subject}</div>
+            <div class="message-meta">
+                <span>${msg.sender || 'Admin'}</span> | 
+                <span>${msg.SentAt || msg.date}</span>
+            </div>
+        `;
+        item.onclick = function () {
+            document.querySelectorAll('.message-item').forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            item.classList.remove('unread'); // bỏ viền đỏ khi click
+            showTeacherReceivedDetail(msg);
+
+            // Nếu chưa đọc thì gọi API cập nhật
+            if (msg.IsRead == 0 && msg.MessageID) {
+                fetch('../php/mark_message_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messageId: msg.MessageID })
+                }).then(() => {
+                    msg.IsRead = 1; // Cập nhật trạng thái trên giao diện
+                });
+            }
+        };
+        list.appendChild(item);
+    });
+}
+
+function showTeacherReceivedDetail(msg) {
+    const detail = document.getElementById('teacher-received-detail');
+    detail.innerHTML = `
+        <h3>${msg.subject || msg.Type}</h3>
+        <p><strong>Từ:</strong> ${msg.from || 'Admin'}</p>
+        <p><strong>Ngày:</strong> ${msg.date || msg.SentAt}</p>
+        <div class="message-body">${msg.content || msg.Content}</div>
+    `;
+}
+
+// Load sent notifications
+function loadTeacherSentNotifications() {
+    const body = document.getElementById('teacher-sent-table');
+    body.innerHTML = '';
+    (teacherData.sent_notifications || []).forEach(row => {
+        body.innerHTML += `
+            <tr>
+                <td>${row.SentAt}</td>
+                <td>${row.ClassName}</td>
+                <td>${row.Type}</td>
+                <td>${row.Content}</td>
+            </tr>
+        `;
+    });
 }
 
 // Load teacher profile

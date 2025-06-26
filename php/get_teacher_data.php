@@ -82,6 +82,29 @@ $stmt = $conn->prepare($sql);
 $stmt->execute([$teacher['UserID']]);
 $teaching_log = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Lấy danh sách thông báo đã nhận
+$stmt = $conn->prepare("
+    SELECT m.MessageID, m.SendDate AS SentAt, m.Subject AS Type, m.Content, u.Username AS sender, m.IsRead
+    FROM messages m
+    JOIN users u ON m.SenderID = u.UserID
+    WHERE m.ReceiverID = ?
+    ORDER BY m.SendDate DESC
+");
+$stmt->execute([$teacher['UserID']]);
+$received_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Lấy danh sách thông báo đã gửi
+$stmt = $conn->prepare("
+    SELECT m.SendDate AS SentAt, c.ClassName, m.Subject AS Type, m.Content
+    FROM messages m
+    JOIN students s ON m.ReceiverID = s.UserID
+    JOIN classes c ON s.ClassID = c.ClassID
+    WHERE m.SenderID = ?
+    ORDER BY m.SendDate DESC
+");
+$stmt->execute([$teacher['UserID']]);
+$sent_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Trả về JSON
 echo json_encode([
     'id' => $teacher['UserID'],
@@ -90,5 +113,7 @@ echo json_encode([
     'phone' => $teacher['Phone'],
     'classes' => $classes,
     'monthly_sessions' => $monthly_sessions,
-    'teaching_log' => $teaching_log
+    'teaching_log' => $teaching_log,
+    'received_notifications' => $received_notifications,
+    'sent_notifications' => $sent_notifications
 ]);

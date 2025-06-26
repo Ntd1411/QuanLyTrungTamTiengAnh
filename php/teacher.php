@@ -210,31 +210,69 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
         <!-- Notifications Section -->
         <div id="notifications" class="element">
-            <div class="notification-form">
+            <!-- Nút gửi thông báo -->
+            <div class="notifications-header">
+                <button id="send-notification-btn" class="add-log-btn">+ Gửi thông báo cho học sinh</button>
+            </div>
+
+            <!-- Bảng thông báo đã nhận -->
+            <h3>Thông báo đã nhận</h3>
+            <div class="message-container">
+                <div class="message-list" id="teacher-received-list">
+                    <!-- Danh sách thông báo đã nhận sẽ được thêm bằng JS -->
+                </div>
+                <div class="message-detail">
+                    <div class="message-content" id="teacher-received-detail">
+                        <!-- Nội dung chi tiết thông báo đã nhận -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng thông báo đã gửi -->
+            <h3>Thông báo đã gửi</h3>
+            <div class="table-container">
+                <table id="table-sent-notifications">
+                    <thead>
+                        <tr>
+                            <th>Ngày gửi</th>
+                            <th>Lớp</th>
+                            <th>Loại</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teacher-sent-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Popup gửi thông báo -->
+        <div id="send-notification-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeSendNotificationModal()">&times;</span>
+                <h3>Gửi thông báo cho học sinh</h3>
                 <div class="form-group">
-                    <label>Chọn lớp:</label>
-                    <select id="notification-class">
-                        <option value="">Chọn lớp</option>
-                    </select>
+                    <label>Lớp:</label>
+                    <select id="notification-class-select"></select>
                 </div>
                 <div class="form-group">
                     <label>Loại thông báo:</label>
-                    <select id="notification-type">
-                        <option value="homework">Bài tập về nhà</option>
-                        <option value="cancel">Nghỉ học</option>
-                        <option value="exam">Kiểm tra</option>
-                        <option value="other">Khác</option>
+                    <select id="notification-type-select">
+                        <option value="Loại thông báo">Loại thông báo</option>
+                        <option value="Bài tập về nhà">Bài tập về nhà</option>
+                        <option value="Nghỉ học">Nghỉ học</option>
+                        <option value="Kiểm tra">Kiểm tra</option>
+                        <option value="Khác">Khác</option>
                     </select>
+                </div>
+                <div class="form-group" id="homework-deadline-group">
+                    <label>Hạn nộp bài tập:</label>
+                    <input type="date" id="homework-deadline-input">
                 </div>
                 <div class="form-group">
                     <label>Nội dung:</label>
-                    <textarea id="notification-content" rows="4"></textarea>
+                    <textarea id="notification-content-input" rows="4"></textarea>
                 </div>
-                <div class="notification-options">
-                    <label><input type="checkbox" id="notify-zalo"> Gửi qua Zalo</label>
-                    <label><input type="checkbox" id="notify-sms"> Gửi qua SMS</label>
-                </div>
-                <button onclick="sendNotification()">Gửi thông báo</button>
+                <button onclick="submitSendNotification()">Gửi thông báo</button>
             </div>
         </div>
 
