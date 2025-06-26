@@ -44,6 +44,12 @@
     font-weight: bold;
 }
 
+#next-session-info{
+    color: var(--primary-color);
+    font-size:1.1em;
+    line-height:1.5;
+}
+
 /* Log Table */
 .table-container {
     margin-top: 20px;
@@ -420,6 +426,7 @@
 
 .schedule-table-container {
     overflow-x: auto;
+    border-radius: 12px;
 }
 
 .schedule-table {
@@ -430,7 +437,7 @@
 
 .schedule-table th,
 .schedule-table td {
-    border: 1px solid var(--border-color);
+    border: 1px solid #bbb;
     padding: 12px;
     text-align: center;
 }

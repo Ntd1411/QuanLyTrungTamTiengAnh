@@ -57,14 +57,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('schedule')">
                     <h3>Buổi dạy tiếp theo</h3>
-                    <p id="total-classes">0</p>
+                    <div id="next-session-info"></div>
                 </div>
                 <div class="summary-card" onclick="showElement('my-classes')">
-                    <h3>Tổng số học sinh</h3>
+                    <h3>Tổng học sinh các lớp đang dạy</h3>
                     <p id="total-students">0</p>
                 </div>
                 <div class="summary-card">
-                    <h3>Buổi dạy tháng này</h3>
+                    <h3>Số buổi đã dạy tháng này</h3>
                     <p id="monthly-sessions">0</p>
                 </div>
             </div>
@@ -123,7 +123,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label>Xem theo tuần:</label>
                         <input type="week" id="schedule-week">
                     </div>
-                    <button onclick="viewSchedule()">Xem lịch</button>
+                    <button id="view-schedule-btn" onclick="viewSchedule()">Xem lịch</button>
                 </div>
                 <div class="schedule-table-container">
                     <table class="schedule-table">

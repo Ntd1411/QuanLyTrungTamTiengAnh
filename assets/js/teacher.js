@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
             loadTeacherDashboard();
             loadClassSelect();
             loadTeacherProfile();
-            viewSchedule();
             loadTeachingLog();
             loadTeacherReceivedNotifications();
             loadTeacherSentNotifications();
@@ -26,7 +25,25 @@ document.addEventListener('DOMContentLoaded', function () {
 // Load dashboard data
 function loadTeacherDashboard() {
     document.getElementById('teacher-name').textContent = teacherData.name;
-    document.getElementById('total-classes').textContent = teacherData.classes.length;
+
+    // Hiển thị buổi dạy tiếp theo
+    const nextSession = getNextTeachingSession();
+    const nextSessionDiv = document.getElementById('next-session-info');
+    if (nextSessionDiv) {
+        if (nextSession) {
+            const d = nextSession.date;
+            const weekdays = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+            const thu = weekdays[d.getDay()];
+            nextSessionDiv.innerHTML = `
+            <strong>${thu}</strong>, ngày ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}<br>
+            <strong>Giờ:</strong> ${nextSession.time} <br>
+            <strong>Lớp:</strong> ${nextSession.className}
+        `;
+        } else {
+            nextSessionDiv.innerHTML = 'Không có buổi dạy nào sắp tới';
+        }
+    }
+
     const studentsListDiv = document.querySelector('.class-students-list');
     if (studentsListDiv) studentsListDiv.style.display = 'none';
 
@@ -537,30 +554,131 @@ function updateProfile() {
 }
 
 // View schedule
+document.getElementById('view-schedule-btn').onclick = viewSchedule;
 function viewSchedule() {
     const scheduleBody = document.getElementById('schedule-body');
     scheduleBody.innerHTML = '';
 
-    if (!teacherData.schedule) {
-        scheduleBody.innerHTML = '<tr><td colspan="8">Chưa có dữ liệu lịch dạy.</td></tr>';
-        return;
+    // Lấy tuần được chọn
+    const weekInput = document.getElementById('schedule-week').value;
+    if (!weekInput) {
+        alert('Vui lòng chọn tuần để xem lịch!');
+        return; // Không hiển thị gì nếu chưa chọn tuần
+    }
+    let weekStart = null, weekEnd = null;
+    if (weekInput) {
+        const [year, week] = weekInput.split('-W');
+        const firstDay = new Date(year, 0, 1 + (week - 1) * 7);
+        weekStart = new Date(firstDay.setDate(firstDay.getDate() - (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1)));
+        weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
     }
 
-    teacherData.schedule.forEach(slot => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${slot.time}</td>
-            <td>${formatClassCell(slot.monday)}</td>
-            <td>${formatClassCell(slot.tuesday)}</td>
-            <td>${formatClassCell(slot.wednesday)}</td>
-            <td>${formatClassCell(slot.thursday)}</td>
-            <td>${formatClassCell(slot.friday)}</td>
-            <td>${formatClassCell(slot.saturday)}</td>
-            <td>${formatClassCell(slot.sunday)}</td>
-        `;
-        scheduleBody.appendChild(row);
+    // Tạo map: { time: [thứ 2,...,CN] }
+    const timeSlots = {};
+    (teacherData.classes || []).forEach(cls => {
+        // Lọc theo tuần
+        const start = new Date(cls.StartDate);
+        const end = new Date(cls.EndDate);
+        if (weekStart && weekEnd && (end < weekStart || start > weekEnd)) return;
+
+        const { days, time } = parseClassTime(cls.ClassTime);
+        if (!time) return;
+        if (!timeSlots[time]) timeSlots[time] = [null, null, null, null, null, null, null];
+        days.forEach(day => {
+            const idx = day === 8 ? 6 : day - 2;
+            if (idx >= 0 && idx < 7) {
+                timeSlots[time][idx] = cls.ClassName;
+            }
+        });
     });
+
+    // Hiển thị lịch
+    Object.keys(timeSlots)
+        .sort((a, b) => {
+            const [ah, am] = a.split(':').map(Number);
+            const [bh, bm] = b.split(':').map(Number);
+            return ah * 60 + am - (bh * 60 + bm);
+        })
+        .forEach(time => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${time}</td>
+                ${[0, 1, 2, 3, 4, 5, 6].map(i => `<td>${timeSlots[time][i] || ''}</td>`).join('')}
+            `;
+            scheduleBody.appendChild(row);
+        });
 }
+
+function parseClassTime(classTime) {
+    // Ví dụ: "Thứ 2,4,6 - 18:00"
+    if (!classTime) return { days: [], time: '' };
+    const [daysPart, timePart] = classTime.split(' - ');
+    const days = daysPart.replace('Thứ ', '').split(',').map(d => parseInt(d.trim()));
+    return { days, time: timePart };
+}
+
+function getNextTeachingSession() {
+    const now = new Date();
+    let nextSession = null;
+
+    (teacherData.classes || []).forEach(cls => {
+        const { days, time } = parseClassTime(cls.ClassTime);
+        if (!days || !time) return;
+
+        // Lấy ngày bắt đầu và kết thúc lớp
+        const startDate = new Date(cls.StartDate);
+        const endDate = new Date(cls.EndDate);
+
+        // Duyệt 21 ngày tới (3 tuần), tìm buổi gần nhất hợp lệ
+        for (let i = 0; i < 21; i++) {
+            const d = new Date(now);
+            d.setDate(now.getDate() + i);
+            if (d < startDate || d > endDate) continue;
+
+            // JS: Chủ nhật là 0, Thứ 2 là 1, ... Thứ 7 là 6
+            let jsDay = d.getDay(); // 0-6
+            let thu = jsDay === 0 ? 8 : jsDay + 1; // Quy đổi về Thứ 2-8 (CN)
+            if (!days.includes(thu)) continue;
+
+            // Ghép giờ học
+            const [h, m] = time.split(':').map(Number);
+            d.setHours(h, m, 0, 0);
+
+            if (d > now && (!nextSession || d < nextSession.date)) {
+                nextSession = {
+                    date: new Date(d),
+                    className: cls.ClassName,
+                    time: time
+                };
+            }
+        }
+    });
+
+    return nextSession;
+}
+
+document.querySelector('.summary-card[onclick*="showElement(\'schedule\')"]').onclick = function () {
+    const nextSession = getNextTeachingSession();
+    if (nextSession && nextSession.date) {
+        // Tính tuần ISO
+        const d = nextSession.date;
+        const year = d.getFullYear();
+        // Lấy số thứ tự tuần ISO
+        const temp = new Date(d.getTime());
+        temp.setHours(0, 0, 0, 0);
+        // Thứ 2 là ngày đầu tuần ISO
+        temp.setDate(temp.getDate() + 4 - (temp.getDay() || 7));
+        const yearStart = new Date(temp.getFullYear(), 0, 1);
+        const weekNo = Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
+
+        // Set giá trị cho input week
+        const weekStr = `${year}-W${weekNo.toString().padStart(2, '0')}`;
+        document.getElementById('schedule-week').value = weekStr;
+    }
+    showElement('schedule');
+    setTimeout(viewSchedule, 0); // Đảm bảo DOM đã chuyển tab
+};
 
 // Event listeners
 document.getElementById('class-select').addEventListener('change', function () {
