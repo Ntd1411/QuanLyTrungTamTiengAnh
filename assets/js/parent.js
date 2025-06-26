@@ -1,6 +1,6 @@
 let parentData = {};
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     fetch('../php/get_parent_data.php')
         .then(res => res.json())
         .then(data => {
@@ -39,7 +39,7 @@ function loadParentDashboard() {
 function loadChildren() {
     const childrenList = document.querySelector('.children-list');
     childrenList.innerHTML = '';
-    
+
     parentData.children.forEach(child => {
         const childCard = document.createElement('div');
         childCard.className = 'child-card';
@@ -114,6 +114,19 @@ function loadMessages() {
             // Thêm class selected cho item được click
             messageItem.classList.add('selected');
             showMessageDetail(message);
+            // Đánh dấu tin nhắn là đã đọc
+            if (!message.read && message.id) {
+                fetch('../php/mark_message_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messageId: message.id })
+                }).then(() => {
+                    message.read = true;
+                    messageItem.classList.remove('unread');
+                    // Cập nhật số thông báo chưa đọc trên dashboard
+                    loadParentDashboard();
+                });
+            }
         };
         messageList.appendChild(messageItem);
     });
@@ -132,7 +145,6 @@ function showMessageDetail(message) {
     messageContent.classList.remove('message-content');
     void messageContent.offsetWidth; // trigger reflow
     messageContent.classList.add('message-content');
-    message.read = true;
     loadParentDashboard(); // Update unread count
 }
 
@@ -177,7 +189,7 @@ function updateProfile() {
 
     fetch('../php/update_parent_data.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             email: newEmail,
             phone: newPhone,
@@ -186,22 +198,22 @@ function updateProfile() {
             newPassword: newPassword
         })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Cập nhật thông tin thành công!');
-            // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
-            if (oldPassword && newPassword) {
-                window.location.href = '../index.html';
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Cập nhật thông tin thành công!');
+                // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
+                if (oldPassword && newPassword) {
+                    window.location.href = '../index.html';
+                }
+            } else {
+                alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
             }
-        } else {
-            alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
-        }
-    })
-    .catch(err => {
-        alert('Có lỗi xảy ra khi cập nhật!');
-        console.error(err);
-    });
+        })
+        .catch(err => {
+            alert('Có lỗi xảy ra khi cập nhật!');
+            console.error(err);
+        });
 }
 
 // Pay fee
@@ -253,10 +265,10 @@ function hidePayFeeForm() {
 }
 
 // Handle form submit
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('feeForm');
     if (form) {
-        form.onsubmit = function(e) {
+        form.onsubmit = function (e) {
             e.preventDefault();
             const studentId = document.getElementById('fee-student').value;
             const bank = document.getElementById('fee-bank').value;
@@ -265,27 +277,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             fetch('../php/payfee.php', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     studentId, bank, amount, note
                 })
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
 
-                    // Phát triển xử lý nộp tiền thêm ở đây
+                        // Phát triển xử lý nộp tiền thêm ở đây
 
 
-                    alert('Nộp tiền thành công!');
-                    hidePayFeeForm();
-                    // Reload Data
-                    location.reload();
-                } else {
-                    alert('Có lỗi xảy ra: ' + (data.error || ''));
-                }
-            })
-            .catch(() => alert('Không thể kết nối máy chủ!'));
+                        alert('Nộp tiền thành công!');
+                        hidePayFeeForm();
+                        // Reload Data
+                        location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + (data.error || ''));
+                    }
+                })
+                .catch(() => alert('Không thể kết nối máy chủ!'));
         };
     }
 });

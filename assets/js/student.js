@@ -69,8 +69,21 @@ function loadStudentNotifications() {
             document.querySelectorAll('.notification-item').forEach(i => i.classList.remove('selected'));
             item.classList.add('selected');
             showStudentNotificationDetail(msg);
-            msg.read = true;
-            item.classList.remove('unread');
+
+            // Đánh dấu đã đọc nếu chưa đọc
+            if (!msg.read && msg.id) {
+                fetch('../php/mark_message_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messageId: msg.id })
+                }).then(() => {
+                    msg.read = true;
+                    item.classList.remove('unread');
+                });
+            } else {
+                msg.read = true;
+                item.classList.remove('unread');
+            }
         };
         notificationList.appendChild(item);
     });
