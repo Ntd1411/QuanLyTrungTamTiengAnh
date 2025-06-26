@@ -107,6 +107,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <th>Lớp</th>
                             <th>Trạng thái</th>
                             <th>Ghi chú</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="teaching-log-body"></tbody>

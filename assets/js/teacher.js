@@ -91,8 +91,40 @@ function loadTeachingLog() {
             <td>${log.ClassName}</td>
             <td>${log.Status}</td>
             <td>${log.Note || ''}</td>
+            <td>
+                <button class="delete-log-btn" onclick="deleteTeachingLog('${log.SessionID}')">Xóa</button>
+            </td>
         `;
         logBody.appendChild(row);
+    });
+}
+
+// Delete teaching log
+function deleteTeachingLog(SessionID) {
+    if (!confirm('Bạn có chắc chắn muốn xóa nhật ký này?')) return;
+    fetch('../php/delete_teaching_log.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logId: SessionID })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Đã xóa nhật ký!');
+            // Lấy lại dữ liệu giáo viên và render lại bảng
+            fetch('../php/get_teacher_data.php')
+                .then(res => res.json())
+                .then(newData => {
+                    teacherData = newData;
+                    loadTeachingLog();
+                });
+        } else {
+            alert('Xóa thất bại!');
+        }
+    })
+    .catch(err => {
+        alert('Lỗi khi xóa nhật ký!');
+        console.error(err);
     });
 }
 

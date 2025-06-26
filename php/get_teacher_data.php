@@ -71,7 +71,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $monthly_sessions = $row ? (int)$row['monthly_sessions'] : 0;
 
 // Lấy nhật ký dạy tháng này
-$sql = "SELECT ts.SessionDate, c.ClassName, ts.Status, ts.Note
+$sql = "SELECT ts.SessionID, ts.SessionDate, c.ClassName, ts.Status, ts.Note
         FROM teaching_sessions ts
         JOIN classes c ON ts.ClassID = c.ClassID
         WHERE ts.TeacherID = ?
