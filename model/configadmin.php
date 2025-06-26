@@ -273,7 +273,7 @@ function getchild($parentID)
         $conn = connectdb();
 
 
-        $sql = "SELECT GROUP_CONCAT(ClassID SEPARATOR ', ') as Childs
+        $sql = "SELECT GROUP_CONCAT(UserID SEPARATOR ', ') as Childs
                 FROM students 
                 WHERE ParentID = :parentID";
 

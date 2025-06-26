@@ -706,3 +706,283 @@ INSERT INTO news (title, content, excerpt, image, author, date) VALUES
     'Thầy Duy Hưng',
     '2025-05-28'
 );
+
+
+
+
+
+-- Phần mới update--------------------------------------------------------------------------
+
+
+-- Tạo bảng student_parent_keys
+CREATE TABLE student_parent_keys (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id VARCHAR(10) NOT NULL,
+    parent_id VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_key (student_id, parent_id),
+    FOREIGN KEY (student_id) REFERENCES students(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES parents(UserID) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Thêm cột Tuition vào bảng classes
+ALTER TABLE classes
+ADD COLUMN Tuition DECIMAL(12,0) NOT NULL DEFAULT 0 AFTER Room;
+
+
+
+-- Cập nhật dữ liệu mẫu
+UPDATE classes 
+SET Tuition = 2000000 
+WHERE ClassID = 1;
+
+UPDATE classes 
+SET Tuition = 1500000 
+WHERE ClassID = 3;
+
+-- Thêm trigger để tự động tạo học phí khi thêm học sinh vào lớp
+DELIMITER $$
+CREATE TRIGGER after_student_class_update
+AFTER UPDATE ON students
+FOR EACH ROW
+BEGIN
+    -- Xóa học phí khi học sinh rời lớp
+    IF OLD.ClassID IS NOT NULL AND NEW.ClassID IS NULL THEN
+        DELETE FROM tuition 
+        WHERE StudentID = NEW.UserID 
+        AND Status = 'Chưa đóng';
+        
+    -- Xử lý khi chuyển lớp    
+    ELSEIF OLD.ClassID IS NOT NULL AND NEW.ClassID != OLD.ClassID THEN
+        -- Xóa học phí chưa đóng của lớp cũ
+        DELETE FROM tuition 
+        WHERE StudentID = NEW.UserID 
+        AND Status = 'Chưa đóng'
+        AND TuitionID = (
+            SELECT t.TuitionID
+            FROM tuition t
+            WHERE t.StudentID = NEW.UserID
+            AND t.Status = 'Chưa đóng'
+            ORDER BY t.CreatedAt DESC
+            LIMIT 1
+        );
+        
+        -- Thêm học phí cho lớp mới
+        INSERT INTO tuition (StudentID, Amount, DueDate, Status, Note)
+        SELECT 
+            NEW.UserID,
+            c.Tuition,
+            LAST_DAY(CURRENT_DATE),
+            'Chưa đóng',
+            CONCAT('Học phí lớp ', c.ClassName, ' - ', DATE_FORMAT(CURRENT_DATE, '%m/%Y'))
+        FROM classes c
+        WHERE c.ClassID = NEW.ClassID;
+        
+    -- Xử lý khi thêm vào lớp lần đầu    
+    ELSEIF NEW.ClassID IS NOT NULL AND OLD.ClassID IS NULL THEN
+        INSERT INTO tuition (StudentID, Amount, DueDate, Status, Note)
+        SELECT 
+            NEW.UserID,
+            c.Tuition,
+            LAST_DAY(CURRENT_DATE),
+            'Chưa đóng',
+            CONCAT('Học phí lớp ', c.ClassName, ' - ', DATE_FORMAT(CURRENT_DATE, '%m/%Y'))
+        FROM classes c
+        WHERE c.ClassID = NEW.ClassID;
+    END IF;
+END $$
+
+-- Trigger cho việc thêm mới học sinh
+CREATE TRIGGER after_student_insert
+AFTER INSERT ON students
+FOR EACH ROW
+BEGIN
+    IF NEW.ClassID IS NOT NULL THEN
+        -- Kiểm tra trùng lặp học phí
+        IF NOT EXISTS (
+            SELECT 1 FROM tuition 
+            WHERE StudentID = NEW.UserID 
+            AND MONTH(DueDate) = MONTH(CURRENT_DATE)
+            AND YEAR(DueDate) = YEAR(CURRENT_DATE)
+        ) THEN
+            INSERT INTO tuition (StudentID, Amount, DueDate, Status, Note)
+            SELECT 
+                NEW.UserID,
+                c.Tuition,
+                LAST_DAY(CURRENT_DATE),
+                'Chưa đóng',
+                CONCAT('Học phí lớp ', c.ClassName, ' - ', DATE_FORMAT(CURRENT_DATE, '%m/%Y'))
+            FROM classes c
+            WHERE c.ClassID = NEW.ClassID;
+        END IF;
+    END IF;
+END $$
+DELIMITER ;
+
+-- Xóa foreign key và index của ParentID
+ALTER TABLE students
+DROP FOREIGN KEY students_ibfk_3,
+DROP INDEX ParentID;
+
+-- Xóa cột ParentID
+ALTER TABLE students
+DROP COLUMN ParentID;
+
+-- Xóa các trigger cũ
+-- DROP TRIGGER IF EXISTS after_student_class_update;
+
+-- 
+-- DROP TRIGGER IF EXISTS after_student_insert;
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS after_tuition_insert$$
+CREATE TRIGGER after_tuition_insert
+AFTER INSERT ON tuition
+FOR EACH ROW
+BEGIN
+    -- Tạo biến tạm để lưu trữ tổng học phí
+    DECLARE total_unpaid DECIMAL(12,0);
+    
+    -- Tính tổng học phí chưa đóng cho từng phụ huynh
+    SELECT COALESCE(SUM(
+        CASE 
+            WHEN t.Status = 'Chưa đóng' THEN t.Amount - IFNULL(t.Discount, 0)
+            ELSE 0 
+        END
+    ), 0)
+    INTO total_unpaid
+    FROM tuition t
+    JOIN student_parent_keys spk ON t.StudentID = spk.student_id
+    WHERE spk.parent_id IN (
+        SELECT parent_id 
+        FROM student_parent_keys 
+        WHERE student_id = NEW.StudentID
+    )
+    AND t.Status = 'Chưa đóng';
+
+    -- Cập nhật UnpaidAmount cho phụ huynh
+    UPDATE parents p
+    SET p.UnpaidAmount = total_unpaid
+    WHERE p.UserID IN (
+        SELECT parent_id 
+        FROM student_parent_keys 
+        WHERE student_id = NEW.StudentID
+    );
+END $$
+
+-- Sửa trigger after_tuition_update
+DROP TRIGGER IF EXISTS after_tuition_update$$
+CREATE TRIGGER after_tuition_update
+AFTER UPDATE ON tuition
+FOR EACH ROW
+BEGIN
+    DECLARE total_unpaid DECIMAL(12,0);
+    -- Chỉ cập nhật khi có thay đổi liên quan đến tiền
+    IF NEW.Status != OLD.Status OR NEW.Amount != OLD.Amount OR NEW.Discount != OLD.Discount THEN
+        
+        
+        -- Tính lại tổng học phí chưa đóng
+        SELECT COALESCE(SUM(
+            CASE 
+                WHEN t.Status = 'Chưa đóng' THEN t.Amount - IFNULL(t.Discount, 0)
+                ELSE 0 
+            END
+        ), 0)
+        INTO total_unpaid
+        FROM tuition t
+        JOIN student_parent_keys spk ON t.StudentID = spk.student_id
+        WHERE spk.parent_id IN (
+            SELECT parent_id 
+            FROM student_parent_keys 
+            WHERE student_id = NEW.StudentID
+        )
+        AND t.Status = 'Chưa đóng';
+
+        -- Cập nhật UnpaidAmount
+        UPDATE parents p
+        SET p.UnpaidAmount = total_unpaid
+        WHERE p.UserID IN (
+            SELECT parent_id 
+            FROM student_parent_keys 
+            WHERE student_id = NEW.StudentID
+        );
+    END IF;
+END $$
+
+-- Sửa stored procedure DeleteParent
+DROP PROCEDURE IF EXISTS DeleteParent$$
+CREATE PROCEDURE DeleteParent(IN p_UserID VARCHAR(10))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Lỗi khi xóa phụ huynh';
+    END;
+
+    START TRANSACTION;
+    
+    -- Xóa các key liên kết với phụ huynh
+    DELETE FROM student_parent_keys 
+    WHERE parent_id = p_UserID;
+    
+    -- Xóa thông tin phụ huynh
+    DELETE FROM parents 
+    WHERE UserID = p_UserID;
+    
+    -- Xóa tài khoản người dùng
+    DELETE FROM users 
+    WHERE UserID = p_UserID;
+    
+    COMMIT;
+END $$
+
+-- Sửa procedure UpdateStudent bỏ tham số ParentID
+DROP PROCEDURE IF EXISTS UpdateStudent $$
+CREATE PROCEDURE UpdateStudent(
+    IN p_UserID VARCHAR(10),
+    IN p_FullName VARCHAR(100),
+    IN p_Gender ENUM('Nam','Nữ'),
+    IN p_Email VARCHAR(100),
+    IN p_Phone VARCHAR(15),
+    IN p_BirthDate DATE,
+    IN p_ClassID INT
+)
+BEGIN
+    UPDATE students 
+    SET FullName = p_FullName,
+        Gender = p_Gender,
+        Email = p_Email,
+        Phone = p_Phone,
+        BirthDate = p_BirthDate,
+        ClassID = p_ClassID
+    WHERE UserID = p_UserID;
+END $$
+
+-- Sửa procedure DeleteStudent để xóa cả liên kết trong student_parent_keys
+DROP PROCEDURE IF EXISTS DeleteStudent $$
+CREATE PROCEDURE DeleteStudent(IN p_UserID VARCHAR(10))
+BEGIN
+    START TRANSACTION;
+    
+    -- Xóa điểm danh
+    DELETE FROM attendance WHERE StudentID = p_UserID;
+    
+    -- Xóa học phí
+    DELETE FROM tuition WHERE StudentID = p_UserID;
+    
+    -- Xóa liên kết với phụ huynh
+    DELETE FROM student_parent_keys WHERE student_id = p_UserID;
+    
+    -- Xóa thông tin học sinh
+    DELETE FROM students WHERE UserID = p_UserID;
+    
+    -- Xóa tài khoản người dùng
+    DELETE FROM users WHERE UserID = p_UserID;
+    
+    COMMIT;
+END $$
+
+DELIMITER ;
