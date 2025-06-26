@@ -1129,3 +1129,12 @@ textarea {
     overflow-wrap: break-word;
     white-space: pre-wrap;
 }
+
+.disabled {
+    color: #333 !important;
+    background-color: #e4e4e4 !important;
+}
+.disabled:hover {
+    background-color: #e4e4e4 !important;
+    border-color: #ddd !important;
+}

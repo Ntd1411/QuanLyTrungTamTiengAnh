@@ -556,11 +556,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <label>
                                 <input type="checkbox" name="sendMethods[]" value="web" checked> Website
                             </label>
-                            <label>
-                                <input type="checkbox" name="sendMethods[]" value="zalo"> Zalo
+                            <label class="disabled" title="Chưa triển khai">
+                                <input type="checkbox" name="sendMethods[]"   value="zalo" disabled> Zalo
                             </label>
-                            <label>
-                                <input type="checkbox" name="sendMethods[]" value="gmail"> Gmail
+                            <label class="disabled" title="Chưa triển khai" >
+                                <input type="checkbox" name="sendMethods[]"  value="gmail" disabled> Gmail
                             </label>
                         </div>
                     </div>

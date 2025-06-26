@@ -239,7 +239,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 break;
 
             case "sendNotification":
-                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content'])) {
+                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content']) || empty($_POST['sendMethods'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
                 }
@@ -247,6 +247,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 try {
                     $conn = connectdb();
                     $selectedMethods = json_decode($_POST['sendMethods'], true);
+                    if ($selectedMethods == []) {
+                        echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
+                        exit;
+                    }
+
 
                     // Insert notification into messages table
                     $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
