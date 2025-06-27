@@ -5,6 +5,7 @@ ob_start();
 include "../model/config.php";
 include "../model/user.php";
 include "../model/configadmin.php";
+include "../model/sendmail.php";
 
 if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     (isset($_SESSION['role'])  && $_SESSION['role'] == 0)
@@ -194,7 +195,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (!preg_match('/^[0-9]+$/', $_POST['studentPhone'])) {
                     echo json_encode([
                         'status' => 'error',
-                        'message' => 'Số điện thoại chỉ được chứa số'
+                        'message' => 'Số điện thoại chỉ được chứa số' 
                     ]);
                     exit;
                 }
@@ -214,7 +215,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $studentDiscount = $_POST['studentDiscount'] ?? 0;
                 if (!is_numeric($studentDiscount) || $studentDiscount < 0 || $studentDiscount > 100) {
                     echo json_encode([
-                        'status' => 'error',
+                        'status' => 'error', 
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
                     ]);
                     exit;
@@ -242,7 +243,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                 $result = addStudent(
                     $studentFullName,
-                    $studentDate,
+                    $studentDate, 
                     $studentGender,
                     $studentUsername,
                     $studentPassword,
@@ -298,7 +299,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
-                        'status' => 'error',
+                        'status' => 'error', 
                         'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
                     ]);
                     exit;
@@ -506,11 +507,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate discount
-                if (
-                    !is_numeric($_POST['studentDiscount']) ||
-                    $_POST['studentDiscount'] < 0 ||
-                    $_POST['studentDiscount'] > 100
-                ) {
+                if (!is_numeric($_POST['studentDiscount']) || 
+                    $_POST['studentDiscount'] < 0 || 
+                    $_POST['studentDiscount'] > 100) {
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
@@ -548,7 +547,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate birthdate
-                $birthdate = strtotime($_POST['birthDate']);
+                $birthdate = strtotime($_POST['birthDate']); 
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
@@ -564,58 +563,90 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 break;
 
             case "sendNotification":
-                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content']) || empty($_POST['sendMethods'])) {
+                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
                 }
 
                 try {
                     $conn = connectdb();
-                    $selectedMethods = json_decode($_POST['sendMethods'], true);
-                    if ($selectedMethods == []) {
-                        echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
-                        exit;
+                    $selectedMethods = isset($_POST['sendMethods']) ? json_decode($_POST['sendMethods'], true) : [];
+                    $sendEmail = in_array('email', $selectedMethods);
+                    
+                    // Get receiver's email if Gmail is selected
+                    $receiverEmail = null;
+                    if ($sendEmail) {
+                        $sql = "SELECT Email FROM teachers WHERE UserID = :receiverId
+                               UNION
+                               SELECT Email FROM students WHERE UserID = :receiverId  
+                               UNION
+                               SELECT Email FROM parents WHERE UserID = :receiverId";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute([':receiverId' => $_POST['receiverId']]);
+                        $receiverEmail = $stmt->fetchColumn();
+                        
+                        if (!$receiverEmail) {
+                            echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy email của người nhận']);
+                            exit;
+                        }
                     }
 
-
-                    // Insert notification into messages table
-                    $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
-                            VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
-
-                    $stmt = $conn->prepare($sql);
-                    $result = $stmt->execute([
-                        ':receiverId' => $_POST['receiverId'],
-                        ':subject' => $_POST['subject'],
-                        ':content' => $_POST['content']
-                    ]);
-
-                    if ($result) {
-                        $successMethods = [];
-                        if (!empty($selectedMethods)) {
-                            foreach ($selectedMethods as $method) {
-                                switch ($method) {
-                                    case 'web':
-                                        $successMethods[] = 'Website';
-                                        break;
-                                    case 'zalo':
-                                        $successMethods[] = 'Zalo';
-                                        break;
-                                    case 'gmail':
-                                        $successMethods[] = 'Gmail';
-                                        break;
-                                }
-                            }
+                    // If Gmail is selected, try to send email first
+                    $emailSent = false;
+                    if ($sendEmail && $receiverEmail) {
+                        // Send immediate response for email processing
+                        if (ob_get_level()) {
+                            ob_flush();
                         }
+                        flush();
+                        
+                        // Basic email sending using PHPMailer
+                        $receiver = $receiverEmail;
+                        $subject = $_POST['subject'];
+                        $message = $_POST['content'];
+                        
+                        $emailSent = sendEmail($receiver, $subject, $message);
+                        
+                        if ($emailSent['status'] === "fail") {
+                            echo json_encode([
+                                'status' => 'error', 
+                                'message' => 'Gửi email thất bại: ' . $emailSent['message']
+                            ]);
+                            exit;
+                        }
+                    }
 
-                        echo json_encode([
-                            'status' => 'success',
-                            'message' => 'Thông báo đã được gửi thành công qua ' . implode(', ', $successMethods)
+                    // Save to database only after successful email sending (if Gmail was selected)
+                    // or immediately if no Gmail sending was requested
+                    if (!$sendEmail || ($sendEmail && $emailSent['status'] === "success")) {
+                        $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
+                                VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
+
+                        $stmt = $conn->prepare($sql);
+                        $result = $stmt->execute([
+                            ':receiverId' => $_POST['receiverId'],
+                            ':subject' => $_POST['subject'],
+                            ':content' => $_POST['content']
                         ]);
-                    } else {
-                        echo json_encode([
-                            'status' => 'error',
-                            'message' => 'Không thể gửi thông báo'
-                        ]);
+
+                        if ($result) {
+                            if ($sendEmail && $emailSent['status'] === "success") {
+                                echo json_encode([
+                                    'status' => 'success',
+                                    'message' => '✅ Thông báo đã được gửi thành công đến email: ' . $receiverEmail
+                                ]);
+                            } else {
+                                echo json_encode([
+                                    'status' => 'success',
+                                    'message' => '✅ Thông báo đã được lưu thành công'
+                                ]);
+                            }
+                        } else {
+                            echo json_encode([
+                                'status' => 'error',
+                                'message' => 'Không thể lưu thông báo vào cơ sở dữ liệu'
+                            ]);
+                        }
                     }
                 } catch (Exception $e) {
                     error_log("Error sending notification: " . $e->getMessage());

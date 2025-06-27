@@ -694,7 +694,7 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(this);
     const type = formData.get('type');
-    console.log(type);
+    // console.log(type);
 
     fetch('admincrud.php', {
         method: 'POST',
@@ -731,6 +731,19 @@ document.getElementById('notification-form').addEventListener('submit', function
     // Thêm vào formData dưới dạng JSON string
     formData.append('sendMethods', JSON.stringify(selectedMethods));
 
+    // Hiển thị loading khi gửi email
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    const isEmailSelected = selectedMethods.includes('email');
+    
+    if (isEmailSelected) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi email...';
+    } else {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+    }
+
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -749,6 +762,11 @@ document.getElementById('notification-form').addEventListener('submit', function
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi gửi thông báo');
+        })
+        .finally(() => {
+            // Khôi phục trạng thái ban đầu của button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
         });
 });
 
