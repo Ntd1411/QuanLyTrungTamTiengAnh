@@ -31,4 +31,15 @@ function showElement(id) {
             });
         }, 300);
     }
+
+     // Hide menu if it's open
+    const nav = document.querySelector('nav');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    const mainContent = document.querySelector('.main-content-admin');
+    
+    if (nav.classList.contains('active')) {
+        nav.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        mainContent.classList.remove('pushed');
+    }
 }

@@ -28,6 +28,60 @@ document.getElementById('class-form').addEventListener('submit', function (e) {
         });
 });
 
+function initializeDataTable(tableId) {
+    try {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+        }
+        
+        return $(tableId).DataTable({
+            responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.modal({
+                        header: function(row) {
+                            return 'Chi tiết';
+                        }
+                    }),
+                    renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+                }
+            },
+            language: {
+                emptyTable: "Không có dữ liệu",
+                info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                infoFiltered: "(được lọc từ _MAX_ mục)",
+                infoPostFix: "",
+                thousands: ",",
+                lengthMenu: "Hiển thị _MENU_ mục",
+                loadingRecords: "Đang tải...",
+                processing: "Đang xử lý...",
+                search: "Tìm kiếm:",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                }
+            },
+            pageLength: 5,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+            columnDefs: [
+                {responsivePriority: 1, targets: 0},
+                {responsivePriority: 2, targets: -1},
+                {responsivePriority: 3, targets: 1}
+            ],
+            drawCallback: function() {
+                // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
+                $(tableId).css('width', '100%');
+                $(window).trigger('resize');
+            }
+        });
+    } catch(error) {
+        console.error('Error initializing DataTable:', error);
+    }
+}
+
 function loadClasses() {
     fetch('admincrud.php?action=getClasses', {
         method: 'post'
@@ -35,6 +89,7 @@ function loadClasses() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('class-table-body').innerHTML = html;
+            initializeDataTable('#class-table');
         })
         .catch(error => {
             console.error('Error loading classes:', error);
@@ -82,9 +137,10 @@ function loadTeachers() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('teacher-table-body').innerHTML = html;
+            initializeDataTable('#teacher-table');
         })
         .catch(error => {
-            console.error('Error loading teacher:', error);
+            console.error('Error loading teachers:', error);
         });
 }
 
@@ -129,9 +185,10 @@ function loadStudents() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('student-table-body').innerHTML = html;
+            initializeDataTable('#student-table');
         })
         .catch(error => {
-            console.error('Error loading student:', error);
+            console.error('Error loading students:', error);
         });
 }
 
@@ -175,9 +232,10 @@ function loadParents() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('parent-table-body').innerHTML = html;
+            initializeDataTable('#parent-table');
         })
         .catch(error => {
-            console.error('Error loading parent:', error);
+            console.error('Error loading parents:', error);
         });
 }
 
@@ -660,13 +718,62 @@ document.getElementById('notification-form').addEventListener('submit', function
 });
 
 function loadMessages() {
-    fetch('admincrud.php?action=getMessages')
+    fetch('admincrud.php?action=getMessages', {
+        method: 'post'
+    })
         .then(response => response.text())
         .then(html => {
             document.getElementById('message-table-body').innerHTML = html;
+            if ($.fn.DataTable.isDataTable('#message-table')) {
+                $('#message-table').DataTable().destroy();
+            }
+            $('#message-table').DataTable({
+                responsive: true,
+                language: {
+                    emptyTable: "Không có thông báo nào",
+                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                    infoFiltered: "(được lọc từ _MAX_ mục)", 
+                    thousands: ",",
+                    lengthMenu: "Hiển thị _MENU_ mục",
+                    loadingRecords: "Đang tải...",
+                    processing: "Đang xử lý...",
+                    search: "Tìm kiếm:",
+                    zeroRecords: "Không tìm thấy thông báo phù hợp",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Sau",
+                        previous: "Trước"
+                    }
+                },
+                pageLength: 5,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    {responsivePriority: 1, targets: 0},
+                    {responsivePriority: 2, targets: 1}, 
+                    {responsivePriority: 3, targets: 2},
+                    {
+                        targets: 3,
+                        render: function(data, type, row) {
+                            if (type === 'display' && data.length > 50) {
+                                return `<span title="${data}">${data.substr(0, 50)}...</span>`;
+                            }
+                            return data;
+                        }
+                    }
+                ],
+                drawCallback: function() {
+                    $(this).find('td').css('min-width', '50px');
+                    $(window).trigger('resize');
+                }
+            });
         })
         .catch(error => {
             console.error('Error loading messages:', error);
+            document.getElementById('message-table-body').innerHTML = 
+                '<tr><td colspan="5" class="error-message">Lỗi khi tải thông báo</td></tr>';
         });
 }
 
@@ -884,6 +991,30 @@ function showEditNews(id) {
             alert('Có lỗi xảy ra khi lấy thông tin bài viết');
         });
 }
+
+// Add menu toggle function
+function toggleMenu() {
+    const nav = document.querySelector('nav');
+    const mainContent = document.querySelector('.main-content-admin');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    menuOverlay.classList.toggle('active');
+    nav.classList.toggle('active');
+    mainContent.classList.toggle('pushed');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function(e) {
+    const nav = document.querySelector('nav');
+    const menuToggle = document.querySelector('.menu-toggle');
+    
+    if (nav.classList.contains('active') && 
+        !nav.contains(e.target) && 
+        !menuToggle.contains(e.target)) {
+        nav.classList.remove('active');
+        document.querySelector('.main-content-admin').classList.remove('pushed');
+    }
+});
+
 
 
 

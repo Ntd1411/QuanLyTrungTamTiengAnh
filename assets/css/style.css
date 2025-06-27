@@ -119,7 +119,7 @@ nav {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #34495e;
+  background-color: var(--primary-color);
   min-width: 200px;
   display: none;
   z-index: 1000;
@@ -267,50 +267,6 @@ footer h3 {
 
 footer p {
   margin-bottom: 5px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  body {
-    width: 95%;
-  }
-
-  .menu {
-    flex-direction: column;
-  }
-
-  .menu a {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .submenu {
-    position: static;
-    display: none;
-    background-color: #34495e;
-  }
-
-  .menu li:hover .submenu {
-    display: block;
-  }
-
-  .main-content {
-    flex-direction: column;
-  }
-
-  .sidebar-left,
-  .sidebar-right {
-    border: none;
-    border-top: 3px solid #bdc3c7;
-    border-bottom: 3px solid #bdc3c7;
-  }
-}
-
-/* Hiệu ứng hover cho menu mobile */
-@media (max-width: 768px) {
-  .menu li {
-    cursor: pointer;
-  }
 }
 
 /* ======================Login=============================== */
@@ -535,12 +491,6 @@ input[type="password"]:not(:placeholder-shown) {
   text-decoration: underline;
 }
 
-
-@media (max-width: 600px) {
-  .signup-block {
-    flex: 1 1 100%;
-  }
-}
 
 /* =============error ===================== */
 .error-message {
