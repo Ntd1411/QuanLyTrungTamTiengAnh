@@ -1,3 +1,28 @@
+// Thêm protective code ngay đầu file
+(function() {
+    'use strict';
+    
+    // Protect against Google Translate conflicts
+    if (typeof window.gtag !== 'undefined') {
+        window.gtag = function() {};
+    }
+    
+    // Ensure jQuery is properly loaded
+    if (typeof $ === 'undefined' && typeof jQuery !== 'undefined') {
+        window.$ = jQuery;
+    }
+})();
+
+// Add error handler for uncaught exceptions
+window.addEventListener('error', function(e) {
+    if (e.message.includes('className.indexOf') || 
+        e.message.includes('bubble_compiled.js')) {
+        e.preventDefault();
+        console.warn('Google Translate conflict detected and handled');
+        return false;
+    }
+});
+
 // Hiển thị danh sách yêu cầu tư vấn
 function loadConsultingList() {
     fetch('admincrud.php?action=getConsultingList')
@@ -118,13 +143,37 @@ function initializeDataTable(tableId) {
 }
 
 function loadClasses() {
-    fetch('admincrud.php?action=getClasses', {
-        method: 'post'
+    fetch('admincrud.php?action=getClasses&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('class-table').innerHTML = 
+            `
+                        <thead id="class-table-head">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên lớp</th>
+                                <th>Năm học</th>
+                                <th>Giáo viên</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Giờ học</th>
+                                <th>Phòng học</th>
+                                <th>Học phí</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="class-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('class-table-body').innerHTML = html;
-            initializeDataTable('#class-table');
+            setTimeout(() => {
+        initializeDataTable('#class-table');
+    }, 100);
         })
         .catch(error => {
             console.error('Error loading classes:', error);
@@ -166,13 +215,35 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
 });
 
 function loadTeachers() {
-    fetch('admincrud.php?action=getTeachers', {
-        method: 'post'
+    fetch('admincrud.php?action=getTeachers&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('teacher-table').innerHTML = 
+            `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>Lương</th>
+                                <th>ID Lớp phụ trách</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('teacher-table-body').innerHTML = html;
-            initializeDataTable('#teacher-table');
+            setTimeout(() => {
+                initializeDataTable('#teacher-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading teachers:', error);
@@ -214,13 +285,38 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
 });
 
 function loadStudents() {
-    fetch('admincrud.php?action=getStudents', {
-        method: 'post'
+    fetch('admincrud.php?action=getStudents&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('student-table').innerHTML = 
+            `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>ID Lớp</th>
+                                <th>Phụ huynh</th>
+                                <th>Số buổi học</th>
+                                <th>Số buổi nghỉ</th>
+                                <th>Giảm học phí</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('student-table-body').innerHTML = html;
-            initializeDataTable('#student-table');
+            setTimeout(() => {
+                initializeDataTable('#student-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading students:', error);
@@ -261,13 +357,37 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
 });
 
 function loadParents() {
-    fetch('admincrud.php?action=getParents', {
-        method: 'post'
+    fetch('admincrud.php?action=getParents&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('parent-table').innerHTML = 
+            `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>Zalo ID</th>
+                                <th>Con</th>
+                                <th>Số tiền chưa đóng</th>
+                                <th>Xem thông tin GV</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parent-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('parent-table-body').innerHTML = html;
-            initializeDataTable('#parent-table');
+            setTimeout(() => {
+                initializeDataTable('#parent-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading parents:', error);
@@ -771,58 +891,31 @@ document.getElementById('notification-form').addEventListener('submit', function
 });
 
 function loadMessages() {
-    fetch('admincrud.php?action=getMessages', {
-        method: 'post'
+    fetch('admincrud.php?action=getMessages&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('message-table').innerHTML = 
+            `
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Người nhận</th>
+                                <th>Chủ đề</th>
+                                <th class="message-content">Nội dung</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="message-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('message-table-body').innerHTML = html;
-            // if ($.fn.DataTable.isDataTable('#message-table')) {
-            //     $('#message-table').DataTable().destroy();
-            // }
-            // $('#message-table').DataTable({
-            //     responsive: true,
-            //     language: {
-            //         emptyTable: "Không có thông báo nào",
-            //         info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-            //         infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-            //         infoFiltered: "(được lọc từ _MAX_ mục)", 
-            //         thousands: ",",
-            //         lengthMenu: "Hiển thị _MENU_ mục",
-            //         loadingRecords: "Đang tải...",
-            //         processing: "Đang xử lý...",
-            //         search: "Tìm kiếm:",
-            //         zeroRecords: "Không tìm thấy thông báo phù hợp",
-            //         paginate: {
-            //             first: "Đầu",
-            //             last: "Cuối",
-            //             next: "Sau",
-            //             previous: "Trước"
-            //         }
-            //     },
-            //     pageLength: 5,
-            //     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-            //     order: [[0, 'desc']],
-            //     columnDefs: [
-            //         {responsivePriority: 1, targets: 0},
-            //         {responsivePriority: 2, targets: 1}, 
-            //         {responsivePriority: 3, targets: 2},
-            //         {
-            //             targets: 3,
-            //             render: function(data, type, row) {
-            //                 if (type === 'display' && data.length > 50) {
-            //                     return `<span title="${data}">${data.substr(0, 50)}...</span>`;
-            //                 }
-            //                 return data;
-            //             }
-            //         }
-            //     ],
-            //     drawCallback: function() {
-            //         $(this).find('td').css('min-width', '50px');
-            //         $(window).trigger('resize');
-            //     }
-            // });
-            initializeDataTable('#message-table');
+            setTimeout(() => {
+                initializeDataTable('#message-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading messages:', error);
