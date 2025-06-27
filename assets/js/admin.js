@@ -1,3 +1,38 @@
+// Hiển thị danh sách yêu cầu tư vấn
+function loadConsultingList() {
+    fetch('admincrud.php?action=getConsultingList')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('consulting-table-body').innerHTML = html;
+        });
+}
+document.addEventListener('DOMContentLoaded', loadConsultingList);
+
+// Xử lý sự kiện đánh dấu đã tư vấn
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('consulted-checkbox')) {
+        const id = e.target.getAttribute('data-id');
+        const status = e.target.checked ? 'Đã tư vấn' : 'Chưa tư vấn';
+        const body = new FormData();
+        body.append('action', 'toggleConsulted');
+        body.append('id', id);
+        body.append('status', status);
+        
+        fetch('admincrud.php', {
+            method: 'POST',
+            body: body
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadConsultingList();
+            } else {
+                alert('Có lỗi khi cập nhật trạng thái!');
+            }
+        });
+    }
+});
+
 // Xử lý class
 document.getElementById('class-form').addEventListener('submit', function (e) {
     e.preventDefault();

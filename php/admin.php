@@ -122,6 +122,25 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <button onclick="showElement('manage-parents')">Quản lý phụ huynh</button>
                     </div>
                 </div>
+                <!-- Bảng danh sách đăng ký tư vấn -->
+                <div class="table-container">
+                    <h2>Danh sách đăng ký tư vấn khóa học</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Năm sinh</th>
+                                <th>Điện thoại</th>
+                                <th>Email</th>
+                                <th>Khóa học</th>
+                                <th>Nội dung</th>
+                                <th>Thời gian gửi</th>
+                                <th>Đã tư vấn</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consulting-table-body"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Manage Classes -->
@@ -476,19 +495,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <div id="month-filter" class="statistics__time" style="display:none;">
                         <select id="stats-month">
-                            <?php 
-                                for($i = 1; $i <= 12; $i++) {
-                                    echo "<option value='$i'>Tháng $i</option>";
-                                }
+                            <?php
+                            for ($i = 1; $i <= 12; $i++) {
+                                echo "<option value='$i'>Tháng $i</option>";
+                            }
                             ?>
                         </select>
                         <select id="stats-year-month">
-                            <?php 
-                                $currentYear = date('Y');
-                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
-                                    $selected = ($i == $currentYear) ? 'selected' : '';
-                                    echo "<option value='$i' $selected>Năm $i</option>";
-                                }
+                            <?php
+                            $currentYear = date('Y');
+                            for ($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                $selected = ($i == $currentYear) ? 'selected' : '';
+                                echo "<option value='$i' $selected>Năm $i</option>";
+                            }
                             ?>
                         </select>
                     </div>
@@ -501,24 +520,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <option value="4">Quý 4 (Tháng 10-12)</option>
                         </select>
                         <select id="stats-year-quarter">
-                            <?php 
-                                $currentYear = date('Y');
-                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
-                                    $selected = ($i == $currentYear) ? 'selected' : '';
-                                    echo "<option value='$i' $selected>Năm $i</option>";
-                                }
+                            <?php
+                            $currentYear = date('Y');
+                            for ($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                $selected = ($i == $currentYear) ? 'selected' : '';
+                                echo "<option value='$i' $selected>Năm $i</option>";
+                            }
                             ?>
                         </select>
                     </div>
 
                     <div id="year-filter" class="statistics__time" style="display:none;">
                         <select id="stats-year">
-                            <?php 
-                                $currentYear = date('Y');
-                                for($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
-                                    $selected = ($i == $currentYear) ? 'selected' : '';
-                                    echo "<option value='$i' $selected>Năm $i</option>";
-                                }
+                            <?php
+                            $currentYear = date('Y');
+                            for ($i = $currentYear - 5; $i <= $currentYear + 5; $i++) {
+                                $selected = ($i == $currentYear) ? 'selected' : '';
+                                echo "<option value='$i' $selected>Năm $i</option>";
+                            }
                             ?>
                         </select>
                     </div>
@@ -631,10 +650,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <input type="checkbox" name="sendMethods[]" value="web" checked> Website
                             </label>
                             <label class="disabled" title="Chưa triển khai">
-                                <input type="checkbox" name="sendMethods[]"   value="zalo" disabled> Zalo
+                                <input type="checkbox" name="sendMethods[]" value="zalo" disabled> Zalo
                             </label>
-                            <label class="disabled" title="Chưa triển khai" >
-                                <input type="checkbox" name="sendMethods[]"  value="gmail" disabled> Gmail
+                            <label class="disabled" title="Chưa triển khai">
+                                <input type="checkbox" name="sendMethods[]" value="gmail" disabled> Gmail
                             </label>
                         </div>
                     </div>

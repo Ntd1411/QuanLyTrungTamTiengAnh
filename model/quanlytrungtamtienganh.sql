@@ -707,9 +707,6 @@ INSERT INTO news (title, content, excerpt, image, author, date) VALUES
     '2025-05-28'
 );
 
--- Phần mới update--------------------------------------------------------------------------
-
-
 -- Tạo bảng student_parent_keys
 CREATE TABLE student_parent_keys (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -985,3 +982,15 @@ DELIMITER ;
 -- Thêm cột isShowTeacher vào bảng parents
 ALTER TABLE parents 
 ADD COLUMN isShowTeacher BOOLEAN DEFAULT FALSE;
+
+-------------------- Phần mới update -----------------------
+CREATE TABLE consulting (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    fullname VARCHAR(100) NOT NULL,
+    birthyear VARCHAR(10) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100),
+    course VARCHAR(100) NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

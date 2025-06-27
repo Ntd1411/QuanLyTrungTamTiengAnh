@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Đặt mã này vào file script.js
+// Registration form validation
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- PHẦN CODE CUỘN TRANG (GIỮ NGUYÊN) ---
@@ -87,8 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (isValid) {
-                alert('Thông tin đã được gửi thành công!');
-                form.reset();
+                requestConsultation();
             }
         });
     }
@@ -104,3 +103,28 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     }
 });
+
+// Handle form submission
+function requestConsultation() {
+    const form = document.getElementById('registration-form');
+    const formData = new FormData(form);
+    formData.append('action', 'requestConsultation');
+
+    fetch('../php/request_consultation.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Gửi thông tin tư vấn thành công!');
+            form.reset();
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể gửi thông tin'));
+        }
+    })
+    .catch(err => {
+        alert('Có lỗi xảy ra khi gửi thông tin!');
+        console.error(err);
+    });
+}

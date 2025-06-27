@@ -194,7 +194,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (!preg_match('/^[0-9]+$/', $_POST['studentPhone'])) {
                     echo json_encode([
                         'status' => 'error',
-                        'message' => 'Số điện thoại chỉ được chứa số' 
+                        'message' => 'Số điện thoại chỉ được chứa số'
                     ]);
                     exit;
                 }
@@ -214,7 +214,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $studentDiscount = $_POST['studentDiscount'] ?? 0;
                 if (!is_numeric($studentDiscount) || $studentDiscount < 0 || $studentDiscount > 100) {
                     echo json_encode([
-                        'status' => 'error', 
+                        'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
                     ]);
                     exit;
@@ -242,7 +242,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                 $result = addStudent(
                     $studentFullName,
-                    $studentDate, 
+                    $studentDate,
                     $studentGender,
                     $studentUsername,
                     $studentPassword,
@@ -298,7 +298,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
-                        'status' => 'error', 
+                        'status' => 'error',
                         'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
                     ]);
                     exit;
@@ -506,9 +506,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate discount
-                if (!is_numeric($_POST['studentDiscount']) || 
-                    $_POST['studentDiscount'] < 0 || 
-                    $_POST['studentDiscount'] > 100) {
+                if (
+                    !is_numeric($_POST['studentDiscount']) ||
+                    $_POST['studentDiscount'] < 0 ||
+                    $_POST['studentDiscount'] > 100
+                ) {
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
@@ -546,7 +548,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate birthdate
-                $birthdate = strtotime($_POST['birthDate']); 
+                $birthdate = strtotime($_POST['birthDate']);
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
@@ -793,6 +795,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 exit;
                 break;
+            case "toggleConsulted":
+                $id = $_POST['id'] ?? 0;
+                $status = $_POST['status'] ?? 'Chưa tư vấn';
+                $conn = connectdb();
+                $stmt = $conn->prepare("UPDATE consulting SET status = ? WHERE id = ?");
+                $success = $stmt->execute([$status, $id]);
+                echo json_encode(['success' => $success]);
+                exit;
+                break;
         }
     }
 
@@ -808,7 +819,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . htmlspecialchars($class['ClassID']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
-                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . " (" .$class['TeacherID']. ")" . "</td>";
+                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . " (" . $class['TeacherID'] . ")" . "</td>";
                         echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
                         echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
@@ -861,7 +872,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                            LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
                            LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
                            GROUP BY s.UserID";
-                    
+
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -875,7 +886,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($student['Email']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['Phone']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['BirthDate']) . "</td>";
-                            echo "<td>" . htmlspecialchars($student['ClassName']) . " (" .$student['SchoolYear']. ")" . "</td>";
+                            echo "<td>" . htmlspecialchars($student['ClassName']) . " (" . $student['SchoolYear'] . ")" . "</td>";
                             echo "<td>" . htmlspecialchars($student['Parents'] ?? "Chưa có phụ huynh") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "0") . "</td>";
@@ -923,7 +934,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
                             echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
                             echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có") . "</td>";
-                            echo "<td>" . htmlspecialchars($parent['Children'] ?? "Chưa có con") . "</td>"; 
+                            echo "<td>" . htmlspecialchars($parent['Children'] ?? "Chưa có con") . "</td>";
                             echo "<td>" . number_format($parent['UnpaidAmount'], 0, ',', '.') . " VNĐ" . "</td>";
                             echo "<td>" . ($parent['isShowTeacher'] ? 'Có' : 'Không') . "</td>";
                             echo "<td>
@@ -1035,6 +1046,27 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 $result = getParentById($_GET['id']);
                 echo json_encode($result);
+                exit;
+                break;
+            case "getConsultingList":
+                $conn = connectdb();
+                $stmt = $conn->prepare("SELECT * FROM consulting ORDER BY created_at DESC");
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($rows as $row) {
+                    $checked = $row['status'] === 'Đã tư vấn' ? 'checked' : '';
+                    $btn = "<input type='checkbox' class='consulted-checkbox' data-id='{$row['id']}' {$checked} title='Đánh dấu đã tư vấn'>";
+                    echo "<tr>
+                        <td>" . htmlspecialchars($row['fullname']) . "</td>
+                        <td>" . htmlspecialchars($row['birthyear']) . "</td>
+                        <td>" . htmlspecialchars($row['phone']) . "</td>
+                        <td>" . htmlspecialchars($row['email']) . "</td>
+                        <td>" . htmlspecialchars($row['course']) . "</td>
+                        <td>" . htmlspecialchars($row['message']) . "</td>
+                        <td>" . htmlspecialchars($row['created_at']) . "</td>
+                        <td>{$btn}</td>
+                    </tr>";
+                }
                 exit;
                 break;
             default:
