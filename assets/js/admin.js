@@ -64,7 +64,7 @@ function initializeDataTable(tableId) {
                     previous: "Trước"
                 }
             },
-            pageLength: 5,
+            pageLength: 10,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
             columnDefs: [
                 {responsivePriority: 1, targets: 0},
@@ -724,51 +724,52 @@ function loadMessages() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('message-table-body').innerHTML = html;
-            if ($.fn.DataTable.isDataTable('#message-table')) {
-                $('#message-table').DataTable().destroy();
-            }
-            $('#message-table').DataTable({
-                responsive: true,
-                language: {
-                    emptyTable: "Không có thông báo nào",
-                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                    infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-                    infoFiltered: "(được lọc từ _MAX_ mục)", 
-                    thousands: ",",
-                    lengthMenu: "Hiển thị _MENU_ mục",
-                    loadingRecords: "Đang tải...",
-                    processing: "Đang xử lý...",
-                    search: "Tìm kiếm:",
-                    zeroRecords: "Không tìm thấy thông báo phù hợp",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    }
-                },
-                pageLength: 5,
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-                order: [[0, 'desc']],
-                columnDefs: [
-                    {responsivePriority: 1, targets: 0},
-                    {responsivePriority: 2, targets: 1}, 
-                    {responsivePriority: 3, targets: 2},
-                    {
-                        targets: 3,
-                        render: function(data, type, row) {
-                            if (type === 'display' && data.length > 50) {
-                                return `<span title="${data}">${data.substr(0, 50)}...</span>`;
-                            }
-                            return data;
-                        }
-                    }
-                ],
-                drawCallback: function() {
-                    $(this).find('td').css('min-width', '50px');
-                    $(window).trigger('resize');
-                }
-            });
+            // if ($.fn.DataTable.isDataTable('#message-table')) {
+            //     $('#message-table').DataTable().destroy();
+            // }
+            // $('#message-table').DataTable({
+            //     responsive: true,
+            //     language: {
+            //         emptyTable: "Không có thông báo nào",
+            //         info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+            //         infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+            //         infoFiltered: "(được lọc từ _MAX_ mục)", 
+            //         thousands: ",",
+            //         lengthMenu: "Hiển thị _MENU_ mục",
+            //         loadingRecords: "Đang tải...",
+            //         processing: "Đang xử lý...",
+            //         search: "Tìm kiếm:",
+            //         zeroRecords: "Không tìm thấy thông báo phù hợp",
+            //         paginate: {
+            //             first: "Đầu",
+            //             last: "Cuối",
+            //             next: "Sau",
+            //             previous: "Trước"
+            //         }
+            //     },
+            //     pageLength: 5,
+            //     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+            //     order: [[0, 'desc']],
+            //     columnDefs: [
+            //         {responsivePriority: 1, targets: 0},
+            //         {responsivePriority: 2, targets: 1}, 
+            //         {responsivePriority: 3, targets: 2},
+            //         {
+            //             targets: 3,
+            //             render: function(data, type, row) {
+            //                 if (type === 'display' && data.length > 50) {
+            //                     return `<span title="${data}">${data.substr(0, 50)}...</span>`;
+            //                 }
+            //                 return data;
+            //             }
+            //         }
+            //     ],
+            //     drawCallback: function() {
+            //         $(this).find('td').css('min-width', '50px');
+            //         $(window).trigger('resize');
+            //     }
+            // });
+            initializeDataTable('#message-table');
         })
         .catch(error => {
             console.error('Error loading messages:', error);
