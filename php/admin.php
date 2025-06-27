@@ -832,8 +832,28 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 });
             }
 
-            initializeDatatable("#class-table");
-            
+            // Initialize tables only when they become visible
+            function initializeVisibleTables() {
+                $('.element:visible table').each(function() {
+                    const tableId = '#' + $(this).attr('id');
+                    if ($(tableId).is(':visible')) {
+                        initializeDatatable(tableId);
+                    }
+                });
+            }
+
+            // Initial initialization
+            initializeVisibleTables();
+
+            // Initialize when switching tabs
+            $('.menu a').on('click', function() {
+                setTimeout(initializeVisibleTables, 100);
+            });
+
+            $('.action-buttons button').on('click', function() {
+                setTimeout(initializeVisibleTables, 100);
+            });
+
             // Initialize select2 dropdowns
             $('.select2-dropdown, .recipient-select, .select2-search').select2({
                 width: '100%',
