@@ -30,6 +30,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Add DataTables CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
 
 <body>
@@ -203,7 +208,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <input type="number" name="classTuition" id="class-tuition" placeholder="Nhập học phí">
                     </div>
                     <div class="form-actions">
-                        <button type="button" onclick="document.getElementById('class-form').reset()">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('class-form').reset()" class="refresh">Làm mới</button>
                         <button type="submit">Thêm lớp</button>
                     </div>
                 </form>
@@ -273,7 +278,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <input type="number" name="teacherSalary" id="teacher-salary" required>
                     </div>
                     <div class="form-actions">
-                        <button type="button" onclick="document.getElementById('teacher-form').reset()">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('teacher-form').reset()" class="refresh">Làm mới</button>
                         <button type="submit" onclick="addTeacher()">Thêm giáo viên</button>
                     </div>
                 </form>
@@ -369,7 +374,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" onclick="document.getElementById('student-form').reset()">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('student-form').reset()" class="refresh">Làm mới</button>
                         <button type="submit">Thêm học sinh</button>
                     </div>
                 </form>
@@ -445,7 +450,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-actions">
-                        <button type="button" onclick="document.getElementById('parent-form').reset()">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('parent-form').reset()" class="refresh">Làm mới</button>
                         <button type="submit">Thêm phụ huynh</button>
                     </div>
                 </form>
@@ -479,21 +484,21 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <div class="filter-type">
                         <label>Chọn cách thống kê:</label>
                         <select id="stats-filter-type" onchange="changeFilterType()">
-                            <option value="custom">Tùy chọn</option>
                             <option value="month">Theo tháng</option>
+                            <option value="custom">Tùy chọn</option>
                             <option value="quarter">Theo quý</option>
                             <option value="year">Theo năm</option>
                         </select>
                     </div>
 
-                    <div id="custom-filter" class="statistics__time">
+                    <div id="custom-filter" class="statistics__time" style="display:none;">
                         <span>Từ</span>
                         <input type="date" id="stats-start" required>
                         <span>đến</span>
                         <input type="date" id="stats-end" required>
                     </div>
 
-                    <div id="month-filter" class="statistics__time" style="display:none;">
+                    <div id="month-filter" class="statistics__time">
                         <select id="stats-month">
                             <?php
                             for ($i = 1; $i <= 12; $i++) {
@@ -551,6 +556,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <p>Tổng tiền đã thu: <span id="total-collected">0</span> VNĐ</p>
                     <p>Số học sinh tăng: <span id="students-increased">0</span></p>
                     <p>Số học sinh giảm: <span id="students-decreased">0</span></p>
+                    <p>Tổng lương giáo viên: <span id="total-salary">0</span> VNĐ</p>
+                    <p>Số giáo viên hiện tại: <span id="teacher-count">0</span></p>
                 </div>
             </div>
 
@@ -659,7 +666,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="submit">Gửi thông báo</button>
-                        <button type="button" onclick="document.getElementById('notification-form').reset()">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('notification-form').reset()" class="refresh">Làm mới</button>
                     </div>
                 </form>
 
@@ -793,43 +800,99 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/update_page.js"></script>
     <script>
-        // Initialize Select2 for the recipient select element
         $(document).ready(function() {
-            $('.select2-dropdown').select2({
-                placeholder: "Chọn người nhận",
-                allowClear: true,
-                minimumResultsForSearch: Infinity // Disable search box
-            });
-
-            $('.recipient-select').select2({
-                placeholder: "Tìm kiếm người nhận...",
-                allowClear: true,
-                minimumResultsForSearch: 2,
-                language: {
-                    noResults: function() {
-                        return "Không tìm thấy kết quả";
-                    },
-                    searching: function() {
-                        return "Đang tìm kiếm...";
-                    }
+            function initializeDatatable(selector) {
+                if ($.fn.DataTable.isDataTable(selector)) {
+                    $(selector).DataTable().destroy();
                 }
+                
+                return $(selector).DataTable({
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: 'tr'
+                        }
+                    },
+                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
+                    autoWidth: false,
+                    scrollX: false,
+                    language: {
+                        emptyTable: "Không có dữ liệu",
+                        info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                        infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                        infoFiltered: "(được lọc từ _MAX_ mục)",
+                        thousands: ",",
+                        lengthMenu: "Hiển thị _MENU_ mục",
+                        loadingRecords: "Đang tải...",
+                        processing: "Đang xử lý...",
+                        search: "Tìm kiếm:",
+                        zeroRecords: "Không tìm thấy kết quả phù hợp",
+                        paginate: {
+                            first: "Đầu",
+                            last: "Cuối",
+                            next: "Sau",
+                            previous: "Trước"
+                        }
+                    },
+                    pageLength: 5,
+                    lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+                    columnDefs: [
+                        {
+                            className: 'control',
+                            orderable: false,
+                            targets: 0
+                        },
+                        {
+                            responsivePriority: 1,
+                            targets: [0, 1, -1]
+                        }
+                    ],
+                    order: [[1, 'asc']]
+                });
+            }
+
+            // Initialize tables only when they become visible
+            function initializeVisibleTables() {
+                $('.element:visible table').each(function() {
+                    const tableId = '#' + $(this).attr('id');
+                    if ($(tableId).is(':visible')) {
+                        initializeDatatable(tableId);
+                    }
+                });
+            }
+
+            // Initial initialization
+            initializeVisibleTables();
+
+            // Initialize when switching tabs
+            $('.menu a').on('click', function() {
+                setTimeout(initializeVisibleTables, 100);
             });
 
-            $('.select2-search').select2({
+            $('.action-buttons button').on('click', function() {
+                setTimeout(initializeVisibleTables, 100);
+            });
+
+            // Initialize select2 dropdowns
+            $('.select2-dropdown, .recipient-select, .select2-search').select2({
+                width: '100%',
                 placeholder: "Tìm kiếm...",
                 allowClear: true,
-                width: '100%',
                 language: {
-                    noResults: function() {
-                        return "Không tìm thấy kết quả";
-                    },
-                    searching: function() {
-                        return "Đang tìm kiếm...";
-                    }
+                    noResults: () => "Không tìm thấy kết quả",
+                    searching: () => "Đang tìm kiếm..."
                 }
             });
         });
     </script>
+
+    <!-- Add this button right after the <body> tag -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add this right after the body tag -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
 </body>
 
 </html>

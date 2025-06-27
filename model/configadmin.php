@@ -442,10 +442,13 @@ function getStatistics($startDate, $endDate)
         $conn = connectdb();
         error_log("Getting statistics from $startDate to $endDate");
 
-        // Tổng tiền dự kiến và đã thu
+        // Tổng tiền dự kiến (đã tính discount) và đã thu
         $sql = "SELECT 
-                COALESCE(SUM(Amount), 0) as ExpectedAmount,
-                COALESCE(SUM(CASE WHEN Status = 'Đã đóng' THEN Amount * (1 - IFNULL(Discount, 0)/100) ELSE 0 END), 0) as CollectedAmount
+                COALESCE(SUM(Amount * (1 - IFNULL(Discount, 0)/100)), 0) as ExpectedAmount,
+                COALESCE(SUM(CASE 
+                    WHEN Status = 'Đã đóng' THEN Amount * (1 - IFNULL(Discount, 0)/100) 
+                    ELSE 0 
+                END), 0) as CollectedAmount
                 FROM tuition 
                 WHERE DueDate BETWEEN :startDate AND :endDate";
 
@@ -455,6 +458,19 @@ function getStatistics($startDate, $endDate)
             ':endDate' => $endDate
         ]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Tính tổng lương giáo viên và số giáo viên trong khoảng thời gian
+        $sqlSalary = "SELECT 
+                      COALESCE(SUM(Salary), 0) as TotalSalary,
+                      COUNT(*) as TeacherCount 
+                      FROM teachers 
+                      WHERE DATE(CreatedAt) <= :endDate";
+        
+        $stmtSalary = $conn->prepare($sqlSalary);
+        $stmtSalary->execute([
+            ':endDate' => $endDate
+        ]);
+        $salaryStats = $stmtSalary->fetch(PDO::FETCH_ASSOC);
 
         // Học sinh tăng (số học sinh mới trong khoảng thời gian)
         $sqlIncrease = "SELECT COUNT(*) as Increased 
@@ -499,7 +515,9 @@ function getStatistics($startDate, $endDate)
                 'expectedAmount' => (int)$result['ExpectedAmount'],
                 'collectedAmount' => (int)$result['CollectedAmount'],
                 'studentsIncreased' => (int)$increased['Increased'],
-                'studentsDecreased' => (int)$decreased['Decreased']
+                'studentsDecreased' => (int)$decreased['Decreased'],
+                'totalSalary' => (int)$salaryStats['TotalSalary'],
+                'teacherCount' => (int)$salaryStats['TeacherCount']
             ]
         ];
     } catch (PDOException $e) {
