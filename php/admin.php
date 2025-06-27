@@ -460,21 +460,21 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <div class="filter-type">
                         <label>Chọn cách thống kê:</label>
                         <select id="stats-filter-type" onchange="changeFilterType()">
-                            <option value="custom">Tùy chọn</option>
                             <option value="month">Theo tháng</option>
+                            <option value="custom">Tùy chọn</option>
                             <option value="quarter">Theo quý</option>
                             <option value="year">Theo năm</option>
                         </select>
                     </div>
 
-                    <div id="custom-filter" class="statistics__time">
+                    <div id="custom-filter" class="statistics__time" style="display:none;">
                         <span>Từ</span>
                         <input type="date" id="stats-start" required>
                         <span>đến</span>
                         <input type="date" id="stats-end" required>
                     </div>
 
-                    <div id="month-filter" class="statistics__time" style="display:none;">
+                    <div id="month-filter" class="statistics__time" >
                         <select id="stats-month">
                             <?php 
                                 for($i = 1; $i <= 12; $i++) {
@@ -532,6 +532,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <p>Tổng tiền đã thu: <span id="total-collected">0</span> VNĐ</p>
                     <p>Số học sinh tăng: <span id="students-increased">0</span></p>
                     <p>Số học sinh giảm: <span id="students-decreased">0</span></p>
+                    <p>Tổng lương giáo viên: <span id="total-salary">0</span> VNĐ</p>
+                    <p>Số giáo viên hiện tại: <span id="teacher-count">0</span></p>
                 </div>
             </div>
 

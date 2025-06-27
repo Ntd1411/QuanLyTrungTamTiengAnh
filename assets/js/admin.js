@@ -257,6 +257,10 @@ function loadStatistics() {
                 data.data.studentsIncreased;
             document.getElementById('students-decreased').textContent = 
                 data.data.studentsDecreased;
+            document.getElementById('total-salary').textContent =
+                new Intl.NumberFormat('vi-VN').format(data.data.totalSalary);
+            document.getElementById('teacher-count').textContent =
+                data.data.teacherCount;
         } else {
             alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
         }
