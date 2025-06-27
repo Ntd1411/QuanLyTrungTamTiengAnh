@@ -35,7 +35,7 @@ function loadTeacherDashboard() {
             const weekdays = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
             const thu = weekdays[d.getDay()];
             nextSessionDiv.innerHTML = `
-            <strong>${thu}</strong>, ngày ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}<br>
+            <strong>Ngày:</strong> ${thu}, ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}<br>
             <strong>Giờ:</strong> ${nextSession.time} <br>
             <strong>Lớp:</strong> ${nextSession.className}
         `;
@@ -570,7 +570,8 @@ function updateProfile() {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert('Cập nhật thông tin thành công, vui lòng đăng nhập lại!');
+                if (!confirm('Bạn có chắc chắn muốn cập nhật thông tin?')) return;
+                alert('Cập nhật thông tin thành công!');
                 // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
                 if (oldPassword && newPassword) {
                     window.location.href = './logout.php';

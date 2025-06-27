@@ -206,7 +206,8 @@ function updateProfile() {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert('Cập nhật thông tin thành công, vui lòng đăng nhập lại!');
+                if (!confirm('Bạn có chắc chắn muốn cập nhật thông tin?')) return;
+                alert('Cập nhật thông tin thành công!');
                 // Nếu đổi mật khẩu thành công, chuyển hướng về trang đăng nhập
                 if (oldPassword && newPassword) {
                     window.location.href = './logout.php';
