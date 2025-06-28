@@ -500,8 +500,13 @@ button:disabled:hover {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Notification form loading overlay */
@@ -527,7 +532,7 @@ button:disabled:hover {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     text-align: center;
     font-weight: 500;
 }
@@ -655,35 +660,7 @@ button:disabled:hover {
 }
 
 /* Popup styling */
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    display: none;
-    z-index: 999;
-}
 
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: none;
-}
-
-.popup.active,
-.popup-overlay.active {
-    display: block;
-}
 
 /* Dashboard Styles */
 .dashboard-stats {
@@ -763,43 +740,31 @@ button:disabled:hover {
 
 /* popup edit */
 /* Popup styles */
+.popup-overlay,
 .popup-overlay-2 {
     /* display: none; */
-    opacity: 0;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: -100;
-    display: flex;
+    display: none;
+    z-index: 9999;
     align-items: center;
     justify-content: center;
 }
 
+.popup-overlay.active,
+.popup-overlay-2.active {
+    display: flex;
+}
+
 .edit-popup {
-    /* display: none; */
-    opacity: 0;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    max-height: 80vh;
+    width: 900px;
     background: white;
-    padding: 50px;
-    border-radius: 5px;
-    z-index: -100;
-    max-width: 1000px;
-    width: 90%;
-    max-height: 95vh;
-    /* chiều cao tối đa 80% viewport height */
+    padding: 30px 50px;
+    border-radius: 8px;
     overflow-y: auto;
-    /* cho phép cuộn dọc */
-    scrollbar-width: thin;
-    /* thanh cuộn mỏng cho Firefox */
-    scrollbar-color: #888 #f1f1f1;
-    /* màu thanh cuộn cho Firefox */
-    /* transition: 0.1s; */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .confirm-popup h3,
@@ -823,11 +788,6 @@ button:disabled:hover {
 }
 
 .confirm-popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background: white;
     padding: 30px 40px;
     border-radius: 5px;
@@ -1198,18 +1158,18 @@ textarea {
 }
 
 .menu-toggle {
-        display: none !important;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 10px;
-        cursor: pointer;
-    }
+    display: none !important;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
 
 @media screen and (max-width: 992px) {
 
@@ -1253,7 +1213,7 @@ textarea {
     } */
 
     /* Responsive Menu/Sidebar */
-    
+
 
     @media screen and (max-width: 992px) {
         .menu-toggle {
@@ -1513,6 +1473,7 @@ textarea {
         -webkit-line-clamp: 2;
     }
 
+    .popup-overlay,
     .popup-overlay-2,
     .edit-popup {
         padding: 15px;
@@ -1624,7 +1585,8 @@ div.dtr-modal-content {
 
 /* Nền mờ phía sau modal */
 .dtr-modal {
-    background-color: rgba(0, 0, 0, 0.4); /* màu nền tối mờ */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* màu nền tối mờ */
     z-index: 20000 !important;
 }
 
@@ -1636,7 +1598,7 @@ div.dtr-modal-content {
     max-width: 600px;
     width: 90%;
     margin: 5% auto;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -1696,13 +1658,68 @@ div.dtr-modal-content {
 
 
 @media screen and (max-width: 768px) {
+
     .dataTables_wrapper .dataTables_length,
     .dataTables_wrapper .dataTables_filter {
         text-align: left;
         margin-bottom: 10px;
     }
-    
+
     .dataTables_wrapper {
         padding: 10px;
     }
+}
+
+/* Tổng thể vùng chọn */
+.select2-selection--multiple {
+  min-height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex !important;
+  flex-wrap: wrap;
+  cursor: text;
+}
+
+/* Các thẻ đã chọn */
+.select2-selection__choice {
+    flex: 1;
+    min-width: 50%;
+  background-color: var(--primary-color) !important;
+  height: 1.5rem;
+  display: flex !important;
+  align-items: center;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin: 4px 4px 0 0;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Dấu X xóa từng người */
+.select2-selection__choice__remove {
+  color: white !important;
+  padding: 5px;
+  margin-top: 3px;
+  margin-right: 6px !important;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.select2-selection__choice__remove:hover {
+  opacity: 0.8;
+}
+
+/* Input tìm kiếm nội bộ trong select2 */
+.select2-search__field {
+  border: none !important;
+  outline: none;
+  margin-top: 6px;
+  padding: 4px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 120px;
 }

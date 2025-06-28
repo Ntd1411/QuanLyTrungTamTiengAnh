@@ -535,16 +535,19 @@ function showEditPopup(type, id) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                const overlay = document.querySelector('.popup-overlay-2');
-                const popup = document.getElementById('edit-popup');
-                overlay.style.display = 'block';
-                overlay.style.opacity = '1';
-                overlay.style.zIndex = '10001';
-                popup.style.display = 'block';
-                popup.style.opacity = '1';
-                popup.style.zIndex = '10001';
+                const overlay = document.querySelector('.popup-overlay');
+                overlay.classList.add('active');
 
                 fillEditForm(type, data.data);
+
+                // Initialize Select2 after form content is set
+                $('.select2-edit').each(function () {
+                    if (!$(this).hasClass("select2-hidden-accessible")) {
+                        $(this).select2({
+                            dropdownParent: $(this).parent()
+                        });
+                    }
+                });
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -613,26 +616,7 @@ function fillEditForm(type, data) {
                     </select>
                 </div>`;
 
-            // Initialize Select2 after form content is set
-            setTimeout(() => {
-                $('.select2-edit').select2({
-                    width: '100%',
-                    dropdownParent: $('.edit-popup'),
-                    placeholder: "Tìm kiếm...",
-                    allowClear: true,
-                    language: {
-                        noResults: function () {
-                            return "Không tìm thấy kết quả";
-                        },
-                        searching: function () {
-                            return "Đang tìm kiếm...";
-                        }
-                    }
-                });
 
-                // Prevent dropdown from being cut off
-                $('.edit-popup .select2-container').css('z-index', 100000);
-            }, 100);
             break;
 
         case 'Teacher':
@@ -705,7 +689,7 @@ function fillEditForm(type, data) {
             </div>
             <div class="form-group">
                 <label>Phụ huynh:</label>
-                <select name="parentIds[]" class="select2-multiple" multiple>
+                <select name="parentIds[]" class="select2-edit" multiple>
                     ${data.parentOptions}
                 </select>
             </div>
@@ -715,20 +699,7 @@ function fillEditForm(type, data) {
             </div>`;
 
             // Initialize Select2 after form content is set
-            setTimeout(() => {
-                $('.select2-multiple').select2({
-                    width: '100%',
-                    placeholder: 'Chọn phụ huynh...',
-                    allowClear: true,
-                    dropdownParent: $('#edit-popup')
-                });
-                $('.select2-edit').select2({
-                    width: '100%',
-                    placeholder: 'Chọn lớp...',
-                    allowClear: true,
-                    dropdownParent: $('#edit-popup')
-                });
-            }, 100);
+            
             break;
 
         case 'Parent':
@@ -777,22 +748,15 @@ function fillEditForm(type, data) {
 }
 
 function closePopup() {
-    const overlay = document.querySelector('.popup-overlay-2');
-    overlay.style.opacity = 0;
-    overlay.style.zIndex = -100;
-    const cfpopup = document.querySelector('.confirm-popup');
-    cfpopup.style.display = "none";
-    const popup = document.querySelector('.edit-popup');
-    popup.style.opacity = 0;
-    popup.style.zIndex = -100;
+    const overlay = document.querySelector('.popup-overlay');
+    const overlayDelete = document.querySelector('.popup-overlay-2');
+    overlay.classList.remove('active');
+    overlayDelete.classList.remove('active');
 }
 
 function confirmDelete(type, id) {
     const overlay = document.querySelector('.popup-overlay-2');
-    const popup = document.getElementById('confirm-popup');
-    overlay.style.opacity = 1;
-    overlay.style.zIndex = 10000;
-    popup.style.display = 'block';
+    overlay.classList.add('active');
 
     document.getElementById('confirm-yes').onclick = () => {
         deleteItem(type, id);
@@ -933,12 +897,12 @@ function loadMessages() {
                         </tbody>
             `;
             document.getElementById('message-table-body').innerHTML = html;
-            
+
             setTimeout(() => {
                 initializeDataTable('#message-table');
             }, 100);
 
-            console.log("load message");
+            // console.log("load message");
         })
         .catch(error => {
             console.error('Error loading messages:', error);
@@ -1111,12 +1075,7 @@ function showEditNews(id) {
         .then(data => {
             if (data.status === 'success') {
                 const overlay = document.querySelector('.popup-overlay-2');
-                const popup = document.getElementById('edit-popup');
-                overlay.style.opacity = 1;
-                overlay.style.zIndex = 10001;
-                popup.style.display = 'block';
-                popup.style.opacity = 1;
-                popup.style.zIndex = 10001;
+                overlay.classList.add('active');
 
                 // Fill form with news data
                 document.getElementById('edit-form').innerHTML = `

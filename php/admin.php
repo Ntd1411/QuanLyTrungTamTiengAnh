@@ -25,34 +25,34 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <!-- Add Google Translate protection -->
     <meta name="google" content="notranslate">
     <meta name="robots" content="notranslate">
-    
-    
+
+
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+
     <!-- Load jQuery first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- Add error protection script -->
     <script>
         window.addEventListener('error', function(e) {
-            if (e.message && (e.message.includes('className.indexOf') || 
-                e.message.includes('bubble_compiled.js') ||
-                e.message.includes('gtx'))) {
+            if (e.message && (e.message.includes('className.indexOf') ||
+                    e.message.includes('bubble_compiled.js') ||
+                    e.message.includes('gtx'))) {
                 e.preventDefault();
                 console.warn('External script conflict handled');
                 return false;
             }
         });
-        
+
         // Protect against Google Translate
         if (typeof window.google !== 'undefined' && window.google.translate) {
             window.google.translate.TranslateElement = function() {};
         }
     </script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- Add DataTables CSS and JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -786,26 +786,28 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
 
     <!-- Pop Up-->
-    <div class="popup-overlay-2"></div>
-
-    <div class="edit-popup" id="edit-popup">
-        <h3>Chỉnh sửa thông tin</h3>
-        <form id="edit-form">
-            <!-- Form sẽ được điền động bởi JavaScript -->
-        </form>
-        <form id="edit-news"></form>
-        <div class="popup-buttons">
-            <button type="submit" form="edit-form">Lưu</button>
-            <button onclick="closePopup()">Hủy</button>
+    <div class="popup-overlay">
+        <div class="edit-popup" id="edit-popup">
+            <h3>Chỉnh sửa thông tin</h3>
+            <form id="edit-form">
+                <!-- Form sẽ được điền động bởi JavaScript -->
+            </form>
+            <form id="edit-news"></form>
+            <div class="popup-buttons">
+                <button type="submit" form="edit-form">Lưu</button>
+                <button onclick="closePopup()">Hủy</button>
+            </div>
         </div>
     </div>
 
-    <div class="confirm-popup" id="confirm-popup">
-        <h3>Xác nhận xóa</h3>
-        <p>Bạn có chắc chắn muốn xóa mục này?</p>
-        <div class="popup-buttons">
-            <button class="confirm" id="confirm-yes">Xóa</button>
-            <button class="cancel" onclick="closePopup()">Hủy</button>
+    <div class="popup-overlay-2">
+        <div class="confirm-popup" id="confirm-popup">
+            <h3>Xác nhận xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa mục này?</p>
+            <div class="popup-buttons">
+                <button class="confirm" id="confirm-yes">Xóa</button>
+                <button class="cancel" onclick="closePopup()">Hủy</button>
+            </div>
         </div>
     </div>
 
@@ -824,88 +826,6 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         // Wrap in try-catch to prevent errors
         try {
             $(document).ready(function() {
-                // function initializeDatatable(selector) {
-                //     try {
-                //         if ($.fn.DataTable.isDataTable(selector)) {
-                //             $(selector).DataTable().destroy();
-                //         }
-                        
-                //         return $(selector).DataTable({
-                //             responsive: {
-                //                 details: {
-                //                     type: 'column',
-                //                     target: 'tr'
-                //                 }
-                //             },
-                //             dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                //             autoWidth: false,
-                //             scrollX: false,
-                //             language: {
-                //                 emptyTable: "Không có dữ liệu",
-                //                 info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                //                 infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-                //                 infoFiltered: "(được lọc từ _MAX_ mục)",
-                //                 thousands: ",",
-                //                 lengthMenu: "Hiển thị _MENU_ mục",
-                //                 loadingRecords: "Đang tải...",
-                //                 processing: "Đang xử lý...",
-                //                 search: "Tìm kiếm:",
-                //                 zeroRecords: "Không tìm thấy kết quả phù hợp",
-                //                 paginate: {
-                //                     first: "Đầu",
-                //                     last: "Cuối",
-                //                     next: "Sau",
-                //                     previous: "Trước"
-                //                 }
-                //             },
-                //             pageLength: 5,
-                //             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-                //             columnDefs: [
-                //                 {
-                //                     className: 'control',
-                //                     orderable: false,
-                //                     targets: 0
-                //                 },
-                //                 {
-                //                     responsivePriority: 1,
-                //                     targets: [0, 1, -1]
-                //                 }
-                //             ],
-                //             order: [[1, 'asc']]
-                //         });
-                //     } catch (e) {
-                //         console.warn('DataTable initialization error:', e);
-                //         return null;
-                //     }
-                // }
-
-                // Initialize tables only when they become visible
-                // function initializeVisibleTables() {
-                //     try {
-                //         $('.element:visible table').each(function() {
-                //             const tableId = '#' + $(this).attr('id');
-                //             if ($(tableId).is(':visible')) {
-                //                 initializeDatatable(tableId);
-                //             }
-                //         });
-                //     } catch (e) {
-                //         console.warn('Table initialization error:', e);
-                //     }
-                // }
-
-                // Initial initialization
-                // initializeVisibleTables();
-
-                // Initialize when switching tabs
-                // $('.menu a').on('click', function() {
-                //     setTimeout(initializeVisibleTables, 100);
-                // });
-
-                // $('.action-buttons button').on('click', function() {
-                //     setTimeout(initializeVisibleTables, 100);
-                // });
-
-                // Initialize select2 dropdowns with error handling
                 try {
                     $('.select2-dropdown, .recipient-select, .select2-search').select2({
                         width: '100%',
@@ -923,6 +843,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         } catch (error) {
             console.error('Script initialization error:', error);
         }
+        $('.popup-overlay, .popup-overlay-2').on('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
     </script>
 
     <!-- Add this button right after the <body> tag -->
