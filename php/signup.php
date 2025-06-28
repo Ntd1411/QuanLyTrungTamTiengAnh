@@ -36,6 +36,14 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
         echo json_encode($respon);
         exit;
     }
+
+        // Kiểm tra email đã tồn tại
+    if (isExistEmail($_POST['email'])) {
+        $respon['error'] = "Email đã được sử dụng bởi người khác!";
+        echo json_encode($respon);
+        exit;
+    }
+
     // Validate password length (minimum 6 characters)
     if (strlen($password) < 6) {
         $respon['error'] = "Mật khẩu phải có ít nhất 6 ký tự!";

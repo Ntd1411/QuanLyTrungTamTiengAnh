@@ -148,6 +148,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['teacherUsername'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['teacherEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
+                    ]);
+                    exit;
+                }
+
                 $teacherFullName = $_POST['teacherFullName'];
                 $teacherUsername = $_POST['teacherUsername'];
                 $teacherPassword = empty($_POST['teacherPassword']) ? "123456" : $_POST['teacherPassword'];
@@ -231,6 +249,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['studentUsername'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['studentEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
+                    ]);
+                    exit;
+                }
+
                 $studentFullName = $_POST['studentFullName'];
                 $studentUsername = $_POST['studentUsername'];
                 $studentPassword = empty($_POST['studentPassword']) ? "123456" : $_POST['studentPassword'];
@@ -301,6 +337,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo json_encode([
                         'status' => 'error', 
                         'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['parentUserName'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['parentEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
                     ]);
                     exit;
                 }

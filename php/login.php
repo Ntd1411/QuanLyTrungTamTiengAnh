@@ -14,52 +14,60 @@ if (isset($_POST['login']) && ($_POST['login'])) {
         exit;
     }
 
-    $username = $_POST['username'];
+    $usernameOrEmail = $_POST['username'];
     $password = $_POST['password'];
     $remember = $_POST['remember'] ?? "";
 
-    $role = getRole($username, $password);
-    $_SESSION['role'] = $role; //thừa
+    $role = getRole($usernameOrEmail, $password);
+
+    $actualUsername = $usernameOrEmail;
+
+    // Nếu đăng nhập bằng email, chuyển về username
+    if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
+        $actualUsername = getUsernameByEmail($usernameOrEmail);
+    }
+
+    $_SESSION['role'] = $role;
 
     if (isset($_SESSION['role'])) {
         switch ($role) {
             case 0:
                 $response['redirect'] = "admin.php";
-                $_SESSION['username'] = $username;
+                $_SESSION['username'] = $actualUsername;
                 $_SESSION['role'] = $role;
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');
-                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('username', $actualUsername, time() + 3600 * 24, '/');
                     setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 1:
                 $response['redirect'] = "teacher.php";
                 $_SESSION['role'] = $role;
-                $_SESSION['username'] = $username;
+                $_SESSION['username'] = $actualUsername;
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');
-                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('username', $actualUsername, time() + 3600 * 24, '/');
                     setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 2:
                 $response['redirect'] = "student.php";
                 $_SESSION['role'] = $role;
-                $_SESSION['username'] = $username;
+                $_SESSION['username'] = $actualUsername;
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');
-                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('username', $actualUsername, time() + 3600 * 24, '/');
                     setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
             case 3:
                 $response['redirect'] = "parent.php";
                 $_SESSION['role'] = $role;
-                $_SESSION['username'] = $username;
+                $_SESSION['username'] = $actualUsername;
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');
-                    setcookie('username', $username, time() + 3600 * 24, '/');
+                    setcookie('username', $actualUsername, time() + 3600 * 24, '/');
                     setcookie('role', $role, time() + 3600 * 24, '/');
                 }
                 break;
@@ -153,7 +161,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
                 <form id="loginForm" method="post">
                     <div class="block">
                         <h2>Tài khoản</h2>
-                        <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản" required>
+                        <input type="text" title="Tên đăng nhập" name="username" placeholder="Tài khoản hoặc email" required>
                     </div>
 
                     <div class="block">
