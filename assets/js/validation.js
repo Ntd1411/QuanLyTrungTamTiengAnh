@@ -3,7 +3,7 @@ const patterns = {
     password: /[a-zA-Z0-9]{6,}$/,
     fullname: /^[a-zA-ZÀ-ỹ\s]{2,}$/,
     email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    phone: /^0\d{9}$/
+    phone: /^\d+^$/
 };
 
 const messages = {
@@ -11,7 +11,7 @@ const messages = {
     password: 'Mật khẩu phải có ít nhất 6 ký tự',
     fullname: 'Họ tên chỉ được chứa chữ cái',
     email: 'Email không đúng định dạng',
-    phone: 'Số điện thoại phải có 10 số và bắt đầu bằng số 0',
+    phone: 'Số điện thoại chỉ được bao gồm số',
     confirm_password: 'Mật khẩu nhập lại không khớp',
     gender: 'Vui lòng chọn giới tính',
     birthdate: 'Vui lòng nhập ngày sinh và không được lớn hơn ngày hiện tại',

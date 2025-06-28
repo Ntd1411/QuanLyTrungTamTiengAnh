@@ -26,8 +26,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <meta name="google" content="notranslate">
     <meta name="robots" content="notranslate">
     
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -58,6 +57,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <!-- Add DataTables CSS and JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
@@ -155,7 +156,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <!-- Bảng danh sách đăng ký tư vấn -->
                 <div class="table-container">
                     <h2>Danh sách đăng ký tư vấn khóa học</h2>
-                    <table>
+                    <table id="consulting-table">
                         <thead>
                             <tr>
                                 <th>Họ tên</th>
@@ -700,6 +701,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                     <th>Chủ đề</th>
                                     <th class="message-content">Nội dung</th>
                                     <th>Trạng thái</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="message-table-body">
@@ -822,86 +824,86 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         // Wrap in try-catch to prevent errors
         try {
             $(document).ready(function() {
-                function initializeDatatable(selector) {
-                    try {
-                        if ($.fn.DataTable.isDataTable(selector)) {
-                            $(selector).DataTable().destroy();
-                        }
+                // function initializeDatatable(selector) {
+                //     try {
+                //         if ($.fn.DataTable.isDataTable(selector)) {
+                //             $(selector).DataTable().destroy();
+                //         }
                         
-                        return $(selector).DataTable({
-                            responsive: {
-                                details: {
-                                    type: 'column',
-                                    target: 'tr'
-                                }
-                            },
-                            dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                            autoWidth: false,
-                            scrollX: false,
-                            language: {
-                                emptyTable: "Không có dữ liệu",
-                                info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                                infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-                                infoFiltered: "(được lọc từ _MAX_ mục)",
-                                thousands: ",",
-                                lengthMenu: "Hiển thị _MENU_ mục",
-                                loadingRecords: "Đang tải...",
-                                processing: "Đang xử lý...",
-                                search: "Tìm kiếm:",
-                                zeroRecords: "Không tìm thấy kết quả phù hợp",
-                                paginate: {
-                                    first: "Đầu",
-                                    last: "Cuối",
-                                    next: "Sau",
-                                    previous: "Trước"
-                                }
-                            },
-                            pageLength: 5,
-                            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-                            columnDefs: [
-                                {
-                                    className: 'control',
-                                    orderable: false,
-                                    targets: 0
-                                },
-                                {
-                                    responsivePriority: 1,
-                                    targets: [0, 1, -1]
-                                }
-                            ],
-                            order: [[1, 'asc']]
-                        });
-                    } catch (e) {
-                        console.warn('DataTable initialization error:', e);
-                        return null;
-                    }
-                }
+                //         return $(selector).DataTable({
+                //             responsive: {
+                //                 details: {
+                //                     type: 'column',
+                //                     target: 'tr'
+                //                 }
+                //             },
+                //             dom: '<"top"lf>rt<"bottom"ip><"clear">',
+                //             autoWidth: false,
+                //             scrollX: false,
+                //             language: {
+                //                 emptyTable: "Không có dữ liệu",
+                //                 info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                //                 infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                //                 infoFiltered: "(được lọc từ _MAX_ mục)",
+                //                 thousands: ",",
+                //                 lengthMenu: "Hiển thị _MENU_ mục",
+                //                 loadingRecords: "Đang tải...",
+                //                 processing: "Đang xử lý...",
+                //                 search: "Tìm kiếm:",
+                //                 zeroRecords: "Không tìm thấy kết quả phù hợp",
+                //                 paginate: {
+                //                     first: "Đầu",
+                //                     last: "Cuối",
+                //                     next: "Sau",
+                //                     previous: "Trước"
+                //                 }
+                //             },
+                //             pageLength: 5,
+                //             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+                //             columnDefs: [
+                //                 {
+                //                     className: 'control',
+                //                     orderable: false,
+                //                     targets: 0
+                //                 },
+                //                 {
+                //                     responsivePriority: 1,
+                //                     targets: [0, 1, -1]
+                //                 }
+                //             ],
+                //             order: [[1, 'asc']]
+                //         });
+                //     } catch (e) {
+                //         console.warn('DataTable initialization error:', e);
+                //         return null;
+                //     }
+                // }
 
                 // Initialize tables only when they become visible
-                function initializeVisibleTables() {
-                    try {
-                        $('.element:visible table').each(function() {
-                            const tableId = '#' + $(this).attr('id');
-                            if ($(tableId).is(':visible')) {
-                                initializeDatatable(tableId);
-                            }
-                        });
-                    } catch (e) {
-                        console.warn('Table initialization error:', e);
-                    }
-                }
+                // function initializeVisibleTables() {
+                //     try {
+                //         $('.element:visible table').each(function() {
+                //             const tableId = '#' + $(this).attr('id');
+                //             if ($(tableId).is(':visible')) {
+                //                 initializeDatatable(tableId);
+                //             }
+                //         });
+                //     } catch (e) {
+                //         console.warn('Table initialization error:', e);
+                //     }
+                // }
 
                 // Initial initialization
-                initializeVisibleTables();
+                // initializeVisibleTables();
 
                 // Initialize when switching tabs
-                $('.menu a').on('click', function() {
-                    setTimeout(initializeVisibleTables, 100);
-                });
+                // $('.menu a').on('click', function() {
+                //     setTimeout(initializeVisibleTables, 100);
+                // });
 
-                $('.action-buttons button').on('click', function() {
-                    setTimeout(initializeVisibleTables, 100);
-                });
+                // $('.action-buttons button').on('click', function() {
+                //     setTimeout(initializeVisibleTables, 100);
+                // });
 
                 // Initialize select2 dropdowns with error handling
                 try {

@@ -1563,18 +1563,23 @@ textarea {
     margin: 0 4px;
 }
 
+.dataTables_paginate {
+    color: #fff !important;
+}
+
 .dataTables_paginate .paginate_button {
     padding: 6px 12px;
     margin: 0 2px;
     border: 1px solid #ddd;
+    color: #fff !important;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .dataTables_paginate .paginate_button.current {
-    background: var(--primary-color);
+    background: var(--primary-color) !important;
     color: white !important;
-    border-color: var(--primary-color);
+    border-color: var(--primary-color) !important;
 }
 
 .dataTables_filter,
@@ -1616,6 +1621,79 @@ div.dtr-modal-content {
     max-height: 90%;
     overflow-y: auto;
 }
+
+/* Nền mờ phía sau modal */
+.dtr-modal {
+    background-color: rgba(0, 0, 0, 0.4); /* màu nền tối mờ */
+    z-index: 20000 !important;
+}
+
+/* Hộp modal */
+.dtr-modal-display {
+    background-color: #fff !important;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    margin: 5% auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Bảng trong modal */
+.dtr-modal .dtr-modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dtr-modal .dtr-modal-content table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #fff;
+}
+
+/* Header (chi tiết) */
+.dtr-modal .dtr-modal-content::before {
+    content: "Chi tiết";
+    display: block;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Áp dụng cho toàn bộ trang */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* Tổng thể */
+.dataTables_paginate .paginate_button {
+    background-color: #f0f0f0;
+    color: #333 !important;
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+
 
 @media screen and (max-width: 768px) {
     .dataTables_wrapper .dataTables_length,

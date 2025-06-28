@@ -380,6 +380,30 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 echo json_encode($result);
                 exit;
                 break;
+            case "deleteMessage":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID thông báo']);
+                    exit;
+                }
+
+                try {
+                    $conn = connectdb();
+                    $sql = "DELETE FROM messages WHERE MessageID = ? AND SenderID = '0'";
+                    $stmt = $conn->prepare($sql);
+                    $result = $stmt->execute([$_POST['id']]);
+
+                    if ($result) {
+                        echo json_encode(['status' => 'success', 'message' => 'Xóa thông báo thành công']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Không thể xóa thông báo']);
+                    }
+                } catch (PDOException $e) {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()]);
+                } finally {
+                    $conn = null;
+                }
+                exit;
+                break;
 
             case "updateClass":
                 if (empty($_POST['id']) || empty($_POST['className']) || empty($_POST['teacherId'])) {
@@ -1029,14 +1053,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($message['Subject']) . "</td>";
                             echo "<td class='message-content'>" . htmlspecialchars($message['Content']) . "</td>";
                             echo "<td>" . htmlspecialchars($message['IsRead'] == 0 ? "Chưa đọc" : "Đã đọc") . "</td>";
+                            echo "<td>
+                                <button class='btn-delete' onclick='confirmDelete(\"Message\", \"" . $message['MessageID'] . "\")' title='Xóa thông báo'>
+                                    <i class='fas fa-trash'></i> Xóa
+                                </button>
+                                </td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5'>Không có dữ liệu</td></tr>";
+                        echo "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
                     }
                 } catch (Exception $e) {
                     error_log("Error loading messages: " . $e->getMessage());
-                    echo "<tr><td colspan='5'>Lỗi khi tải thông báo</td></tr>";
+                    echo "<tr><td colspan='6'>Lỗi khi tải thông báo</td></tr>";
                 }
                 exit;
                 break;

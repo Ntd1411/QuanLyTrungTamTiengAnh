@@ -1,12 +1,12 @@
 // Thêm protective code ngay đầu file
-(function() {
+(function () {
     'use strict';
-    
+
     // Protect against Google Translate conflicts
     if (typeof window.gtag !== 'undefined') {
-        window.gtag = function() {};
+        window.gtag = function () { };
     }
-    
+
     // Ensure jQuery is properly loaded
     if (typeof $ === 'undefined' && typeof jQuery !== 'undefined') {
         window.$ = jQuery;
@@ -14,8 +14,8 @@
 })();
 
 // Add error handler for uncaught exceptions
-window.addEventListener('error', function(e) {
-    if (e.message.includes('className.indexOf') || 
+window.addEventListener('error', function (e) {
+    if (e.message.includes('className.indexOf') ||
         e.message.includes('bubble_compiled.js')) {
         e.preventDefault();
         console.warn('Google Translate conflict detected and handled');
@@ -28,13 +28,31 @@ function loadConsultingList() {
     fetch('admincrud.php?action=getConsultingList')
         .then(res => res.text())
         .then(html => {
+            document.getElementById('consulting-table').innerHTML =
+                `           <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Năm sinh</th>
+                                <th>Điện thoại</th>
+                                <th>Email</th>
+                                <th>Khóa học</th>
+                                <th>Nội dung</th>
+                                <th>Thời gian gửi</th>
+                                <th>Đã tư vấn</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consulting-table-body"></tbody>`;
             document.getElementById('consulting-table-body').innerHTML = html;
+
+            setTimeout(() => {
+                initializeDataTable('#consulting-table');
+            }, 10);
         });
 }
 document.addEventListener('DOMContentLoaded', loadConsultingList);
 
 // Xử lý sự kiện đánh dấu đã tư vấn
-document.addEventListener('change', function(e) {
+document.addEventListener('change', function (e) {
     if (e.target.classList.contains('consulted-checkbox')) {
         const id = e.target.getAttribute('data-id');
         const status = e.target.checked ? 'Đã tư vấn' : 'Chưa tư vấn';
@@ -42,19 +60,19 @@ document.addEventListener('change', function(e) {
         body.append('action', 'toggleConsulted');
         body.append('id', id);
         body.append('status', status);
-        
+
         fetch('admincrud.php', {
             method: 'POST',
             body: body
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                loadConsultingList();
-            } else {
-                alert('Có lỗi khi cập nhật trạng thái!');
-            }
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    loadConsultingList();
+                } else {
+                    alert('Có lỗi khi cập nhật trạng thái!');
+                }
+            });
     }
 });
 
@@ -93,13 +111,13 @@ function initializeDataTable(tableId) {
         if ($.fn.DataTable.isDataTable(tableId)) {
             $(tableId).DataTable().destroy();
         }
-        
+
         return $(tableId).DataTable({
             responsive: {
                 details: {
                     display: $.fn.dataTable.Responsive.display.modal({
-                        header: function(row) {
-                            return 'Chi tiết';
+                        header: function (row) {
+                            return '';
                         }
                     }),
                     renderer: $.fn.dataTable.Responsive.renderer.tableAll()
@@ -127,17 +145,17 @@ function initializeDataTable(tableId) {
             pageLength: 10,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
             columnDefs: [
-                {responsivePriority: 1, targets: 0},
-                {responsivePriority: 2, targets: -1},
-                {responsivePriority: 3, targets: 1}
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 },
+                { responsivePriority: 3, targets: 1 }
             ],
-            drawCallback: function() {
+            drawCallback: function () {
                 // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
                 $(tableId).css('width', '100%');
                 $(window).trigger('resize');
             }
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Error initializing DataTable:', error);
     }
 }
@@ -149,8 +167,8 @@ function loadClasses() {
     })
         .then(response => response.text())
         .then(html => {
-            document.getElementById('class-table').innerHTML = 
-            `
+            document.getElementById('class-table').innerHTML =
+                `
                         <thead id="class-table-head">
                             <tr>
                                 <th>ID</th>
@@ -172,8 +190,8 @@ function loadClasses() {
             `;
             document.getElementById('class-table-body').innerHTML = html;
             setTimeout(() => {
-        initializeDataTable('#class-table');
-    }, 100);
+                initializeDataTable('#class-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading classes:', error);
@@ -221,8 +239,8 @@ function loadTeachers() {
     })
         .then(response => response.text())
         .then(html => {
-            document.getElementById('teacher-table').innerHTML = 
-            `
+            document.getElementById('teacher-table').innerHTML =
+                `
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -291,8 +309,8 @@ function loadStudents() {
     })
         .then(response => response.text())
         .then(html => {
-            document.getElementById('student-table').innerHTML = 
-            `
+            document.getElementById('student-table').innerHTML =
+                `
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -363,8 +381,8 @@ function loadParents() {
     })
         .then(response => response.text())
         .then(html => {
-            document.getElementById('parent-table').innerHTML = 
-            `
+            document.getElementById('parent-table').innerHTML =
+                `
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -399,13 +417,13 @@ document.addEventListener('DOMContentLoaded', loadParents);
 
 function changeFilterType() {
     const filterType = document.getElementById('stats-filter-type').value;
-    
+
     // Hide all filters first
     document.getElementById('custom-filter').style.display = 'none';
     document.getElementById('month-filter').style.display = 'none';
     document.getElementById('quarter-filter').style.display = 'none';
     document.getElementById('year-filter').style.display = 'none';
-    
+
     // Show selected filter
     document.getElementById(`${filterType}-filter`).style.display = 'flex';
 }
@@ -413,13 +431,13 @@ function changeFilterType() {
 function loadStatistics() {
     const filterType = document.getElementById('stats-filter-type').value;
     let startDate, endDate;
-    
-    switch(filterType) {
+
+    switch (filterType) {
         case 'custom':
             startDate = document.getElementById('stats-start').value;
             endDate = document.getElementById('stats-end').value;
             break;
-            
+
         case 'month':
             const month = parseInt(document.getElementById('stats-month').value);
             const yearMonth = document.getElementById('stats-year-month').value;
@@ -429,7 +447,7 @@ function loadStatistics() {
             const lastDay = new Date(yearMonth, month, 0).getDate();
             endDate = `${yearMonth}-${month.toString().padStart(2, '0')}-${lastDay}`;
             break;
-            
+
         case 'quarter':
             const quarter = parseInt(document.getElementById('stats-quarter').value);
             const yearQuarter = document.getElementById('stats-year-quarter').value;
@@ -440,7 +458,7 @@ function loadStatistics() {
             const lastDayQuarter = new Date(yearQuarter, quarter * 3, 0).getDate();
             endDate = `${yearQuarter}-${endMonth}-${lastDayQuarter}`;
             break;
-            
+
         case 'year':
             const year = document.getElementById('stats-year').value;
             startDate = `${year}-01-01`;
@@ -459,29 +477,29 @@ function loadStatistics() {
     fetch(`admincrud.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET'
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            document.getElementById('total-expected').textContent = 
-                new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
-            document.getElementById('total-collected').textContent = 
-                new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
-            document.getElementById('students-increased').textContent = 
-                data.data.studentsIncreased;
-            document.getElementById('students-decreased').textContent = 
-                data.data.studentsDecreased;
-            document.getElementById('total-salary').textContent =
-                new Intl.NumberFormat('vi-VN').format(data.data.totalSalary);
-            document.getElementById('teacher-count').textContent =
-                data.data.teacherCount;
-        } else {
-            alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi tải thống kê');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('total-expected').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
+                document.getElementById('total-collected').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
+                document.getElementById('students-increased').textContent =
+                    data.data.studentsIncreased;
+                document.getElementById('students-decreased').textContent =
+                    data.data.studentsDecreased;
+                document.getElementById('total-salary').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.totalSalary);
+                document.getElementById('teacher-count').textContent =
+                    data.data.teacherCount;
+            } else {
+                alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi tải thống kê');
+        });
 }
 
 // Add password change handler
@@ -603,15 +621,15 @@ function fillEditForm(type, data) {
                     placeholder: "Tìm kiếm...",
                     allowClear: true,
                     language: {
-                        noResults: function() {
+                        noResults: function () {
                             return "Không tìm thấy kết quả";
                         },
-                        searching: function() {
+                        searching: function () {
                             return "Đang tìm kiếm...";
                         }
                     }
                 });
-                
+
                 // Prevent dropdown from being cut off
                 $('.edit-popup .select2-container').css('z-index', 100000);
             }, 100);
@@ -793,7 +811,7 @@ function deleteItem(type, id) {
         body: form
     })
         .then(res => res.json())
-        .then (data => {
+        .then(data => {
             if (data.status === 'success') {
                 alert('Xóa thành công!');
                 closePopup();
@@ -802,6 +820,7 @@ function deleteItem(type, id) {
                 loadParents();
                 loadClasses();
                 loadTeachers();
+                loadMessages();
                 loadNews();
             } else {
                 alert('Lỗi: ' + data.message);
@@ -855,7 +874,7 @@ document.getElementById('notification-form').addEventListener('submit', function
     const submitButton = this.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
     const isEmailSelected = selectedMethods.includes('email');
-    
+
     if (isEmailSelected) {
         submitButton.disabled = true;
         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi email...';
@@ -897,8 +916,8 @@ function loadMessages() {
     })
         .then(response => response.text())
         .then(html => {
-            document.getElementById('message-table').innerHTML = 
-            `
+            document.getElementById('message-table').innerHTML =
+                `
                         <thead>
                             <tr>
                                 <th>Thời gian</th>
@@ -906,6 +925,7 @@ function loadMessages() {
                                 <th>Chủ đề</th>
                                 <th class="message-content">Nội dung</th>
                                 <th>Trạng thái</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="message-table-body">
@@ -913,13 +933,16 @@ function loadMessages() {
                         </tbody>
             `;
             document.getElementById('message-table-body').innerHTML = html;
+            
             setTimeout(() => {
                 initializeDataTable('#message-table');
             }, 100);
+
+            console.log("load message");
         })
         .catch(error => {
             console.error('Error loading messages:', error);
-            document.getElementById('message-table-body').innerHTML = 
+            document.getElementById('message-table-body').innerHTML =
                 '<tr><td colspan="5" class="error-message">Lỗi khi tải thông báo</td></tr>';
         });
 }
@@ -990,7 +1013,7 @@ function loadNews() {
                                     <i class="fa-solid fa-wrench"></i> Sửa bài viết
                                 </a>
                                 <a href="#" class="news-change" onclick="confirmDelete('news' ,${item.id}); event.preventDefault(); return false;">
-                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </a>
                             </div>
                         </div>
@@ -1150,12 +1173,12 @@ function toggleMenu() {
 }
 
 // Close menu when clicking outside
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const nav = document.querySelector('nav');
     const menuToggle = document.querySelector('.menu-toggle');
-    
-    if (nav.classList.contains('active') && 
-        !nav.contains(e.target) && 
+
+    if (nav.classList.contains('active') &&
+        !nav.contains(e.target) &&
         !menuToggle.contains(e.target)) {
         nav.classList.remove('active');
         document.querySelector('.main-content-admin').classList.remove('pushed');

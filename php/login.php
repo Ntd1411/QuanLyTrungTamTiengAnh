@@ -168,7 +168,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
                         <label for="remember">Ghi nhớ đăng nhập</label>
                     </div>
 
-                    <a href="#">Quên mật khẩu?</a>
+                    <a id="forgot-password" href="forgotpassword.php">Quên mật khẩu?</a>
 
                     <button type="submit" name="login" id="login">Đăng nhập</button>
                 </form>
