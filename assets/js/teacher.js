@@ -37,7 +37,7 @@ function loadTeacherDashboard() {
             nextSessionDiv.innerHTML = `
             <strong>Ngày:</strong> ${thu}, ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}<br>
             <strong>Giờ:</strong> ${nextSession.time} <br>
-            <strong>Lớp:</strong> ${nextSession.className}
+            <strong>Lớp:</strong> ${nextSession.className} - ${nextSession.schoolYear || ''}
         `;
         } else {
             nextSessionDiv.innerHTML = 'Không có buổi dạy nào sắp tới';
@@ -107,25 +107,25 @@ function deleteTeachingLog(SessionID) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ logId: SessionID })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Đã xóa nhật ký!');
-            // Lấy lại dữ liệu giáo viên và render lại bảng
-            fetch('../php/get_teacher_data.php')
-                .then(res => res.json())
-                .then(newData => {
-                    teacherData = newData;
-                    loadTeachingLog();
-                });
-        } else {
-            alert('Xóa thất bại!');
-        }
-    })
-    .catch(err => {
-        alert('Lỗi khi xóa nhật ký!');
-        console.error(err);
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã xóa nhật ký!');
+                // Lấy lại dữ liệu giáo viên và render lại bảng
+                fetch('../php/get_teacher_data.php')
+                    .then(res => res.json())
+                    .then(newData => {
+                        teacherData = newData;
+                        loadTeachingLog();
+                    });
+            } else {
+                alert('Xóa thất bại!');
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi xóa nhật ký!');
+            console.error(err);
+        });
 }
 
 //Popup Log Form
@@ -181,7 +181,8 @@ function loadClassSelect() {
     classSelects.forEach(select => {
         select.innerHTML = '<option value="">Chọn lớp</option>';
         teacherData.classes.forEach(cls => {
-            select.innerHTML += `<option value="${cls.ClassID || cls.id}">${cls.ClassName || cls.name}</option>`;
+            // Hiển thị: Tên lớp - Năm học
+            select.innerHTML += `<option value="${cls.ClassID || cls.id}">${(cls.ClassName || cls.name) + ' - ' + (cls.SchoolYear || '')}</option>`;
         });
     });
 }
@@ -621,7 +622,7 @@ function viewSchedule() {
         days.forEach(day => {
             const idx = day === 8 ? 6 : day - 2;
             if (idx >= 0 && idx < 7) {
-                timeSlots[time][idx] = cls.ClassName;
+                timeSlots[time][idx] = cls.ClassName + ' - ' + (cls.SchoolYear || cls.year || '');
             }
         });
     });
@@ -682,7 +683,8 @@ function getNextTeachingSession() {
                 nextSession = {
                     date: new Date(d),
                     className: cls.ClassName,
-                    time: time
+                    time: time,
+                    schoolYear: cls.SchoolYear || cls.year || ''
                 };
             }
         }
