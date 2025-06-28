@@ -18,8 +18,14 @@ if (isset($_POST['login']) && ($_POST['login'])) {
     $password = $_POST['password'];
     $remember = $_POST['remember'] ?? "";
 
-    $role = getRole($usernameOrEmail, $password);
+    $user = getUserByUsername($usernameOrEmail);
 
+    if (!$user || !password_verify($password, $user['Password'])) {
+        $response['error'] = "Sai tên đăng nhập hoặc mật khẩu";
+        echo json_encode($response);
+        exit;
+    }
+    $role = getRole($usernameOrEmail, $password);
     $actualUsername = $usernameOrEmail;
 
     // Nếu đăng nhập bằng email, chuyển về username
@@ -63,9 +69,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
                 break;
             case 3:
                 $response['redirect'] = "parent.php";
-                $_SESSION['role'] = $role;
                 $_SESSION['username'] = $actualUsername;
-                $user = getUserByUsername($username);
                 $_SESSION['id'] = $user['UserID'];
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');

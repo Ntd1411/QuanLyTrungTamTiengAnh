@@ -3,26 +3,20 @@ function getRole($usernameOrEmail, $password)
 {
     $conn = connectdb();
     try {
-        // Kiểm tra xem input là email hay username
-        if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
-            // Nếu là email, tìm kiếm qua email trong các bảng liên kết
-            $sql = "SELECT u.UserID, u.Username, u.Password, u.Role 
-                    FROM users u 
-                    LEFT JOIN teachers t ON u.UserID = t.UserID 
-                    LEFT JOIN students s ON u.UserID = s.UserID 
-                    LEFT JOIN parents p ON u.UserID = p.UserID 
-                    WHERE t.Email = ? OR s.Email = ? OR p.Email = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$usernameOrEmail, $usernameOrEmail, $usernameOrEmail]);
-        } else {
-            // Nếu là username, tìm kiếm bình thường
-            $sql = "SELECT UserID, Username, Password, Role FROM users WHERE Username = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$usernameOrEmail]);
-        }
-
+        // Tìm user theo username hoặc email (trong bảng users hoặc liên kết với các bảng teachers, students, parents)
+        $sql = "SELECT u.UserID, u.Username, u.Password, u.Role
+                FROM users u
+                LEFT JOIN teachers t ON u.UserID = t.UserID
+                LEFT JOIN students s ON u.UserID = s.UserID
+                LEFT JOIN parents p ON u.UserID = p.UserID
+                WHERE u.Username = :input
+                   OR t.Email = :input
+                   OR s.Email = :input
+                   OR p.Email = :input
+                LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':input' => $usernameOrEmail]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
 
         if ($user && password_verify($password, $user['Password'])) {
             return $user['Role'];
@@ -71,6 +65,24 @@ function getUsernameByEmail($email)
     } finally {
         $conn = null;
     }
+}
+
+function getUserByUsername($usernameOrEmail) {
+    $conn = connectdb();
+    // Lấy user theo username hoặc email (email của teacher, student, parent)
+    $sql = "SELECT u.*
+            FROM users u
+            LEFT JOIN teachers t ON u.UserID = t.UserID
+            LEFT JOIN students s ON u.UserID = s.UserID
+            LEFT JOIN parents p ON u.UserID = p.UserID
+            WHERE u.Username = :input
+               OR t.Email = :input
+               OR s.Email = :input
+               OR p.Email = :input
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':input' => $usernameOrEmail]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function isExistUsername($username)
@@ -143,12 +155,5 @@ function addStudentOrParent($fullname, $birthdate, $gender, $username, $password
     }
 
     $conn = null;
-}
-
-function getUserByUsername($username) {
-    $conn = connectdb();
-    $stmt = $conn->prepare("SELECT * FROM users WHERE Username = ?");
-    $stmt->execute([$username]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 

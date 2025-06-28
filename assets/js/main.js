@@ -26,7 +26,7 @@ function showElement(id) {
             const offset = 0; // Khoảng cách thêm
 
             // resize to load responsive
-            $(window).trigger('resize');
+            window.dispatchEvent(new Event('resize'));
             
             window.scrollTo({
                 top: Math.max(0, targetElement.offsetTop - navHeight - offset),
