@@ -36,11 +36,49 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
         echo json_encode($respon);
         exit;
     }
+
+        // Kiểm tra email đã tồn tại
+    if (isExistEmail($_POST['email'])) {
+        $respon['error'] = "Email đã được sử dụng bởi người khác!";
+        echo json_encode($respon);
+        exit;
+    }
+
+    // Validate password length (minimum 6 characters)
+    if (strlen($password) < 6) {
+        $respon['error'] = "Mật khẩu phải có ít nhất 6 ký tự!";
+        echo json_encode($respon);
+        exit;
+    }
+    
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $respon['error'] = "Email không đúng định dạng!";
+        echo json_encode($respon);
+        exit;
+    }
+    
+    // Validate phone number (only numbers)
+    if (!empty($phone) && !preg_match('/^[0-9]+$/', $phone)) {
+        $respon['error'] = "Số điện thoại chỉ được chứa số!";
+        echo json_encode($respon);
+        exit;
+    }
+    
+    // Validate birthdate (not greater than current date)
+    $birthdateTime = strtotime($birthdate);
+    $today = strtotime(date('Y-m-d'));
+    if ($birthdateTime > $today) {
+        $respon['error'] = "Ngày sinh không thể lớn hơn ngày hiện tại!";
+        echo json_encode($respon);
+        exit;
+    }
     if (strcmp($password, $confirmPassword) != 0) {
         $respon['error'] = "Mật khẩu nhập lại không trùng khớp!";
         echo json_encode($respon);
         exit;
     }
+
 
     addStudentOrParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $role);
 

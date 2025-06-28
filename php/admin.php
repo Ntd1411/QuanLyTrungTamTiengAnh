@@ -22,17 +22,43 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Add Google Translate protection -->
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="notranslate">
+
+
     <title>Admin Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Load jQuery first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Add error protection script -->
+    <script>
+        window.addEventListener('error', function(e) {
+            if (e.message && (e.message.includes('className.indexOf') ||
+                    e.message.includes('bubble_compiled.js') ||
+                    e.message.includes('gtx'))) {
+                e.preventDefault();
+                console.warn('External script conflict handled');
+                return false;
+            }
+        });
+
+        // Protect against Google Translate
+        if (typeof window.google !== 'undefined' && window.google.translate) {
+            window.google.translate.TranslateElement = function() {};
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- Add DataTables CSS and JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
@@ -130,7 +156,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <!-- Bảng danh sách đăng ký tư vấn -->
                 <div class="table-container">
                     <h2>Danh sách đăng ký tư vấn khóa học</h2>
-                    <table>
+                    <table id="consulting-table">
                         <thead>
                             <tr>
                                 <th>Họ tên</th>
@@ -215,7 +241,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                 <div class="table-container">
                     <table id="class-table">
-                        <thead>
+                        <thead id="class-table-head">
                             <tr>
                                 <th>ID</th>
                                 <th>Tên lớp</th>
@@ -606,8 +632,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Gửi thông báo</h2>
                 <form id="notification-form" class="notification-form">
                     <div class="form-group">
+                        <label>Loại người nhận:</label>
+                        <select id="recipient-type" name="recipientType" onchange="changeRecipientType()" required>
+                            <option value="">Chọn loại người nhận</option>
+                            <option value="individual">Gửi cho 1 người</option>
+                            <option value="multiple">Gửi cho nhiều người</option>
+                            <option value="class">Gửi theo lớp</option>
+                            <option value="all-teachers">Gửi cho tất cả giáo viên</option>
+                            <option value="all-parents">Gửi cho tất cả phụ huynh</option>
+                            <option value="all-students">Gửi cho tất cả học sinh</option>
+                            <option value="all-everyone">Gửi cho tất cả mọi người</option>
+                        </select>
+                    </div>
+
+                    <!-- Individual recipient -->
+                    <div class="form-group" id="individual-recipient" style="display: none;">
                         <label>Người nhận:</label>
-                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;" required>
+                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;">
                             <option value="">Chọn người nhận</option>
                             <?php
                             // Get teachers
@@ -642,6 +683,83 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             ?>
                         </select>
                     </div>
+
+                    <!-- Multiple recipients -->
+                    <div class="form-group" id="multiple-recipients" style="display: none;">
+                        <label>Người nhận (có thể chọn nhiều):</label>
+                        <select name="receiverIds[]" class="multiple-recipient-select" style="width: 100%; padding:10px 12px;" multiple>
+                            <?php
+                            // Get teachers
+                            $teachers = getDataFromTable("teachers");
+                            if ($teachers) {
+                                echo "<optgroup label='Giáo viên'>";
+                                foreach ($teachers as $teacher) {
+                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']} (GV)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get students
+                            $students = getDataFromTable("students");
+                            if ($students) {
+                                echo "<optgroup label='Học sinh'>";
+                                foreach ($students as $student) {
+                                    echo "<option value='{$student['UserID']}'>{$student['FullName']} (HS)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get parents
+                            $parents = getDataFromTable("parents");
+                            if ($parents) {
+                                echo "<optgroup label='Phụ huynh'>";
+                                foreach ($parents as $parent) {
+                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']} (PH)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <!-- Class-based recipients -->
+                    <div class="form-group" id="class-recipients" style="display: none;">
+                        <label>Chọn lớp:</label>
+                        <select name="classId" class="class-select" style="width: 100%; padding:10px 12px;">
+                            <option value="">Chọn lớp</option>
+                            <?php
+                            $classes = getDataFromTable("classes");
+                            if ($classes) {
+                                foreach ($classes as $class) {
+                                    if ($class['Status'] == "Đang hoạt động")
+                                        echo "<option value='{$class['ClassID']}'>{$class['ClassName']} ({$class['SchoolYear']})</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                        <div style="margin-top: 10px;">
+                            <label>Gửi cho:</label>
+                            <div class="checkbox-group" style="display:flex;">
+                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="students" style="height: 1rem;" checked> <span>Học sinh</span>
+                                </label>
+                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="parents" style="height: 1rem;"><span> Phụ huynh</span>
+                                </label>
+                                <label style=" display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="teacher" style="height: 1rem;"> <span>Giáo viên phụ trách</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All teachers/parents info -->
+                    <div class="form-group" id="recipient-info" style="display: none;">
+                        <div class="info-box">
+                            <p id="recipient-count-info"></p>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Chủ đề:</label>
                         <input type="text" name="subject" required>
@@ -654,19 +772,13 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <label>Phương thức gửi:</label>
                         <div class="send-methods">
                             <label>
-                                <input type="checkbox" name="sendMethods[]" value="web" checked> Website
-                            </label>
-                            <label class="disabled" title="Chưa triển khai">
-                                <input type="checkbox" name="sendMethods[]" value="zalo" disabled> Zalo
-                            </label>
-                            <label class="disabled" title="Chưa triển khai">
-                                <input type="checkbox" name="sendMethods[]" value="gmail" disabled> Gmail
+                                <input type="checkbox" name="sendMethods[]" value="email"> Gửi qua Email
                             </label>
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit">Gửi thông báo</button>
-                        <button type="button" onclick="document.getElementById('notification-form').reset()" class="refresh">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('notification-form').reset(); resetRecipientType()" class="refresh">Làm mới</button>
                     </div>
                 </form>
 
@@ -681,6 +793,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                     <th>Chủ đề</th>
                                     <th class="message-content">Nội dung</th>
                                     <th>Trạng thái</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="message-table-body">
@@ -765,26 +878,28 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
 
     <!-- Pop Up-->
-    <div class="popup-overlay-2"></div>
-
-    <div class="edit-popup" id="edit-popup">
-        <h3>Chỉnh sửa thông tin</h3>
-        <form id="edit-form">
-            <!-- Form sẽ được điền động bởi JavaScript -->
-        </form>
-        <form id="edit-news"></form>
-        <div class="popup-buttons">
-            <button type="submit" form="edit-form">Lưu</button>
-            <button onclick="closePopup()">Hủy</button>
+    <div class="popup-overlay">
+        <div class="edit-popup" id="edit-popup">
+            <h3>Chỉnh sửa thông tin</h3>
+            <form id="edit-form">
+                <!-- Form sẽ được điền động bởi JavaScript -->
+            </form>
+            <form id="edit-news"></form>
+            <div class="popup-buttons">
+                <button type="submit" form="edit-form">Lưu</button>
+                <button onclick="closePopup()">Hủy</button>
+            </div>
         </div>
     </div>
 
-    <div class="confirm-popup" id="confirm-popup">
-        <h3>Xác nhận xóa</h3>
-        <p>Bạn có chắc chắn muốn xóa mục này?</p>
-        <div class="popup-buttons">
-            <button class="confirm" id="confirm-yes">Xóa</button>
-            <button class="cancel" onclick="closePopup()">Hủy</button>
+    <div class="popup-overlay-2">
+        <div class="confirm-popup" id="confirm-popup">
+            <h3>Xác nhận xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa mục này?</p>
+            <div class="popup-buttons">
+                <button class="confirm" id="confirm-yes">Xóa</button>
+                <button class="cancel" onclick="closePopup()">Hủy</button>
+            </div>
         </div>
     </div>
 
@@ -800,90 +915,109 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/update_page.js"></script>
     <script>
-        $(document).ready(function() {
-            function initializeDatatable(selector) {
-                if ($.fn.DataTable.isDataTable(selector)) {
-                    $(selector).DataTable().destroy();
-                }
-                
-                return $(selector).DataTable({
-                    responsive: {
-                        details: {
-                            type: 'column',
-                            target: 'tr'
+        // Wrap in try-catch to prevent errors
+        try {
+            $(document).ready(function() {
+                try {
+                    $('.select2-dropdown, .recipient-select, .select2-search').select2({
+                        width: '100%',
+                        placeholder: "Tìm kiếm...",
+                        allowClear: true,
+                        language: {
+                            noResults: () => "Không tìm thấy kết quả",
+                            searching: () => "Đang tìm kiếm..."
                         }
-                    },
-                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                    autoWidth: false,
-                    scrollX: false,
-                    language: {
-                        emptyTable: "Không có dữ liệu",
-                        info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                        infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-                        infoFiltered: "(được lọc từ _MAX_ mục)",
-                        thousands: ",",
-                        lengthMenu: "Hiển thị _MENU_ mục",
-                        loadingRecords: "Đang tải...",
-                        processing: "Đang xử lý...",
-                        search: "Tìm kiếm:",
-                        zeroRecords: "Không tìm thấy kết quả phù hợp",
-                        paginate: {
-                            first: "Đầu",
-                            last: "Cuối",
-                            next: "Sau",
-                            previous: "Trước"
-                        }
-                    },
-                    pageLength: 5,
-                    lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-                    columnDefs: [
-                        {
-                            className: 'control',
-                            orderable: false,
-                            targets: 0
-                        },
-                        {
-                            responsivePriority: 1,
-                            targets: [0, 1, -1]
-                        }
-                    ],
-                    order: [[1, 'asc']]
-                });
-            }
-
-            // Initialize tables only when they become visible
-            function initializeVisibleTables() {
-                $('.element:visible table').each(function() {
-                    const tableId = '#' + $(this).attr('id');
-                    if ($(tableId).is(':visible')) {
-                        initializeDatatable(tableId);
-                    }
-                });
-            }
-
-            // Initial initialization
-            initializeVisibleTables();
-
-            // Initialize when switching tabs
-            $('.menu a').on('click', function() {
-                setTimeout(initializeVisibleTables, 100);
-            });
-
-            $('.action-buttons button').on('click', function() {
-                setTimeout(initializeVisibleTables, 100);
-            });
-
-            // Initialize select2 dropdowns
-            $('.select2-dropdown, .recipient-select, .select2-search').select2({
-                width: '100%',
-                placeholder: "Tìm kiếm...",
-                allowClear: true,
-                language: {
-                    noResults: () => "Không tìm thấy kết quả",
-                    searching: () => "Đang tìm kiếm..."
+                    });
+                } catch (e) {
+                    console.warn('Select2 initialization error:', e);
                 }
             });
+        } catch (error) {
+            console.error('Script initialization error:', error);
+        }
+        $('.popup-overlay, .popup-overlay-2').on('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
         });
+
+        // Add recipient type change function
+        function changeRecipientType() {
+            const recipientType = document.getElementById('recipient-type').value;
+            
+            // Hide all recipient options
+            document.getElementById('individual-recipient').style.display = 'none';
+            document.getElementById('multiple-recipients').style.display = 'none';
+            document.getElementById('class-recipients').style.display = 'none';
+            document.getElementById('recipient-info').style.display = 'none';
+            
+            // Clear required attributes
+            document.querySelector('select[name="receiverId"]').removeAttribute('required');
+            document.querySelector('select[name="receiverIds[]"]').removeAttribute('required');
+            document.querySelector('select[name="classId"]').removeAttribute('required');
+            
+            // Show appropriate option based on selection
+            switch(recipientType) {
+                case 'individual':
+                    document.getElementById('individual-recipient').style.display = 'block';
+                    document.querySelector('select[name="receiverId"]').setAttribute('required', 'required');
+                    break;
+                case 'multiple':
+                    document.getElementById('multiple-recipients').style.display = 'block';
+                    document.querySelector('select[name="receiverIds[]"]').setAttribute('required', 'required');
+                    break;
+                case 'class':
+                    document.getElementById('class-recipients').style.display = 'block';
+                    document.querySelector('select[name="classId"]').setAttribute('required', 'required');
+                    break;
+                case 'all-teachers':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả giáo viên (<?php echo countRow("teachers"); ?> người)';
+                    break;
+                case 'all-parents':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả phụ huynh (<?php echo countRow("parents"); ?> người)';
+                    break;
+                case 'all-students':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả học sinh (<?php echo countRow("students"); ?> người)';
+                    break;
+                case 'all-everyone':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    const teacherCount = parseInt(<?php echo countRow("teachers"); ?>);
+                    const parentCount = parseInt(<?php echo countRow("parents"); ?>);
+                    const studentCount = parseInt(<?php echo countRow("students"); ?>);
+                    const totalUsers = teacherCount + parentCount + studentCount;
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả mọi người (' + totalUsers + ' người)<br><small>Bao gồm: ' + teacherCount + ' giáo viên, ' + parentCount + ' phụ huynh, ' + studentCount + ' học sinh</small>';
+                    break;
+            }
+        }
+        
+        function resetRecipientType() {
+            document.getElementById('recipient-type').value = '';
+            changeRecipientType();
+        }
+
+        // Initialize Select2 for multiple recipients
+        try {
+            $(document).ready(function() {
+                try {
+                    $('.select2-dropdown, .recipient-select, .select2-search, .multiple-recipient-select, .class-select').select2({
+                        width: '100%',
+                        placeholder: "Tìm kiếm...",
+                        allowClear: true,
+                        language: {
+                            noResults: () => "Không tìm thấy kết quả",
+                            searching: () => "Đang tìm kiếm..."
+                        }
+                    });
+                } catch (e) {
+                    console.warn('Select2 initialization error:', e);
+                }
+            });
+        } catch (error) {
+            console.error('Script initialization error:', error);
+        }
     </script>
 
     <!-- Add this button right after the <body> tag -->

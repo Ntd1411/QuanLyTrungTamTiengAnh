@@ -1,15 +1,58 @@
+// Thêm protective code ngay đầu file
+(function () {
+    'use strict';
+
+    // Protect against Google Translate conflicts
+    if (typeof window.gtag !== 'undefined') {
+        window.gtag = function () { };
+    }
+
+    // Ensure jQuery is properly loaded
+    if (typeof $ === 'undefined' && typeof jQuery !== 'undefined') {
+        window.$ = jQuery;
+    }
+})();
+
+// Add error handler for uncaught exceptions
+window.addEventListener('error', function (e) {
+    if (e.message.includes('className.indexOf') ||
+        e.message.includes('bubble_compiled.js')) {
+        e.preventDefault();
+        console.warn('Google Translate conflict detected and handled');
+        return false;
+    }
+});
+
 // Hiển thị danh sách yêu cầu tư vấn
 function loadConsultingList() {
     fetch('admincrud.php?action=getConsultingList')
         .then(res => res.text())
         .then(html => {
+            document.getElementById('consulting-table').innerHTML =
+                `           <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Năm sinh</th>
+                                <th>Điện thoại</th>
+                                <th>Email</th>
+                                <th>Khóa học</th>
+                                <th>Nội dung</th>
+                                <th>Thời gian gửi</th>
+                                <th>Đã tư vấn</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consulting-table-body"></tbody>`;
             document.getElementById('consulting-table-body').innerHTML = html;
+
+            setTimeout(() => {
+                initializeDataTable('#consulting-table');
+            }, 10);
         });
 }
 document.addEventListener('DOMContentLoaded', loadConsultingList);
 
 // Xử lý sự kiện đánh dấu đã tư vấn
-document.addEventListener('change', function(e) {
+document.addEventListener('change', function (e) {
     if (e.target.classList.contains('consulted-checkbox')) {
         const id = e.target.getAttribute('data-id');
         const status = e.target.checked ? 'Đã tư vấn' : 'Chưa tư vấn';
@@ -17,19 +60,19 @@ document.addEventListener('change', function(e) {
         body.append('action', 'toggleConsulted');
         body.append('id', id);
         body.append('status', status);
-        
+
         fetch('admincrud.php', {
             method: 'POST',
             body: body
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                loadConsultingList();
-            } else {
-                alert('Có lỗi khi cập nhật trạng thái!');
-            }
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    loadConsultingList();
+                } else {
+                    alert('Có lỗi khi cập nhật trạng thái!');
+                }
+            });
     }
 });
 
@@ -68,13 +111,13 @@ function initializeDataTable(tableId) {
         if ($.fn.DataTable.isDataTable(tableId)) {
             $(tableId).DataTable().destroy();
         }
-        
+
         return $(tableId).DataTable({
             responsive: {
                 details: {
                     display: $.fn.dataTable.Responsive.display.modal({
-                        header: function(row) {
-                            return 'Chi tiết';
+                        header: function (row) {
+                            return '';
                         }
                     }),
                     renderer: $.fn.dataTable.Responsive.renderer.tableAll()
@@ -102,29 +145,53 @@ function initializeDataTable(tableId) {
             pageLength: 10,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
             columnDefs: [
-                {responsivePriority: 1, targets: 0},
-                {responsivePriority: 2, targets: -1},
-                {responsivePriority: 3, targets: 1}
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 },
+                { responsivePriority: 3, targets: 1 }
             ],
-            drawCallback: function() {
+            drawCallback: function () {
                 // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
                 $(tableId).css('width', '100%');
                 $(window).trigger('resize');
             }
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Error initializing DataTable:', error);
     }
 }
 
 function loadClasses() {
-    fetch('admincrud.php?action=getClasses', {
-        method: 'post'
+    fetch('admincrud.php?action=getClasses&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('class-table').innerHTML =
+                `
+                        <thead id="class-table-head">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên lớp</th>
+                                <th>Năm học</th>
+                                <th>Giáo viên</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Giờ học</th>
+                                <th>Phòng học</th>
+                                <th>Học phí</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="class-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('class-table-body').innerHTML = html;
-            initializeDataTable('#class-table');
+            setTimeout(() => {
+                initializeDataTable('#class-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading classes:', error);
@@ -166,13 +233,35 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
 });
 
 function loadTeachers() {
-    fetch('admincrud.php?action=getTeachers', {
-        method: 'post'
+    fetch('admincrud.php?action=getTeachers&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('teacher-table').innerHTML =
+                `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>Lương</th>
+                                <th>ID Lớp phụ trách</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('teacher-table-body').innerHTML = html;
-            initializeDataTable('#teacher-table');
+            setTimeout(() => {
+                initializeDataTable('#teacher-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading teachers:', error);
@@ -214,13 +303,38 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
 });
 
 function loadStudents() {
-    fetch('admincrud.php?action=getStudents', {
-        method: 'post'
+    fetch('admincrud.php?action=getStudents&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('student-table').innerHTML =
+                `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>ID Lớp</th>
+                                <th>Phụ huynh</th>
+                                <th>Số buổi học</th>
+                                <th>Số buổi nghỉ</th>
+                                <th>Giảm học phí</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('student-table-body').innerHTML = html;
-            initializeDataTable('#student-table');
+            setTimeout(() => {
+                initializeDataTable('#student-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading students:', error);
@@ -261,13 +375,37 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
 });
 
 function loadParents() {
-    fetch('admincrud.php?action=getParents', {
-        method: 'post'
+    fetch('admincrud.php?action=getParents&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('parent-table').innerHTML =
+                `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày sinh</th>
+                                <th>Zalo ID</th>
+                                <th>Con</th>
+                                <th>Số tiền chưa đóng</th>
+                                <th>Xem thông tin GV</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parent-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('parent-table-body').innerHTML = html;
-            initializeDataTable('#parent-table');
+            setTimeout(() => {
+                initializeDataTable('#parent-table');
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading parents:', error);
@@ -279,13 +417,13 @@ document.addEventListener('DOMContentLoaded', loadParents);
 
 function changeFilterType() {
     const filterType = document.getElementById('stats-filter-type').value;
-    
+
     // Hide all filters first
     document.getElementById('custom-filter').style.display = 'none';
     document.getElementById('month-filter').style.display = 'none';
     document.getElementById('quarter-filter').style.display = 'none';
     document.getElementById('year-filter').style.display = 'none';
-    
+
     // Show selected filter
     document.getElementById(`${filterType}-filter`).style.display = 'flex';
 }
@@ -293,13 +431,13 @@ function changeFilterType() {
 function loadStatistics() {
     const filterType = document.getElementById('stats-filter-type').value;
     let startDate, endDate;
-    
-    switch(filterType) {
+
+    switch (filterType) {
         case 'custom':
             startDate = document.getElementById('stats-start').value;
             endDate = document.getElementById('stats-end').value;
             break;
-            
+
         case 'month':
             const month = parseInt(document.getElementById('stats-month').value);
             const yearMonth = document.getElementById('stats-year-month').value;
@@ -309,7 +447,7 @@ function loadStatistics() {
             const lastDay = new Date(yearMonth, month, 0).getDate();
             endDate = `${yearMonth}-${month.toString().padStart(2, '0')}-${lastDay}`;
             break;
-            
+
         case 'quarter':
             const quarter = parseInt(document.getElementById('stats-quarter').value);
             const yearQuarter = document.getElementById('stats-year-quarter').value;
@@ -320,7 +458,7 @@ function loadStatistics() {
             const lastDayQuarter = new Date(yearQuarter, quarter * 3, 0).getDate();
             endDate = `${yearQuarter}-${endMonth}-${lastDayQuarter}`;
             break;
-            
+
         case 'year':
             const year = document.getElementById('stats-year').value;
             startDate = `${year}-01-01`;
@@ -339,29 +477,29 @@ function loadStatistics() {
     fetch(`admincrud.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET'
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            document.getElementById('total-expected').textContent = 
-                new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
-            document.getElementById('total-collected').textContent = 
-                new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
-            document.getElementById('students-increased').textContent = 
-                data.data.studentsIncreased;
-            document.getElementById('students-decreased').textContent = 
-                data.data.studentsDecreased;
-            document.getElementById('total-salary').textContent =
-                new Intl.NumberFormat('vi-VN').format(data.data.totalSalary);
-            document.getElementById('teacher-count').textContent =
-                data.data.teacherCount;
-        } else {
-            alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi tải thống kê');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('total-expected').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.expectedAmount);
+                document.getElementById('total-collected').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.collectedAmount);
+                document.getElementById('students-increased').textContent =
+                    data.data.studentsIncreased;
+                document.getElementById('students-decreased').textContent =
+                    data.data.studentsDecreased;
+                document.getElementById('total-salary').textContent =
+                    new Intl.NumberFormat('vi-VN').format(data.data.totalSalary);
+                document.getElementById('teacher-count').textContent =
+                    data.data.teacherCount;
+            } else {
+                alert('Lỗi: ' + (data.message || 'Không thể tải thống kê'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi tải thống kê');
+        });
 }
 
 // Add password change handler
@@ -397,16 +535,19 @@ function showEditPopup(type, id) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                const overlay = document.querySelector('.popup-overlay-2');
-                const popup = document.getElementById('edit-popup');
-                overlay.style.display = 'block';
-                overlay.style.opacity = '1';
-                overlay.style.zIndex = '10001';
-                popup.style.display = 'block';
-                popup.style.opacity = '1';
-                popup.style.zIndex = '10001';
+                const overlay = document.querySelector('.popup-overlay');
+                overlay.classList.add('active');
 
                 fillEditForm(type, data.data);
+
+                // Initialize Select2 after form content is set
+                $('.select2-edit').each(function () {
+                    if (!$(this).hasClass("select2-hidden-accessible")) {
+                        $(this).select2({
+                            dropdownParent: $(this).parent()
+                        });
+                    }
+                });
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -475,26 +616,7 @@ function fillEditForm(type, data) {
                     </select>
                 </div>`;
 
-            // Initialize Select2 after form content is set
-            setTimeout(() => {
-                $('.select2-edit').select2({
-                    width: '100%',
-                    dropdownParent: $('.edit-popup'),
-                    placeholder: "Tìm kiếm...",
-                    allowClear: true,
-                    language: {
-                        noResults: function() {
-                            return "Không tìm thấy kết quả";
-                        },
-                        searching: function() {
-                            return "Đang tìm kiếm...";
-                        }
-                    }
-                });
-                
-                // Prevent dropdown from being cut off
-                $('.edit-popup .select2-container').css('z-index', 100000);
-            }, 100);
+
             break;
 
         case 'Teacher':
@@ -567,7 +689,7 @@ function fillEditForm(type, data) {
             </div>
             <div class="form-group">
                 <label>Phụ huynh:</label>
-                <select name="parentIds[]" class="select2-multiple" multiple>
+                <select name="parentIds[]" class="select2-edit" multiple>
                     ${data.parentOptions}
                 </select>
             </div>
@@ -577,20 +699,7 @@ function fillEditForm(type, data) {
             </div>`;
 
             // Initialize Select2 after form content is set
-            setTimeout(() => {
-                $('.select2-multiple').select2({
-                    width: '100%',
-                    placeholder: 'Chọn phụ huynh...',
-                    allowClear: true,
-                    dropdownParent: $('#edit-popup')
-                });
-                $('.select2-edit').select2({
-                    width: '100%',
-                    placeholder: 'Chọn lớp...',
-                    allowClear: true,
-                    dropdownParent: $('#edit-popup')
-                });
-            }, 100);
+            
             break;
 
         case 'Parent':
@@ -639,22 +748,15 @@ function fillEditForm(type, data) {
 }
 
 function closePopup() {
-    const overlay = document.querySelector('.popup-overlay-2');
-    overlay.style.opacity = 0;
-    overlay.style.zIndex = -100;
-    const cfpopup = document.querySelector('.confirm-popup');
-    cfpopup.style.display = "none";
-    const popup = document.querySelector('.edit-popup');
-    popup.style.opacity = 0;
-    popup.style.zIndex = -100;
+    const overlay = document.querySelector('.popup-overlay');
+    const overlayDelete = document.querySelector('.popup-overlay-2');
+    overlay.classList.remove('active');
+    overlayDelete.classList.remove('active');
 }
 
 function confirmDelete(type, id) {
     const overlay = document.querySelector('.popup-overlay-2');
-    const popup = document.getElementById('confirm-popup');
-    overlay.style.opacity = 1;
-    overlay.style.zIndex = 10000;
-    popup.style.display = 'block';
+    overlay.classList.add('active');
 
     document.getElementById('confirm-yes').onclick = () => {
         deleteItem(type, id);
@@ -673,7 +775,7 @@ function deleteItem(type, id) {
         body: form
     })
         .then(res => res.json())
-        .then (data => {
+        .then(data => {
             if (data.status === 'success') {
                 alert('Xóa thành công!');
                 closePopup();
@@ -682,6 +784,7 @@ function deleteItem(type, id) {
                 loadParents();
                 loadClasses();
                 loadTeachers();
+                loadMessages();
                 loadNews();
             } else {
                 alert('Lỗi: ' + data.message);
@@ -694,7 +797,7 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(this);
     const type = formData.get('type');
-    console.log(type);
+    // console.log(type);
 
     fetch('admincrud.php', {
         method: 'POST',
@@ -724,12 +827,78 @@ document.getElementById('notification-form').addEventListener('submit', function
     const formData = new FormData(this);
     formData.append('action', 'sendNotification');
 
+    // Get recipient type
+    const recipientType = document.getElementById('recipient-type').value;
+    formData.append('recipientType', recipientType);
+
+    // Handle different recipient types
+    switch(recipientType) {
+        case 'individual':
+            const receiverId = document.querySelector('select[name="receiverId"]').value;
+            if (!receiverId) {
+                alert('Vui lòng chọn người nhận');
+                return;
+            }
+            formData.append('receiverId', receiverId);
+            break;
+            
+        case 'multiple':
+            const receiverIds = Array.from(document.querySelector('select[name="receiverIds[]"]').selectedOptions)
+                                    .map(option => option.value);
+            if (receiverIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một người nhận');
+                return;
+            }
+            formData.append('receiverIds', JSON.stringify(receiverIds));
+            break;
+            
+        case 'class':
+            const classId = document.querySelector('select[name="classId"]').value;
+            if (!classId) {
+                alert('Vui lòng chọn lớp');
+                return;
+            }
+            const classRecipientTypes = Array.from(document.querySelectorAll('input[name="classRecipientTypes[]"]:checked'))
+                                             .map(checkbox => checkbox.value);
+            if (classRecipientTypes.length === 0) {
+                alert('Vui lòng chọn ít nhất một loại người nhận trong lớp');
+                return;
+            }
+            formData.append('classId', classId);
+            formData.append('classRecipientTypes', JSON.stringify(classRecipientTypes));
+            break;
+            
+        case 'all-teachers':
+        case 'all-parents':
+        case 'all-students':
+        case 'all-everyone':
+            // No additional data needed for these types
+            break;
+            
+        default:
+            alert('Vui lòng chọn loại người nhận');
+            return;
+    }
+
     // Lấy các phương thức gửi đã chọn
     const selectedMethods = Array.from(document.querySelectorAll('input[name="sendMethods[]"]:checked'))
         .map(checkbox => checkbox.value);
 
     // Thêm vào formData dưới dạng JSON string
     formData.append('sendMethods', JSON.stringify(selectedMethods));
+
+    // Hiển thị loading khi gửi email
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    const isEmailSelected = selectedMethods.includes('email');
+
+    if (isEmailSelected) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi email...';
+    } else {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+    }
 
     fetch('admincrud.php', {
         method: 'POST',
@@ -740,8 +909,11 @@ document.getElementById('notification-form').addEventListener('submit', function
             if (data.status === 'success') {
                 alert(data.message);
                 this.reset();
+                resetRecipientType();
                 loadMessages();
                 $('.recipient-select').val(null).trigger('change');
+                $('.multiple-recipient-select').val(null).trigger('change');
+                $('.class-select').val(null).trigger('change');
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -749,66 +921,48 @@ document.getElementById('notification-form').addEventListener('submit', function
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi gửi thông báo');
+        })
+        .finally(() => {
+            // Khôi phục trạng thái ban đầu của button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
         });
 });
 
 function loadMessages() {
-    fetch('admincrud.php?action=getMessages', {
-        method: 'post'
+    fetch('admincrud.php?action=getMessages&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
     })
         .then(response => response.text())
         .then(html => {
+            document.getElementById('message-table').innerHTML =
+                `
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Người nhận</th>
+                                <th>Chủ đề</th>
+                                <th class="message-content">Nội dung</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="message-table-body">
+
+                        </tbody>
+            `;
             document.getElementById('message-table-body').innerHTML = html;
-            // if ($.fn.DataTable.isDataTable('#message-table')) {
-            //     $('#message-table').DataTable().destroy();
-            // }
-            // $('#message-table').DataTable({
-            //     responsive: true,
-            //     language: {
-            //         emptyTable: "Không có thông báo nào",
-            //         info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-            //         infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
-            //         infoFiltered: "(được lọc từ _MAX_ mục)", 
-            //         thousands: ",",
-            //         lengthMenu: "Hiển thị _MENU_ mục",
-            //         loadingRecords: "Đang tải...",
-            //         processing: "Đang xử lý...",
-            //         search: "Tìm kiếm:",
-            //         zeroRecords: "Không tìm thấy thông báo phù hợp",
-            //         paginate: {
-            //             first: "Đầu",
-            //             last: "Cuối",
-            //             next: "Sau",
-            //             previous: "Trước"
-            //         }
-            //     },
-            //     pageLength: 5,
-            //     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
-            //     order: [[0, 'desc']],
-            //     columnDefs: [
-            //         {responsivePriority: 1, targets: 0},
-            //         {responsivePriority: 2, targets: 1}, 
-            //         {responsivePriority: 3, targets: 2},
-            //         {
-            //             targets: 3,
-            //             render: function(data, type, row) {
-            //                 if (type === 'display' && data.length > 50) {
-            //                     return `<span title="${data}">${data.substr(0, 50)}...</span>`;
-            //                 }
-            //                 return data;
-            //             }
-            //         }
-            //     ],
-            //     drawCallback: function() {
-            //         $(this).find('td').css('min-width', '50px');
-            //         $(window).trigger('resize');
-            //     }
-            // });
-            initializeDataTable('#message-table');
+
+            setTimeout(() => {
+                initializeDataTable('#message-table');
+            }, 100);
+
+            // console.log("load message");
         })
         .catch(error => {
             console.error('Error loading messages:', error);
-            document.getElementById('message-table-body').innerHTML = 
+            document.getElementById('message-table-body').innerHTML =
                 '<tr><td colspan="5" class="error-message">Lỗi khi tải thông báo</td></tr>';
         });
 }
@@ -879,7 +1033,7 @@ function loadNews() {
                                     <i class="fa-solid fa-wrench"></i> Sửa bài viết
                                 </a>
                                 <a href="#" class="news-change" onclick="confirmDelete('news' ,${item.id}); event.preventDefault(); return false;">
-                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </a>
                             </div>
                         </div>
@@ -977,12 +1131,7 @@ function showEditNews(id) {
         .then(data => {
             if (data.status === 'success') {
                 const overlay = document.querySelector('.popup-overlay-2');
-                const popup = document.getElementById('edit-popup');
-                overlay.style.opacity = 1;
-                overlay.style.zIndex = 10001;
-                popup.style.display = 'block';
-                popup.style.opacity = 1;
-                popup.style.zIndex = 10001;
+                overlay.classList.add('active');
 
                 // Fill form with news data
                 document.getElementById('edit-form').innerHTML = `
@@ -1039,12 +1188,12 @@ function toggleMenu() {
 }
 
 // Close menu when clicking outside
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const nav = document.querySelector('nav');
     const menuToggle = document.querySelector('.menu-toggle');
-    
-    if (nav.classList.contains('active') && 
-        !nav.contains(e.target) && 
+
+    if (nav.classList.contains('active') &&
+        !nav.contains(e.target) &&
         !menuToggle.contains(e.target)) {
         nav.classList.remove('active');
         document.querySelector('.main-content-admin').classList.remove('pushed');

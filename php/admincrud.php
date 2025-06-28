@@ -5,6 +5,7 @@ ob_start();
 include "../model/config.php";
 include "../model/user.php";
 include "../model/configadmin.php";
+include "../model/sendmail.php";
 
 if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     (isset($_SESSION['role'])  && $_SESSION['role'] == 0)
@@ -147,6 +148,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     exit;
                 }
 
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['teacherUsername'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['teacherEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
+                    ]);
+                    exit;
+                }
+
                 $teacherFullName = $_POST['teacherFullName'];
                 $teacherUsername = $_POST['teacherUsername'];
                 $teacherPassword = empty($_POST['teacherPassword']) ? "123456" : $_POST['teacherPassword'];
@@ -194,7 +213,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (!preg_match('/^[0-9]+$/', $_POST['studentPhone'])) {
                     echo json_encode([
                         'status' => 'error',
-                        'message' => 'Số điện thoại chỉ được chứa số'
+                        'message' => 'Số điện thoại chỉ được chứa số' 
                     ]);
                     exit;
                 }
@@ -214,7 +233,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $studentDiscount = $_POST['studentDiscount'] ?? 0;
                 if (!is_numeric($studentDiscount) || $studentDiscount < 0 || $studentDiscount > 100) {
                     echo json_encode([
-                        'status' => 'error',
+                        'status' => 'error', 
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
                     ]);
                     exit;
@@ -226,6 +245,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['studentUsername'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['studentEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
                     ]);
                     exit;
                 }
@@ -242,7 +279,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                 $result = addStudent(
                     $studentFullName,
-                    $studentDate,
+                    $studentDate, 
                     $studentGender,
                     $studentUsername,
                     $studentPassword,
@@ -298,8 +335,26 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
-                        'status' => 'error',
+                        'status' => 'error', 
                         'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra username đã tồn tại
+                if (isExistUsername($_POST['parentUserName'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Tên đăng nhập đã tồn tại trong hệ thống!'
+                    ]);
+                    exit;
+                }
+
+                // Kiểm tra email đã tồn tại
+                if (isExistEmail($_POST['parentEmail'])) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Email đã được sử dụng bởi người khác!'
                     ]);
                     exit;
                 }
@@ -377,6 +432,30 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
                 $result = deleteStudent($_POST['id']);
                 echo json_encode($result);
+                exit;
+                break;
+            case "deleteMessage":
+                if (!isset($_POST['id'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Thiếu ID thông báo']);
+                    exit;
+                }
+
+                try {
+                    $conn = connectdb();
+                    $sql = "DELETE FROM messages WHERE MessageID = ? AND SenderID = '0'";
+                    $stmt = $conn->prepare($sql);
+                    $result = $stmt->execute([$_POST['id']]);
+
+                    if ($result) {
+                        echo json_encode(['status' => 'success', 'message' => 'Xóa thông báo thành công']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Không thể xóa thông báo']);
+                    }
+                } catch (PDOException $e) {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()]);
+                } finally {
+                    $conn = null;
+                }
                 exit;
                 break;
 
@@ -506,11 +585,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate discount
-                if (
-                    !is_numeric($_POST['studentDiscount']) ||
-                    $_POST['studentDiscount'] < 0 ||
-                    $_POST['studentDiscount'] > 100
-                ) {
+                if (!is_numeric($_POST['studentDiscount']) || 
+                    $_POST['studentDiscount'] < 0 || 
+                    $_POST['studentDiscount'] > 100) {
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
@@ -548,7 +625,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate birthdate
-                $birthdate = strtotime($_POST['birthDate']);
+                $birthdate = strtotime($_POST['birthDate']); 
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
@@ -564,59 +641,195 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 break;
 
             case "sendNotification":
-                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content']) || empty($_POST['sendMethods'])) {
+                if (empty($_POST['recipientType']) || empty($_POST['subject']) || empty($_POST['content'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
                 }
 
                 try {
                     $conn = connectdb();
-                    $selectedMethods = json_decode($_POST['sendMethods'], true);
-                    if ($selectedMethods == []) {
-                        echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
-                        exit;
-                    }
-
-
-                    // Insert notification into messages table
-                    $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
-                            VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
-
-                    $stmt = $conn->prepare($sql);
-                    $result = $stmt->execute([
-                        ':receiverId' => $_POST['receiverId'],
-                        ':subject' => $_POST['subject'],
-                        ':content' => $_POST['content']
-                    ]);
-
-                    if ($result) {
-                        $successMethods = [];
-                        if (!empty($selectedMethods)) {
-                            foreach ($selectedMethods as $method) {
-                                switch ($method) {
-                                    case 'web':
-                                        $successMethods[] = 'Website';
-                                        break;
-                                    case 'zalo':
-                                        $successMethods[] = 'Zalo';
-                                        break;
-                                    case 'gmail':
-                                        $successMethods[] = 'Gmail';
-                                        break;
+                    $selectedMethods = isset($_POST['sendMethods']) ? json_decode($_POST['sendMethods'], true) : [];
+                    $sendEmail = in_array('email', $selectedMethods);
+                    $recipientType = $_POST['recipientType'];
+                    $subject = $_POST['subject'];
+                    $content = $_POST['content'];
+                    
+                    // Get recipients based on type
+                    $recipients = [];
+                    
+                    switch($recipientType) {
+                        case 'individual':
+                            if (empty($_POST['receiverId'])) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn người nhận']);
+                                exit;
+                            }
+                            $recipients[] = $_POST['receiverId'];
+                            break;
+                            
+                        case 'multiple':
+                            $receiverIds = json_decode($_POST['receiverIds'], true);
+                            if (empty($receiverIds)) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn người nhận']);
+                                exit;
+                            }
+                            $recipients = $receiverIds;
+                            break;
+                            
+                        case 'class':
+                            if (empty($_POST['classId'])) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn lớp']);
+                                exit;
+                            }
+                            $classId = $_POST['classId'];
+                            $classRecipientTypes = json_decode($_POST['classRecipientTypes'], true);
+                            
+                            if (empty($classRecipientTypes)) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn loại người nhận']);
+                                exit;
+                            }
+                            
+                            // Get recipients from class
+                            if (in_array('students', $classRecipientTypes)) {
+                                $sql = "SELECT UserID FROM students WHERE ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                $recipients = array_merge($recipients, $students);
+                            }
+                            
+                            if (in_array('parents', $classRecipientTypes)) {
+                                $sql = "SELECT DISTINCT spk.parent_id FROM student_parent_keys spk 
+                                       JOIN students s ON spk.student_id = s.UserID 
+                                       WHERE s.ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $parents = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                $recipients = array_merge($recipients, $parents);
+                            }
+                            
+                            if (in_array('teacher', $classRecipientTypes)) {
+                                $sql = "SELECT TeacherID FROM classes WHERE ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $teacher = $stmt->fetchColumn();
+                                if ($teacher) {
+                                    $recipients[] = $teacher;
                                 }
                             }
-                        }
-
-                        echo json_encode([
-                            'status' => 'success',
-                            'message' => 'Thông báo đã được gửi thành công qua ' . implode(', ', $successMethods)
-                        ]);
-                    } else {
-                        echo json_encode([
-                            'status' => 'error',
-                            'message' => 'Không thể gửi thông báo'
-                        ]);
+                            break;
+                            
+                        case 'all-teachers':
+                            $sql = "SELECT UserID FROM teachers";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-parents':
+                            $sql = "SELECT UserID FROM parents";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-students':
+                            $sql = "SELECT UserID FROM students";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-everyone':
+                            $sql = "SELECT UserID FROM teachers UNION SELECT UserID FROM students UNION SELECT UserID FROM parents";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        default:
+                            echo json_encode(['status' => 'error', 'message' => 'Loại người nhận không hợp lệ']);
+                            exit;
                     }
+                    
+                    if (empty($recipients)) {
+                        echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy người nhận']);
+                        exit;
+                    }
+                    
+                    $successCount = 0;
+                    $errorCount = 0;
+                    $emailErrors = [];
+                    
+                    // Process each recipient
+                    foreach ($recipients as $recipientId) {
+                        try {
+                            // Get recipient's email if email sending is enabled
+                            $recipientEmail = null;
+                            if ($sendEmail) {
+                                $sql = "SELECT Email FROM teachers WHERE UserID = :recipientId
+                                       UNION
+                                       SELECT Email FROM students WHERE UserID = :recipientId  
+                                       UNION
+                                       SELECT Email FROM parents WHERE UserID = :recipientId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':recipientId' => $recipientId]);
+                                $recipientEmail = $stmt->fetchColumn();
+                            }
+                            
+                            // Send email if requested and email exists
+                            $emailSent = ['status' => 'success'];
+                            if ($sendEmail && $recipientEmail) {
+                                $emailSent = sendEmail($recipientEmail, $subject, $content);
+                                if ($emailSent['status'] === 'fail') {
+                                    $emailErrors[] = "Email to $recipientEmail: " . $emailSent['message'];
+                                }
+                            }
+                            
+                            // Save to database (save even if email fails for record keeping)
+                            $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
+                                    VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
+                            
+                            $stmt = $conn->prepare($sql);
+                            $result = $stmt->execute([
+                                ':receiverId' => $recipientId,
+                                ':subject' => $subject,
+                                ':content' => $content
+                            ]);
+                            
+                            if ($result) {
+                                $successCount++;
+                            } else {
+                                $errorCount++;
+                            }
+                            
+                        } catch (Exception $e) {
+                            $errorCount++;
+                            error_log("Error sending to recipient $recipientId: " . $e->getMessage());
+                        }
+                    }
+                    
+                    // Prepare response message
+                    $message = "✅ Đã gửi thành công cho $successCount người";
+                    if ($errorCount > 0) {
+                        $message .= ", thất bại $errorCount người";
+                    }
+                    
+                    if ($sendEmail) {
+                        if (empty($emailErrors)) {
+                            $message .= " (bao gồm cả email)";
+                        } else {
+                            $message .= ". Một số email gửi thất bại: " . implode('; ', array_slice($emailErrors, 0, 3));
+                            if (count($emailErrors) > 3) {
+                                $message .= "...";
+                            }
+                        }
+                    }
+                    
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => $message
+                    ]);
+                    
                 } catch (Exception $e) {
                     error_log("Error sending notification: " . $e->getMessage());
                     echo json_encode([
@@ -998,14 +1211,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($message['Subject']) . "</td>";
                             echo "<td class='message-content'>" . htmlspecialchars($message['Content']) . "</td>";
                             echo "<td>" . htmlspecialchars($message['IsRead'] == 0 ? "Chưa đọc" : "Đã đọc") . "</td>";
+                            echo "<td>
+                                <button class='btn-delete' onclick='confirmDelete(\"Message\", \"" . $message['MessageID'] . "\")' title='Xóa thông báo'>
+                                    <i class='fas fa-trash'></i> Xóa
+                                </button>
+                                </td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5'>Không có dữ liệu</td></tr>";
+                        echo "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
                     }
                 } catch (Exception $e) {
                     error_log("Error loading messages: " . $e->getMessage());
-                    echo "<tr><td colspan='5'>Lỗi khi tải thông báo</td></tr>";
+                    echo "<tr><td colspan='6'>Lỗi khi tải thông báo</td></tr>";
                 }
                 exit;
                 break;

@@ -373,7 +373,8 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
 }
 
 
-function addParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $zalo, $isShowTeacher) {
+function addParent($fullname, $birthdate, $gender, $username, $password, $email, $phone, $zalo, $isShowTeacher)
+{
     try {
         $conn = connectdb();
         error_log("addParent params: $fullname, $birthdate, $gender, $username, $email, $phone, $zalo, $isShowTeacher");
@@ -393,7 +394,7 @@ function addParent($fullname, $birthdate, $gender, $username, $password, $email,
         $stmt->execute([
             $username,
             $password_hashed,
-            $fullname, 
+            $fullname,
             $gender,
             $email,
             $phone,
@@ -465,7 +466,7 @@ function getStatistics($startDate, $endDate)
                       COUNT(*) as TeacherCount 
                       FROM teachers 
                       WHERE DATE(CreatedAt) <= :endDate";
-        
+
         $stmtSalary = $conn->prepare($sqlSalary);
         $stmtSalary->execute([
             ':endDate' => $endDate
@@ -476,7 +477,7 @@ function getStatistics($startDate, $endDate)
         $sqlIncrease = "SELECT COUNT(*) as Increased 
                        FROM students 
                        WHERE DATE(CreatedAt) BETWEEN :startDate AND :endDate";
-        
+
         $stmtIncrease = $conn->prepare($sqlIncrease);
         $stmtIncrease->execute([
             ':startDate' => $startDate,
@@ -706,6 +707,14 @@ function updateClass($data)
 function updateTeacher($data)
 {
     try {
+        // Kiểm tra email đã tồn tại
+        if (isExistEmail($data['email'])) {
+            return ([
+                'status' => 'error',
+                'message' => 'Email đã được sử dụng bởi người khác!'
+            ]);
+            exit;
+        }
         $conn = connectdb();
         $sql = "UPDATE teachers SET 
                 FullName = :fullName,
@@ -738,6 +747,14 @@ function updateTeacher($data)
 function updateStudent($data)
 {
     try {
+        // Kiểm tra email đã tồn tại
+        if (isExistEmail($data['email'])) {
+            return ([
+                'status' => 'error',
+                'message' => 'Email đã được sử dụng bởi người khác!'
+            ]);
+            exit;
+        }
         $conn = connectdb();
         $sql = "UPDATE students SET 
                 FullName = :fullName,
@@ -794,8 +811,17 @@ function updateStudent($data)
     }
 }
 
-function updateParent($data) {
+function updateParent($data)
+{
     try {
+        // Kiểm tra email đã tồn tại
+        if (isExistEmail($data['email'])) {
+            return ([
+                'status' => 'error',
+                'message' => 'Email đã được sử dụng bởi người khác!'
+            ]);
+            exit;
+        }
         $conn = connectdb();
         $sql = "UPDATE parents SET 
                 FullName = :fullName,
@@ -898,13 +924,14 @@ function deleteStudent($id)
     }
 }
 
-function deleteParent($id) {
+function deleteParent($id)
+{
     try {
         $conn = connectdb();
-        
+
         // Start transaction
         $conn->beginTransaction();
-        
+
         try {
             // Delete parent-student relationships first
             $deleteRelationshipsSql = "DELETE FROM student_parent_keys WHERE parent_id = ?";
@@ -923,7 +950,6 @@ function deleteParent($id) {
 
             $conn->commit();
             return ['status' => 'success', 'message' => 'Xóa phụ huynh thành công'];
-
         } catch (Exception $e) {
             $conn->rollBack();
             throw $e;
