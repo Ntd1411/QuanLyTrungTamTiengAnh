@@ -50,3 +50,10 @@ function addStudentOrParent($fullname, $birthdate, $gender, $username, $password
     $conn = null;
 }
 
+function getUserByUsername($username) {
+    $conn = connectdb();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE Username = ?");
+    $stmt->execute([$username]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+

@@ -3,39 +3,38 @@ session_start();
 require_once '../model/config.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-if (!$data) {
-    echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
-    exit;
-}
-
-$studentId = $data['studentId'] ?? '';
-$bank = $data['bank'] ?? '';
-$amount = $data['amount'] ?? 0;
+$parentID = $_SESSION['id'] ?? $_COOKIE['id'] ?? null;
+$studentID = $data['studentId'] ?? '';
+$amount = isset($data['amount']) ? floatval($data['amount']) : 0;
 $note = $data['note'] ?? '';
+$paymentDate = date('Y-m-d');
 
-if (!$studentId || !$bank || !$amount) {
-    echo json_encode(['error' => 'Thiếu thông tin']);
+if (empty($parentID) || empty($studentID) || $amount <= 0) {
+    echo json_encode(['success' => false, 'error' => 'Thiếu thông tin']);
     exit;
 }
 
 $conn = connectdb();
+$stmt = $conn->prepare("INSERT INTO payment_history (parentID, studentID, paidAmount, note, paymentDate) VALUES (?, ?, ?, ?, ?)");
+$success = $stmt->execute([$parentID, $studentID, $amount, $note, $paymentDate]);
 
-// Tìm bản ghi học phí chưa đóng đúng số tiền thực đã giảm giá
-$sql = "SELECT TuitionID, Amount, Discount FROM tuition 
-        WHERE StudentID = ? 
-        AND Status = 'Chưa đóng'
-        AND ABS(Amount * (100 - Discount) / 100 - ?) < 1
-        ORDER BY DueDate ASC LIMIT 1";
-$stmt = $conn->prepare($sql);
-$stmt->execute([$studentId, $amount]);
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+// Sau khi nộp tiền, kiểm tra tổng đã nộp
+if ($success) {
+    // Lấy tổng học phí phải nộp (đã trừ giảm giá)
+    $stmt = $conn->prepare("SELECT SUM(Amount - Amount * Discount / 100) FROM tuition WHERE StudentID = ?");
+    $stmt->execute([$studentID]);
+    $totalFee = floatval($stmt->fetchColumn());
 
-if ($row) {
-    // Cập nhật trạng thái thành Đã đóng
-    $sql = "UPDATE tuition SET Status = 'Đã đóng', PaymentDate = NOW(), Note = ? WHERE TuitionID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$note, $row['TuitionID']]);
-    echo json_encode(['success' => true]);
-} else {
-    echo json_encode(['error' => 'Không tìm thấy khoản học phí phù hợp để đóng!']);
+    // Lấy tổng đã nộp của tất cả phụ huynh cho học sinh này
+    $stmt = $conn->prepare("SELECT SUM(paidAmount) FROM payment_history WHERE studentID = ?");
+    $stmt->execute([$studentID]);
+    $totalPaid = floatval($stmt->fetchColumn());
+
+    // Nếu đã nộp đủ hoặc thừa, cập nhật trạng thái tuition thành 'Đã đóng'
+    if ($totalPaid >= $totalFee && $totalFee > 0) {
+        $stmt = $conn->prepare("UPDATE tuition SET Status = 'Đã đóng', PaymentDate = ? WHERE StudentID = ?");
+        $stmt->execute([$paymentDate, $studentID]);
+    }
 }
+
+echo json_encode(['success' => $success]);

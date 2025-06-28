@@ -93,8 +93,9 @@ if (
                             <tr>
                                 <th>Ngày</th>
                                 <th>Con</th>
-                                <th>Học phí (chưa giảm giá)</th>
+                                <th>Số tiền đóng</th>
                                 <th>Ghi chú</th>
+                                <th>Người đóng</th>
                             </tr>
                         </thead>
                         <tbody id="payment-history-body"></tbody>
@@ -115,7 +116,7 @@ if (
                         <input type="text" id="fee-bank" required>
                     </label><br>
                     <label>Số tiền đóng:
-                        <input type="number" id="fee-amount" min="1" required readonly>
+                        <input type="number" id="fee-amount" min="1" required>
                     </label><br>
                     <label>Ghi chú:
                         <input type="text" id="fee-note">

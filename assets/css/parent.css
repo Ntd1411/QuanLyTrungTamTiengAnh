@@ -228,14 +228,6 @@
     }
 }
 
-#feeForm input[readonly] {
-    background-color: #e0e0e0;
-    color: #585858;
-    font-weight: bold;
-    border: 1.5px solid #bdbdbd;
-    cursor: not-allowed;
-}
-
 .payment-history table {
     width: 100%;
     border-collapse: separate;

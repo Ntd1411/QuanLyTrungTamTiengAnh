@@ -994,3 +994,18 @@ CREATE TABLE consulting (
     message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE consulting
+ADD COLUMN status ENUM('Chưa tư vấn', 'Đã tư vấn') NOT NULL DEFAULT 'Chưa tư vấn';
+
+CREATE TABLE payment_history (
+    paymentID INT PRIMARY KEY AUTO_INCREMENT,
+    parentID VARCHAR(10) NOT NULL,
+    paidAmount DECIMAL(12,0) NOT NULL,
+    note TEXT,
+    paymentDate DATE NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parentID) REFERENCES parents(UserID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE payment_history ADD COLUMN studentID VARCHAR(10) NOT NULL AFTER paymentID;

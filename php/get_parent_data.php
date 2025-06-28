@@ -47,15 +47,22 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Lấy học phí từng con
 $childrenData = [];
 foreach ($children as $child) {
-    // Lấy thông tin học phí tổng hợp
+    // Tổng học phí
     $sql = "SELECT 
             SUM(Amount) AS fee, 
-            SUM(CASE WHEN Status='Đã đóng' THEN Amount * (100 - Discount) / 100 ELSE 0 END) AS paid,
             SUM(Amount * (Discount/100)) AS discount
         FROM tuition WHERE StudentID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$child['UserID']]);
     $feeData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Tổng đã đóng của tất cả phụ huynh liên kết với học sinh này
+    $sql = "SELECT SUM(paidAmount) AS paid
+            FROM payment_history
+            WHERE studentID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID']]);
+    $paid = (int)($stmt->fetchColumn() ?: 0);
 
     // Lấy Note của khoản học phí chưa đóng gần nhất
     $sql = "SELECT Note FROM tuition WHERE StudentID = ? AND Status = 'Chưa đóng' ORDER BY DueDate ASC LIMIT 1";
@@ -65,11 +72,11 @@ foreach ($children as $child) {
     $note = $noteRow ? $noteRow['Note'] : '';
 
     // Lấy lịch sử đóng học phí cho từng con
-    $sql = "SELECT PaymentDate, Amount, Note
-            FROM tuition
-            WHERE StudentID = ?
-            AND Status = 'Đã đóng'
-            ORDER BY PaymentDate DESC";
+    $sql = "SELECT ph.paymentDate AS PaymentDate, ph.paidAmount AS Amount, ph.note AS Note, p.FullName AS Payer
+        FROM payment_history ph
+        JOIN parents p ON ph.parentID = p.UserID
+        WHERE ph.studentID = ?
+        ORDER BY ph.paymentDate DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$child['UserID']]);
     $paymentHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -94,7 +101,7 @@ foreach ($children as $child) {
         'absent' => $absent,
         'teacher' => $child['TeacherName'],
         'fee' => (int)($feeData['fee'] ?? 0),
-        'paid' => (int)($feeData['paid'] ?? 0),
+        'paid' => $paid,
         'discount' => (int)($feeData['discount'] ?? 0),
         'paymentHistory' => $paymentHistory,
         'note' => $note

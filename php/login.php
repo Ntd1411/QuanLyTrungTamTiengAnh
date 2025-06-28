@@ -57,10 +57,13 @@ if (isset($_POST['login']) && ($_POST['login'])) {
                 $response['redirect'] = "parent.php";
                 $_SESSION['role'] = $role;
                 $_SESSION['username'] = $username;
+                $user = getUserByUsername($username);
+                $_SESSION['id'] = $user['UserID'];
                 if (isset($remember) && $remember) {
                     setcookie('is_login', true, time() + 3600 * 24, '/');
                     setcookie('username', $username, time() + 3600 * 24, '/');
                     setcookie('role', $role, time() + 3600 * 24, '/');
+                    setcookie('id', $user['UserID'], time() + 3600 * 24, '/');
                 }
                 break;
             default:

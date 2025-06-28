@@ -90,6 +90,7 @@ function loadPayments() {
             <td>${payment.childName || ''}</td>
             <td>${Number(payment.Amount).toLocaleString()} VNĐ</td>
             <td>${payment.Note || ''}</td>
+            <td>${payment.Payer || ''}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -258,11 +259,23 @@ function updateFeeAmountAndNote() {
         // Số tiền cần đóng = fee - paid - discount
         const unpaid = child.fee - child.paid - (child.discount || 0);
         amountInput.value = unpaid > 0 ? unpaid : 0;
-        // Ghi chú: note từ DB - tên con
-        noteInput.value = (child.note ? child.note + ' - ' : '') + child.name;
+        // Ghi chú: note từ DB - tên con - số tiền nộp
+        noteInput.value =
+            (child.note ? child.note + ' - ' : '') +
+            child.name + ' - Nộp ' + amountInput.value.toLocaleString() + ' VNĐ';
+
+        // Gán lại sự kiện oninput mỗi lần chọn con khác
+        amountInput.oninput = function () {
+            // Lấy lại child mới nhất theo select
+            const currentChild = parentData.children.find(c => c.id === select.value);
+            noteInput.value =
+                (currentChild && currentChild.note ? currentChild.note + ' - ' : '') +
+                (currentChild ? currentChild.name : '') + ' - Nộp ' + amountInput.value.toLocaleString() + ' VNĐ';
+        };
     } else {
         amountInput.value = 0;
         noteInput.value = '';
+        amountInput.oninput = null;
     }
 }
 
@@ -278,8 +291,21 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const studentId = document.getElementById('fee-student').value;
             const bank = document.getElementById('fee-bank').value;
-            const amount = document.getElementById('fee-amount').value;
+            const amount = parseFloat(document.getElementById('fee-amount').value);
             const note = document.getElementById('fee-note').value;
+
+            // Lấy số tiền còn nợ của học sinh này
+            const child = parentData.children.find(c => c.id === studentId);
+            const unpaid = child ? (child.fee - child.paid - (child.discount || 0)) : 0;
+
+            if (amount > unpaid) {
+                alert('Số tiền nộp lớn hơn số tiền còn nợ của học phí!');
+                return;
+            }
+            if (amount <= 0) {
+                alert('Số tiền nộp phải lớn hơn 0!');
+                return;
+            }
 
             fetch('../php/payfee.php', {
                 method: 'POST',
@@ -291,13 +317,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-
-                        // Phát triển xử lý nộp tiền thêm ở đây
-
-
                         alert('Nộp tiền thành công!');
                         hidePayFeeForm();
-                        // Reload Data
                         location.reload();
                     } else {
                         alert('Có lỗi xảy ra: ' + (data.error || ''));
