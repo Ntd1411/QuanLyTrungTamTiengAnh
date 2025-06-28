@@ -632,8 +632,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Gửi thông báo</h2>
                 <form id="notification-form" class="notification-form">
                     <div class="form-group">
+                        <label>Loại người nhận:</label>
+                        <select id="recipient-type" name="recipientType" onchange="changeRecipientType()" required>
+                            <option value="">Chọn loại người nhận</option>
+                            <option value="individual">Gửi cho 1 người</option>
+                            <option value="multiple">Gửi cho nhiều người</option>
+                            <option value="class">Gửi theo lớp</option>
+                            <option value="all-teachers">Gửi cho tất cả giáo viên</option>
+                            <option value="all-parents">Gửi cho tất cả phụ huynh</option>
+                            <option value="all-students">Gửi cho tất cả học sinh</option>
+                            <option value="all-everyone">Gửi cho tất cả mọi người</option>
+                        </select>
+                    </div>
+
+                    <!-- Individual recipient -->
+                    <div class="form-group" id="individual-recipient" style="display: none;">
                         <label>Người nhận:</label>
-                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;" required>
+                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;">
                             <option value="">Chọn người nhận</option>
                             <?php
                             // Get teachers
@@ -668,6 +683,83 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             ?>
                         </select>
                     </div>
+
+                    <!-- Multiple recipients -->
+                    <div class="form-group" id="multiple-recipients" style="display: none;">
+                        <label>Người nhận (có thể chọn nhiều):</label>
+                        <select name="receiverIds[]" class="multiple-recipient-select" style="width: 100%; padding:10px 12px;" multiple>
+                            <?php
+                            // Get teachers
+                            $teachers = getDataFromTable("teachers");
+                            if ($teachers) {
+                                echo "<optgroup label='Giáo viên'>";
+                                foreach ($teachers as $teacher) {
+                                    echo "<option value='{$teacher['UserID']}'>{$teacher['FullName']} (GV)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get students
+                            $students = getDataFromTable("students");
+                            if ($students) {
+                                echo "<optgroup label='Học sinh'>";
+                                foreach ($students as $student) {
+                                    echo "<option value='{$student['UserID']}'>{$student['FullName']} (HS)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+
+                            // Get parents
+                            $parents = getDataFromTable("parents");
+                            if ($parents) {
+                                echo "<optgroup label='Phụ huynh'>";
+                                foreach ($parents as $parent) {
+                                    echo "<option value='{$parent['UserID']}'>{$parent['FullName']} (PH)</option>";
+                                }
+                                echo "</optgroup>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <!-- Class-based recipients -->
+                    <div class="form-group" id="class-recipients" style="display: none;">
+                        <label>Chọn lớp:</label>
+                        <select name="classId" class="class-select" style="width: 100%; padding:10px 12px;">
+                            <option value="">Chọn lớp</option>
+                            <?php
+                            $classes = getDataFromTable("classes");
+                            if ($classes) {
+                                foreach ($classes as $class) {
+                                    if ($class['Status'] == "Đang hoạt động")
+                                        echo "<option value='{$class['ClassID']}'>{$class['ClassName']} ({$class['SchoolYear']})</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                        <div style="margin-top: 10px;">
+                            <label>Gửi cho:</label>
+                            <div class="checkbox-group" style="display:flex;">
+                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="students" style="height: 1rem;" checked> <span>Học sinh</span>
+                                </label>
+                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="parents" style="height: 1rem;"><span> Phụ huynh</span>
+                                </label>
+                                <label style=" display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" name="classRecipientTypes[]" value="teacher" style="height: 1rem;"> <span>Giáo viên phụ trách</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All teachers/parents info -->
+                    <div class="form-group" id="recipient-info" style="display: none;">
+                        <div class="info-box">
+                            <p id="recipient-count-info"></p>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Chủ đề:</label>
                         <input type="text" name="subject" required>
@@ -686,7 +778,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="submit">Gửi thông báo</button>
-                        <button type="button" onclick="document.getElementById('notification-form').reset()" class="refresh">Làm mới</button>
+                        <button type="button" onclick="document.getElementById('notification-form').reset(); resetRecipientType()" class="refresh">Làm mới</button>
                     </div>
                 </form>
 
@@ -848,6 +940,84 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 closePopup();
             }
         });
+
+        // Add recipient type change function
+        function changeRecipientType() {
+            const recipientType = document.getElementById('recipient-type').value;
+            
+            // Hide all recipient options
+            document.getElementById('individual-recipient').style.display = 'none';
+            document.getElementById('multiple-recipients').style.display = 'none';
+            document.getElementById('class-recipients').style.display = 'none';
+            document.getElementById('recipient-info').style.display = 'none';
+            
+            // Clear required attributes
+            document.querySelector('select[name="receiverId"]').removeAttribute('required');
+            document.querySelector('select[name="receiverIds[]"]').removeAttribute('required');
+            document.querySelector('select[name="classId"]').removeAttribute('required');
+            
+            // Show appropriate option based on selection
+            switch(recipientType) {
+                case 'individual':
+                    document.getElementById('individual-recipient').style.display = 'block';
+                    document.querySelector('select[name="receiverId"]').setAttribute('required', 'required');
+                    break;
+                case 'multiple':
+                    document.getElementById('multiple-recipients').style.display = 'block';
+                    document.querySelector('select[name="receiverIds[]"]').setAttribute('required', 'required');
+                    break;
+                case 'class':
+                    document.getElementById('class-recipients').style.display = 'block';
+                    document.querySelector('select[name="classId"]').setAttribute('required', 'required');
+                    break;
+                case 'all-teachers':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả giáo viên (<?php echo countRow("teachers"); ?> người)';
+                    break;
+                case 'all-parents':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả phụ huynh (<?php echo countRow("parents"); ?> người)';
+                    break;
+                case 'all-students':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả học sinh (<?php echo countRow("students"); ?> người)';
+                    break;
+                case 'all-everyone':
+                    document.getElementById('recipient-info').style.display = 'block';
+                    const teacherCount = parseInt(<?php echo countRow("teachers"); ?>);
+                    const parentCount = parseInt(<?php echo countRow("parents"); ?>);
+                    const studentCount = parseInt(<?php echo countRow("students"); ?>);
+                    const totalUsers = teacherCount + parentCount + studentCount;
+                    document.getElementById('recipient-count-info').innerHTML = '<i class="fas fa-users"></i> Sẽ gửi cho tất cả mọi người (' + totalUsers + ' người)<br><small>Bao gồm: ' + teacherCount + ' giáo viên, ' + parentCount + ' phụ huynh, ' + studentCount + ' học sinh</small>';
+                    break;
+            }
+        }
+        
+        function resetRecipientType() {
+            document.getElementById('recipient-type').value = '';
+            changeRecipientType();
+        }
+
+        // Initialize Select2 for multiple recipients
+        try {
+            $(document).ready(function() {
+                try {
+                    $('.select2-dropdown, .recipient-select, .select2-search, .multiple-recipient-select, .class-select').select2({
+                        width: '100%',
+                        placeholder: "Tìm kiếm...",
+                        allowClear: true,
+                        language: {
+                            noResults: () => "Không tìm thấy kết quả",
+                            searching: () => "Đang tìm kiếm..."
+                        }
+                    });
+                } catch (e) {
+                    console.warn('Select2 initialization error:', e);
+                }
+            });
+        } catch (error) {
+            console.error('Script initialization error:', error);
+        }
     </script>
 
     <!-- Add this button right after the <body> tag -->

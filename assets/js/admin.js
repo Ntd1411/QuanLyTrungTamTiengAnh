@@ -827,6 +827,59 @@ document.getElementById('notification-form').addEventListener('submit', function
     const formData = new FormData(this);
     formData.append('action', 'sendNotification');
 
+    // Get recipient type
+    const recipientType = document.getElementById('recipient-type').value;
+    formData.append('recipientType', recipientType);
+
+    // Handle different recipient types
+    switch(recipientType) {
+        case 'individual':
+            const receiverId = document.querySelector('select[name="receiverId"]').value;
+            if (!receiverId) {
+                alert('Vui lòng chọn người nhận');
+                return;
+            }
+            formData.append('receiverId', receiverId);
+            break;
+            
+        case 'multiple':
+            const receiverIds = Array.from(document.querySelector('select[name="receiverIds[]"]').selectedOptions)
+                                    .map(option => option.value);
+            if (receiverIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một người nhận');
+                return;
+            }
+            formData.append('receiverIds', JSON.stringify(receiverIds));
+            break;
+            
+        case 'class':
+            const classId = document.querySelector('select[name="classId"]').value;
+            if (!classId) {
+                alert('Vui lòng chọn lớp');
+                return;
+            }
+            const classRecipientTypes = Array.from(document.querySelectorAll('input[name="classRecipientTypes[]"]:checked'))
+                                             .map(checkbox => checkbox.value);
+            if (classRecipientTypes.length === 0) {
+                alert('Vui lòng chọn ít nhất một loại người nhận trong lớp');
+                return;
+            }
+            formData.append('classId', classId);
+            formData.append('classRecipientTypes', JSON.stringify(classRecipientTypes));
+            break;
+            
+        case 'all-teachers':
+        case 'all-parents':
+        case 'all-students':
+        case 'all-everyone':
+            // No additional data needed for these types
+            break;
+            
+        default:
+            alert('Vui lòng chọn loại người nhận');
+            return;
+    }
+
     // Lấy các phương thức gửi đã chọn
     const selectedMethods = Array.from(document.querySelectorAll('input[name="sendMethods[]"]:checked'))
         .map(checkbox => checkbox.value);
@@ -856,8 +909,11 @@ document.getElementById('notification-form').addEventListener('submit', function
             if (data.status === 'success') {
                 alert(data.message);
                 this.reset();
+                resetRecipientType();
                 loadMessages();
                 $('.recipient-select').val(null).trigger('change');
+                $('.multiple-recipient-select').val(null).trigger('change');
+                $('.class-select').val(null).trigger('change');
             } else {
                 alert('Lỗi: ' + data.message);
             }

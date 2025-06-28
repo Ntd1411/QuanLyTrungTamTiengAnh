@@ -641,7 +641,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 break;
 
             case "sendNotification":
-                if (empty($_POST['receiverId']) || empty($_POST['subject']) || empty($_POST['content'])) {
+                if (empty($_POST['recipientType']) || empty($_POST['subject']) || empty($_POST['content'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
                     exit;
                 }
@@ -650,82 +650,186 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $conn = connectdb();
                     $selectedMethods = isset($_POST['sendMethods']) ? json_decode($_POST['sendMethods'], true) : [];
                     $sendEmail = in_array('email', $selectedMethods);
+                    $recipientType = $_POST['recipientType'];
+                    $subject = $_POST['subject'];
+                    $content = $_POST['content'];
                     
-                    // Get receiver's email if Gmail is selected
-                    $receiverEmail = null;
-                    if ($sendEmail) {
-                        $sql = "SELECT Email FROM teachers WHERE UserID = :receiverId
-                               UNION
-                               SELECT Email FROM students WHERE UserID = :receiverId  
-                               UNION
-                               SELECT Email FROM parents WHERE UserID = :receiverId";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute([':receiverId' => $_POST['receiverId']]);
-                        $receiverEmail = $stmt->fetchColumn();
-                        
-                        if (!$receiverEmail) {
-                            echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy email của người nhận']);
-                            exit;
-                        }
-                    }
-
-                    // If Gmail is selected, try to send email first
-                    $emailSent = false;
-                    if ($sendEmail && $receiverEmail) {
-                        // Send immediate response for email processing
-                        if (ob_get_level()) {
-                            ob_flush();
-                        }
-                        flush();
-                        
-                        // Basic email sending using PHPMailer
-                        $receiver = $receiverEmail;
-                        $subject = $_POST['subject'];
-                        $message = $_POST['content'];
-                        
-                        $emailSent = sendEmail($receiver, $subject, $message);
-                        
-                        if ($emailSent['status'] === "fail") {
-                            echo json_encode([
-                                'status' => 'error', 
-                                'message' => 'Gửi email thất bại: ' . $emailSent['message']
-                            ]);
-                            exit;
-                        }
-                    }
-
-                    // Save to database only after successful email sending (if Gmail was selected)
-                    // or immediately if no Gmail sending was requested
-                    if (!$sendEmail || ($sendEmail && $emailSent['status'] === "success")) {
-                        $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
-                                VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
-
-                        $stmt = $conn->prepare($sql);
-                        $result = $stmt->execute([
-                            ':receiverId' => $_POST['receiverId'],
-                            ':subject' => $_POST['subject'],
-                            ':content' => $_POST['content']
-                        ]);
-
-                        if ($result) {
-                            if ($sendEmail && $emailSent['status'] === "success") {
-                                echo json_encode([
-                                    'status' => 'success',
-                                    'message' => '✅ Thông báo đã được gửi thành công đến email: ' . $receiverEmail
-                                ]);
-                            } else {
-                                echo json_encode([
-                                    'status' => 'success',
-                                    'message' => '✅ Thông báo đã được lưu thành công'
-                                ]);
+                    // Get recipients based on type
+                    $recipients = [];
+                    
+                    switch($recipientType) {
+                        case 'individual':
+                            if (empty($_POST['receiverId'])) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn người nhận']);
+                                exit;
                             }
-                        } else {
-                            echo json_encode([
-                                'status' => 'error',
-                                'message' => 'Không thể lưu thông báo vào cơ sở dữ liệu'
+                            $recipients[] = $_POST['receiverId'];
+                            break;
+                            
+                        case 'multiple':
+                            $receiverIds = json_decode($_POST['receiverIds'], true);
+                            if (empty($receiverIds)) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn người nhận']);
+                                exit;
+                            }
+                            $recipients = $receiverIds;
+                            break;
+                            
+                        case 'class':
+                            if (empty($_POST['classId'])) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn lớp']);
+                                exit;
+                            }
+                            $classId = $_POST['classId'];
+                            $classRecipientTypes = json_decode($_POST['classRecipientTypes'], true);
+                            
+                            if (empty($classRecipientTypes)) {
+                                echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn loại người nhận']);
+                                exit;
+                            }
+                            
+                            // Get recipients from class
+                            if (in_array('students', $classRecipientTypes)) {
+                                $sql = "SELECT UserID FROM students WHERE ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                $recipients = array_merge($recipients, $students);
+                            }
+                            
+                            if (in_array('parents', $classRecipientTypes)) {
+                                $sql = "SELECT DISTINCT spk.parent_id FROM student_parent_keys spk 
+                                       JOIN students s ON spk.student_id = s.UserID 
+                                       WHERE s.ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $parents = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                $recipients = array_merge($recipients, $parents);
+                            }
+                            
+                            if (in_array('teacher', $classRecipientTypes)) {
+                                $sql = "SELECT TeacherID FROM classes WHERE ClassID = :classId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':classId' => $classId]);
+                                $teacher = $stmt->fetchColumn();
+                                if ($teacher) {
+                                    $recipients[] = $teacher;
+                                }
+                            }
+                            break;
+                            
+                        case 'all-teachers':
+                            $sql = "SELECT UserID FROM teachers";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-parents':
+                            $sql = "SELECT UserID FROM parents";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-students':
+                            $sql = "SELECT UserID FROM students";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        case 'all-everyone':
+                            $sql = "SELECT UserID FROM teachers UNION SELECT UserID FROM students UNION SELECT UserID FROM parents";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
+                            $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                            break;
+                            
+                        default:
+                            echo json_encode(['status' => 'error', 'message' => 'Loại người nhận không hợp lệ']);
+                            exit;
+                    }
+                    
+                    if (empty($recipients)) {
+                        echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy người nhận']);
+                        exit;
+                    }
+                    
+                    $successCount = 0;
+                    $errorCount = 0;
+                    $emailErrors = [];
+                    
+                    // Process each recipient
+                    foreach ($recipients as $recipientId) {
+                        try {
+                            // Get recipient's email if email sending is enabled
+                            $recipientEmail = null;
+                            if ($sendEmail) {
+                                $sql = "SELECT Email FROM teachers WHERE UserID = :recipientId
+                                       UNION
+                                       SELECT Email FROM students WHERE UserID = :recipientId  
+                                       UNION
+                                       SELECT Email FROM parents WHERE UserID = :recipientId";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute([':recipientId' => $recipientId]);
+                                $recipientEmail = $stmt->fetchColumn();
+                            }
+                            
+                            // Send email if requested and email exists
+                            $emailSent = ['status' => 'success'];
+                            if ($sendEmail && $recipientEmail) {
+                                $emailSent = sendEmail($recipientEmail, $subject, $content);
+                                if ($emailSent['status'] === 'fail') {
+                                    $emailErrors[] = "Email to $recipientEmail: " . $emailSent['message'];
+                                }
+                            }
+                            
+                            // Save to database (save even if email fails for record keeping)
+                            $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
+                                    VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
+                            
+                            $stmt = $conn->prepare($sql);
+                            $result = $stmt->execute([
+                                ':receiverId' => $recipientId,
+                                ':subject' => $subject,
+                                ':content' => $content
                             ]);
+                            
+                            if ($result) {
+                                $successCount++;
+                            } else {
+                                $errorCount++;
+                            }
+                            
+                        } catch (Exception $e) {
+                            $errorCount++;
+                            error_log("Error sending to recipient $recipientId: " . $e->getMessage());
                         }
                     }
+                    
+                    // Prepare response message
+                    $message = "✅ Đã gửi thành công cho $successCount người";
+                    if ($errorCount > 0) {
+                        $message .= ", thất bại $errorCount người";
+                    }
+                    
+                    if ($sendEmail) {
+                        if (empty($emailErrors)) {
+                            $message .= " (bao gồm cả email)";
+                        } else {
+                            $message .= ". Một số email gửi thất bại: " . implode('; ', array_slice($emailErrors, 0, 3));
+                            if (count($emailErrors) > 3) {
+                                $message .= "...";
+                            }
+                        }
+                    }
+                    
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => $message
+                    ]);
+                    
                 } catch (Exception $e) {
                     error_log("Error sending notification: " . $e->getMessage());
                     echo json_encode([
