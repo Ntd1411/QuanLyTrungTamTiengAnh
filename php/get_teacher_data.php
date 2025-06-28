@@ -71,7 +71,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $monthly_sessions = $row ? (int)$row['monthly_sessions'] : 0;
 
 // Lấy nhật ký dạy tháng này
-$sql = "SELECT ts.SessionID, ts.SessionDate, c.ClassName, ts.Status, ts.Note
+$sql = "SELECT ts.SessionID, ts.SessionDate, c.ClassName, c.SchoolYear, c.Room, ts.Status, ts.Note
         FROM teaching_sessions ts
         JOIN classes c ON ts.ClassID = c.ClassID
         WHERE ts.TeacherID = ?
@@ -95,7 +95,7 @@ $received_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Lấy danh sách thông báo đã gửi
 $stmt = $conn->prepare("
-    SELECT m.SendDate AS SentAt, c.ClassName, m.Subject AS Type, m.Content
+    SELECT m.SendDate AS SentAt, c.ClassName, c.SchoolYear, c.Room, m.Subject AS Type, m.Content
     FROM messages m
     JOIN students s ON m.ReceiverID = s.UserID
     JOIN classes c ON s.ClassID = c.ClassID

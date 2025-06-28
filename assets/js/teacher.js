@@ -37,7 +37,7 @@ function loadTeacherDashboard() {
             nextSessionDiv.innerHTML = `
             <strong>Ngày:</strong> ${thu}, ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}<br>
             <strong>Giờ:</strong> ${nextSession.time} <br>
-            <strong>Lớp:</strong> ${nextSession.className} - ${nextSession.schoolYear || ''}
+            <strong>Lớp:</strong> ${nextSession.className} - ${nextSession.schoolYear || ''} - ${nextSession.room || ''}
         `;
         } else {
             nextSessionDiv.innerHTML = 'Không có buổi dạy nào sắp tới';
@@ -88,7 +88,7 @@ function loadTeachingLog() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${log.SessionDate}</td>
-            <td>${log.ClassName}</td>
+            <td>${log.ClassName}${log.SchoolYear ? ' - ' + log.SchoolYear : ''} - ${log.Room || ''}</td>
             <td>${log.Status}</td>
             <td>${log.Note || ''}</td>
             <td>
@@ -131,11 +131,11 @@ function deleteTeachingLog(SessionID) {
 //Popup Log Form
 // Hiện popup
 document.getElementById('add-log-btn').onclick = function () {
-    // Đổ danh sách lớp vào select
+    // Đổ danh sách lớp vào select với cú pháp: Tên lớp - Năm học
     const select = document.getElementById('log-class-select');
     select.innerHTML = '';
     teacherData.classes.forEach(cls => {
-        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName}</option>`;
+        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName} - ${cls.SchoolYear || ''} - ${cls.Room || ''}</option>`;
     });
     document.getElementById('log-date-input').value = new Date().toISOString().slice(0, 10);
     document.getElementById('add-log-modal').style.display = 'flex';
@@ -182,7 +182,7 @@ function loadClassSelect() {
         select.innerHTML = '<option value="">Chọn lớp</option>';
         teacherData.classes.forEach(cls => {
             // Hiển thị: Tên lớp - Năm học
-            select.innerHTML += `<option value="${cls.ClassID || cls.id}">${(cls.ClassName || cls.name) + ' - ' + (cls.SchoolYear || '')}</option>`;
+            select.innerHTML += `<option value="${cls.ClassID || cls.id}">${(cls.ClassName || cls.name) + ' - ' + (cls.SchoolYear || '') + (cls.Room ? ' - ' + cls.Room : '')}</option>`;
         });
     });
 }
@@ -373,7 +373,7 @@ document.getElementById('send-notification-btn').onclick = function () {
     const select = document.getElementById('notification-class-select');
     select.innerHTML = '';
     teacherData.classes.forEach(cls => {
-        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName}</option>`;
+        select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName} - ${cls.SchoolYear || ''} - ${cls.Room || ''}</option>`;
     });
     document.getElementById('homework-deadline-group').style.display = 'none';
     document.getElementById('homework-deadline-input').value = '';
@@ -508,7 +508,7 @@ function loadTeacherSentNotifications() {
         body.innerHTML += `
             <tr>
                 <td>${row.SentAt}</td>
-                <td>${row.ClassName}</td>
+                <td>${row.ClassName}${row.SchoolYear ? ' - ' + row.SchoolYear : ''}${row.Room ? ' - ' + row.Room : ''}</td>
                 <td>${row.Type}</td>
                 <td>${row.Content}</td>
             </tr>
@@ -622,7 +622,7 @@ function viewSchedule() {
         days.forEach(day => {
             const idx = day === 8 ? 6 : day - 2;
             if (idx >= 0 && idx < 7) {
-                timeSlots[time][idx] = cls.ClassName + ' - ' + (cls.SchoolYear || cls.year || '');
+                timeSlots[time][idx] = cls.ClassName + ' - ' + (cls.SchoolYear || cls.year || '') + (cls.Room ? ' - ' + cls.Room : '');
             }
         });
     });
@@ -684,7 +684,8 @@ function getNextTeachingSession() {
                     date: new Date(d),
                     className: cls.ClassName,
                     time: time,
-                    schoolYear: cls.SchoolYear || cls.year || ''
+                    schoolYear: cls.SchoolYear || cls.year || '',
+                    room: cls.Room || ''
                 };
             }
         }
