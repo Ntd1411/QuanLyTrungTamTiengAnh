@@ -293,6 +293,7 @@ function submitAttendance() {
         .then(data => {
             if (data.success) {
                 alert('Điểm danh đã được lưu');
+                viewAttendanceHistory();
             } else {
                 alert('Lưu điểm danh thất bại: ' + (data.message || 'Lỗi không xác định'));
             }
@@ -328,6 +329,7 @@ function viewAttendanceHistory() {
                             <td>${row.Status}</td>
                             <td>${row.Note || ''}</td>
                             <td>
+                                <button class="update-attendance-btn" onclick="updateAttendance('${row.StudentID}', '${row.FullName}')">Sửa</button>
                                 <button class="delete-attendance-btn" data-student-id="${row.StudentID}" onclick="deleteAttendance('${row.StudentID}')">Xóa</button>
                             </td>
                         </tr>
@@ -342,6 +344,59 @@ function viewAttendanceHistory() {
         });
 }
 
+// Hide attendance history
+function hideAttendanceHistory() {
+    const historyDiv = document.getElementById('attendance-history');
+    if (historyDiv) {
+        historyDiv.style.display = 'none';
+    }
+}
+
+// Update attendance
+function updateAttendance(studentId, studentName) {
+    // Điền dữ liệu vào form
+    document.getElementById('student-name-input').value = studentName;
+    document.getElementById('status-select').value = ''; // Reset trạng thái
+    document.getElementById('note-input').value = '';   // Reset ghi chú
+    document.getElementById('student-id-input').value = studentId; // Lưu studentId
+
+    // Hiển thị modal
+    document.getElementById('attendance-modal').style.display = 'flex';
+}
+
+function saveUpdate() {
+    const studentId = document.getElementById('student-id-input').value; // Lấy từ hidden input
+    const classId = document.getElementById('class-select').value;
+    const date = document.getElementById('attendance-date').value;
+    const status = document.getElementById('status-select').value;
+    const note = document.getElementById('note-input').value;
+    if (!status) {
+        alert('Vui lòng chọn trạng thái!');
+        return;
+    }
+
+    fetch('../php/update_attendance.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classId, date, studentId, status, note })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã cập nhật điểm danh!');
+                viewAttendanceHistory();
+                document.getElementById('attendance-modal').style.display = 'none'; // Sửa cách xóa modal
+            } else {
+                alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi cập nhật điểm danh!');
+            console.error(err);
+        });
+}
+
+// Delete attendance
 function deleteAttendance(studentId) {
     const classId = document.getElementById('class-select').value;
     const date = document.getElementById('attendance-date').value;
@@ -376,6 +431,7 @@ document.getElementById('send-notification-btn').onclick = function () {
         select.innerHTML += `<option value="${cls.ClassID}">${cls.ClassName} - ${cls.SchoolYear || ''} - ${cls.Room || ''}</option>`;
     });
     document.getElementById('homework-deadline-group').style.display = 'none';
+    document.getElementById('notification-type-select').value = '';
     document.getElementById('homework-deadline-input').value = '';
     document.getElementById('notification-content-input').value = '';
     document.getElementById('send-notification-modal').style.display = 'flex';
@@ -435,12 +491,13 @@ function submitSendNotification() {
                                 alert('Đã gửi thông báo, nhưng thêm bài tập về nhà thất bại!');
                             }
                             closeSendNotificationModal();
-                            loadTeacherSentNotifications();
+                            fetchTeacherSentNotifications();
+                            // Cập nhật lại danh sách thông báo đã gửi
                         });
                 } else {
                     alert('Đã gửi thông báo!');
                     closeSendNotificationModal();
-                    loadTeacherSentNotifications();
+                    fetchTeacherSentNotifications();
                 }
             } else {
                 alert('Gửi thông báo thất bại!');
@@ -498,6 +555,28 @@ function showTeacherReceivedDetail(msg) {
         <p><strong>Ngày:</strong> ${msg.date || msg.SentAt}</p>
         <div class="message-body">${msg.content || msg.Content}</div>
     `;
+}
+
+// Fetch lại dữ liệu thông báo sau khi gửi thành công để làm mới bảng
+function fetchTeacherSentNotifications() {
+    fetch('../php/new_teacher_sent_data.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ senderId: teacherData.id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                teacherData.sent_notifications = data.notifications; // Cập nhật dữ liệu
+                loadTeacherSentNotifications(); // Làm mới bảng
+            } else {
+                alert('Không thể tải danh sách thông báo!');
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi tải danh sách thông báo!');
+            console.error(err);
+        });
 }
 
 // Load sent notifications

@@ -192,6 +192,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="button-center">
                     <button onclick="submitAttendance()">Lưu điểm danh</button>
                     <button onclick="viewAttendanceHistory()" style="margin-left:12px;">Xem lịch sử điểm danh</button>
+                    <button onclick="hideAttendanceHistory()" style="margin-left:12px;">Ẩn lịch sử điểm danh</button>
                 </div>
                 <div id="attendance-history" class="table-container">
                     <table>
@@ -200,12 +201,38 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Họ và tên</th>
                                 <th>Trạng thái</th>
                                 <th>Ghi chú</th>
-                                <th></th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-history-body"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <div id="attendance-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-modal" onclick="document.getElementById('attendance-modal').style.display='none'">X</span>
+                <h3>Sửa điểm danh</h3>
+                <div class="form-group">
+                    <label>Tên học sinh:</label>
+                    <input type="text" id="student-name-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái:</label>
+                    <select id="status-select">
+                        <option value="Có mặt">Có mặt</option>
+                        <option value="Vắng mặt">Vắng mặt</option>
+                        <option value="Đi muộn">Đi muộn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ghi chú:</label>
+                    <input type="text" id="note-input">
+                </div>
+                <input type="hidden" id="student-id-input"> <!-- Thêm hidden input -->
+                <button onclick="saveUpdate()">Cập nhật</button>
+                <button onclick="document.getElementById('attendance-modal').style.display='none'">Hủy</button>
             </div>
         </div>
 
