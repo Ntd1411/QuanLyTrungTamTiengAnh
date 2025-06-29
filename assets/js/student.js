@@ -158,16 +158,23 @@ function loadAttendance() {
             historyBody.appendChild(row);
         });
     }
-
-    updateAttendanceRate();
 }
 
 function updateAttendanceProgress(attended, total) {
-    const rate = (attended / total) * 100;
-    const progress = (rate / 100) * 360; // Convert to degrees
+    // Đầu vào (attended, total) giờ đây đã được đảm bảo là số
+    const rate = total > 0 ? (attended / total) * 100 : 0;
+    const progress = (rate / 100) * 360;
 
     const progressCircle = document.querySelector('.progress-circle');
+    if (!progressCircle) {
+        console.error("Không tìm thấy element '.progress-circle'");
+        return;
+    }
     const progressValue = progressCircle.querySelector('.progress-value');
+    if (!progressValue) {
+        console.error("Không tìm thấy element '.progress-value'");
+        return;
+    }
 
     // Create progress element if it doesn't exist
     let progressElement = progressCircle.querySelector('.progress');
@@ -177,23 +184,33 @@ function updateAttendanceProgress(attended, total) {
         progressCircle.appendChild(progressElement);
     }
 
-    // Update progress and value
+    // Update progress circle style
     progressCircle.style.setProperty('--progress', progress + 'deg');
 
-    // Animate the percentage
+    // Đặt giá trị cuối cùng ngay lập tức để đảm bảo hiển thị đúng
+    progressValue.textContent = Math.round(rate) + '%';
+    
+    // Animation (tùy chọn)
     let currentValue = 0;
-    const step = rate / 30; // Divide animation into 30 steps
+    const animationDuration = 500;
+    const framesPerSecond = 60;
+    const totalFrames = (animationDuration / 1000) * framesPerSecond;
+    // Đảm bảo step không phải là 0 để tránh vòng lặp vô hạn nếu rate rất nhỏ
+    const step = rate > 0 ? rate / totalFrames : 0;
 
-    const animateValue = () => {
-        if (currentValue < rate) {
+    if (step > 0) {
+        const animateValue = () => {
             currentValue += step;
-            if (currentValue > rate) currentValue = rate;
+            if (currentValue >= rate) {
+                progressValue.textContent = Math.round(rate) + '%';
+                return;
+            }
             progressValue.textContent = Math.round(currentValue) + '%';
             requestAnimationFrame(animateValue);
-        }
-    };
-
-    animateValue();
+        };
+        progressValue.textContent = '0%'; 
+        animateValue();
+    }
 }
 
 // Load homework
@@ -311,34 +328,4 @@ function updateProfile() {
             alert('Có lỗi xảy ra khi cập nhật!');
             console.error(err);
         });
-}
-
-function updateAttendanceRate() {
-    const attended = studentData.attendance.attended;
-    const total = attended + studentData.attendance.absent;
-    const rate = Math.round((attended / total) * 100);
-
-    // Cập nhật biểu đồ tròn
-    const progressCircle = document.getElementById('attendance-rate');
-    progressCircle.style.setProperty('--progress', rate + '%');
-
-    // Cập nhật giá trị
-    const progressValue = progressCircle.querySelector('.progress-value');
-    progressValue.textContent = rate + '%';
-
-    // Hiệu ứng số đếm
-    let currentValue = 0;
-    const duration = 1000;
-    const increment = rate / (duration / 16);
-
-    const animate = () => {
-        if (currentValue < rate) {
-            currentValue += increment;
-            if (currentValue > rate) currentValue = rate;
-            progressValue.textContent = Math.round(currentValue) + '%';
-            requestAnimationFrame(animate);
-        }
-    };
-
-    animate();
 }
