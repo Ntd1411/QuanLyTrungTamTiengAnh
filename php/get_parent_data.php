@@ -19,7 +19,7 @@ if (!$username) {
 $conn = connectdb(); // Hàm này phải trả về PDO object
 
 // Lấy thông tin phụ huynh
-$sql = "SELECT p.UserID, p.FullName, p.Email, p.Phone, p.ZaloID, p.UnpaidAmount
+$sql = "SELECT p.UserID, p.FullName, p.Email, p.Phone, p.ZaloID, p.UnpaidAmount, p.isShowTeacher, u.Username, u.Role
         FROM parents p
         JOIN users u ON p.UserID = u.UserID
         WHERE u.Username = ?";
@@ -34,14 +34,29 @@ if (!$parent) {
 }
 
 // Lấy danh sách con
-$sql = "SELECT s.UserID, s.FullName, s.ClassID, c.ClassName, t.FullName AS TeacherName
-        FROM student_parent_keys spk
-        JOIN students s ON spk.student_id = s.UserID
-        LEFT JOIN classes c ON s.ClassID = c.ClassID
-        LEFT JOIN teachers t ON c.TeacherID = t.UserID
-        WHERE spk.parent_id = ?";
+$sql = "SELECT 
+    s.UserID, 
+    s.FullName, 
+    s.ClassID, 
+    c.ClassName,
+    CASE 
+        WHEN ? = 1 THEN 
+            CONCAT_WS(' - ', t.FullName, t.Phone) 
+        ELSE 
+            'không có thông tin giáo viên'
+    END AS TeacherName
+FROM 
+    student_parent_keys spk
+JOIN 
+    students s ON spk.student_id = s.UserID
+LEFT JOIN 
+    classes c ON s.ClassID = c.ClassID
+LEFT JOIN 
+    teachers t ON c.TeacherID = t.UserID
+WHERE 
+    spk.parent_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->execute([$parent['UserID']]);
+$stmt->execute([$parent['isShowTeacher'], $parent['UserID']]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Lấy học phí từng con
