@@ -471,8 +471,8 @@ function loadStatistics() {
         return;
     }
 
-    console.log(startDate);
-    console.log(endDate);
+    // console.log(startDate);
+    // console.log(endDate);
 
     fetch(`admincrud.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET'

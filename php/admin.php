@@ -179,16 +179,16 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Quản Lý Lớp Học</h2>
                 <form id="class-form" class="class-form">
                     <div class="form-group">
-                        <label>Tên lớp (VD: Lớp 3.1):</label>
+                        <label for="class-name">Tên lớp (VD: Lớp 3.1):</label>
                         <input type="text" name="className" id="class-name" placeholder="Nhập tên lớp" required>
                     </div>
                     <div class="form-group">
-                        <label>Năm học:</label>
+                        <label for="class-year">Năm học:</label>
                         <input type="number" name="schoolYear" id="class-year" placeholder="VD: 2023" required>
                     </div>
                     <div class="form-group">
-                        <label>Giáo viên phụ trách:</label>
-                        <select name="teacherId" class="select2-search" required>
+                        <label for="class-teacher">Giáo viên phụ trách:</label>
+                        <select name="teacherId" id="class-teacher" class="select2-search" required>
                             <option value="">Chọn giáo viên</option>
                             <?php
                             $teachers = getDataFromTable("teachers");
@@ -201,27 +201,20 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Ngày bắt đầu:</label>
+                        <label for="class-start-date">Ngày bắt đầu:</label>
                         <input type="date" name="startDate" id="class-start-date" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày kết thúc:</label>
+                        <label for="class-end-date">Ngày kết thúc:</label>
                         <input type="date" name="endDate" id="class-end-date" required>
                     </div>
                     <div class="form-group">
-                        <label>Giờ học: (VD: Thứ 2, 4, 6 - 18:00)</label>
-                        <!-- <select id="class-time" name="classTime" required>
-                            <option value="">Chọn giờ học</option>
-                            <option value="07:00-09:00">07:00-09:00</option>
-                            <option value="09:00-11:00">09:00-11:00</option>
-                            <option value="15:00-17:00">15:00-17:00</option>
-                            <option value="19:00-21:00">19:00-21:00</option>
-                        </select> -->
-                        <input type="text" name="classTime" required>
+                        <label for="class-time">Giờ học: (VD: Thứ 2, 4, 6 - 18:00)</label>
+                        <input type="text" name="classTime" id="class-time" required>
                     </div>
                     <div class="form-group">
-                        <label>Phòng học:</label>
-                        <select name="room" class="select2-search" required>
+                        <label for="class-room">Phòng học:</label>
+                        <select name="room" id="class-room" class="select2-search" required>
                             <option value="">Chọn phòng học</option>
                             <option value="P201">P201</option>
                             <option value="P202">P202</option>
@@ -230,7 +223,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Học phí (VNĐ):</label>
+                        <label for="class-tuition">Học phí (VNĐ):</label>
                         <input type="number" name="classTuition" id="class-tuition" placeholder="Nhập học phí">
                     </div>
                     <div class="form-actions">
@@ -268,19 +261,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Quản Lý Giáo Viên</h2>
                 <form id="teacher-form" class="teacher-form">
                     <div class="form-group">
-                        <label>Họ và tên:</label>
+                        <label for="teacher-fullname">Họ và tên:</label>
                         <input type="text" name="teacherFullName" id="teacher-fullname" required>
                     </div>
                     <div class="form-group">
-                        <label>Tên đăng nhập:</label>
+                        <label for="teacher-username">Tên đăng nhập:</label>
                         <input type="text" name="teacherUsername" id="teacher-username" required>
                     </div>
                     <div class="form-group">
-                        <label>Mật khẩu:</label>
+                        <label for="teacher-password">Mật khẩu:</label>
                         <input type="password" name="teacherPassword" id="teacher-password">
                     </div>
                     <div class="form-group">
-                        <label>Giới tính:</label>
+                        <label for="teacher-gender">Giới tính:</label>
                         <select id="teacher-gender" name="teacherGender" required>
                             <option value="">Chọn giới tính</option>
                             <option value="Nam">Nam</option>
@@ -288,24 +281,24 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Email:</label>
+                        <label for="teacher-email">Email:</label>
                         <input type="email" name="teacherEmail" id="teacher-email" required>
                     </div>
                     <div class="form-group">
-                        <label>Số điện thoại:</label>
+                        <label for="teacher-phone">Số điện thoại:</label>
                         <input type="tel" name="teacherPhone" id="teacher-phone" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày sinh:</label>
+                        <label for="teacher-birthdate">Ngày sinh:</label>
                         <input type="date" name="teacherBirthdate" id="teacher-birthdate" required>
                     </div>
                     <div class="form-group">
-                        <label>Lương (VNĐ):</label>
+                        <label for="teacher-salary">Lương (VNĐ):</label>
                         <input type="number" name="teacherSalary" id="teacher-salary" required>
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('teacher-form').reset()" class="refresh">Làm mới</button>
-                        <button type="submit" onclick="addTeacher()">Thêm giáo viên</button>
+                        <button type="submit">Thêm giáo viên</button>
                     </div>
                 </form>
 
@@ -334,19 +327,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Quản Lý Học Sinh</h2>
                 <form id="student-form" class="student-form">
                     <div class="form-group">
-                        <label>Họ và tên:</label>
+                        <label for="student-fullname">Họ và tên:</label>
                         <input type="text" name="studentFullName" id="student-fullname" required>
                     </div>
                     <div class="form-group">
-                        <label>Tên đăng nhập:</label>
+                        <label for="student-username">Tên đăng nhập:</label>
                         <input type="text" name="studentUsername" id="student-username" required>
                     </div>
                     <div class="form-group">
-                        <label>Mật khẩu:</label>
+                        <label for="student-password">Mật khẩu:</label>
                         <input type="password" name="studentPassword" id="student-password">
                     </div>
                     <div class="form-group">
-                        <label>Giới tính:</label>
+                        <label for="student-gender">Giới tính:</label>
                         <select id="student-gender" name="studentGender" required>
                             <option value="">Chọn giới tính</option>
                             <option value="Nam">Nam</option>
@@ -354,20 +347,20 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Email:</label>
+                        <label for="student-email">Email:</label>
                         <input type="email" name="studentEmail" id="student-email" required>
                     </div>
                     <div class="form-group">
-                        <label>Số điện thoại:</label>
+                        <label for="student-phone">Số điện thoại:</label>
                         <input type="tel" name="studentPhone" id="student-phone" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày sinh:</label>
+                        <label for="student-birthdate">Ngày sinh:</label>
                         <input type="date" name="studentDate" id="student-birthdate" required>
                     </div>
                     <div class="form-group">
-                        <label>Lớp:</label>
-                        <select name="studentClass" class="select2-search">
+                        <label for="student-class">Lớp:</label>
+                        <select name="studentClass" id="student-class" class="select2-search">
                             <option value="">Chọn lớp</option>
                             <?php
                             $classes = getDataFromTable("classes");
@@ -381,8 +374,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Phụ huynh (có thể chọn nhiều):</label>
-                        <select name="parentID[]" class="select2-search" multiple>
+                        <label for="student-parent">Phụ huynh (có thể chọn nhiều):</label>
+                        <select name="parentID[]" id="student-parent" class="select2-search" multiple>
                             <option value="">Chọn phụ huynh</option>
                             <?php
                             $parents = getDataFromTable("parents");
@@ -395,7 +388,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Giảm học phí (%):</label>
+                        <label for="student-discount">Giảm học phí (%):</label>
                         <input type="number" name="studentDiscount" id="student-discount" min="0" max="100" step="1" placeholder="0-100">
                     </div>
 
@@ -433,19 +426,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Quản Lý Phụ Huynh</h2>
                 <form id="parent-form" class="parent-form">
                     <div class="form-group">
-                        <label>Họ và tên:</label>
+                        <label for="parent-fullname">Họ và tên:</label>
                         <input type="text" name="parentFullName" id="parent-fullname" required>
                     </div>
                     <div class="form-group">
-                        <label>Tên đăng nhập:</label>
+                        <label for="parent-username">Tên đăng nhập:</label>
                         <input type="text" name="parentUserName" id="parent-username" required>
                     </div>
                     <div class="form-group">
-                        <label>Mật khẩu:</label>
+                        <label for="parent-password">Mật khẩu:</label>
                         <input type="password" name="parentPassword" id="parent-password">
                     </div>
                     <div class="form-group">
-                        <label>Giới tính:</label>
+                        <label for="parent-gender">Giới tính:</label>
                         <select id="parent-gender" name="parentGender" required>
                             <option value="">Chọn giới tính</option>
                             <option value="Nam">Nam</option>
@@ -453,23 +446,23 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Email:</label>
+                        <label for="parent-email">Email:</label>
                         <input type="email" name="parentEmail" id="parent-email" required>
                     </div>
                     <div class="form-group">
-                        <label>Số điện thoại:</label>
+                        <label for="parent-phone">Số điện thoại:</label>
                         <input type="tel" name="parentPhone" id="parent-phone" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày sinh:</label>
+                        <label for="parent-birthdate">Ngày sinh:</label>
                         <input type="date" name="parentBirthdate" id="parent-birthdate" required>
                     </div>
                     <div class="form-group">
-                        <label>Zalo ID:</label>
+                        <label for="parent-zalo">Zalo ID:</label>
                         <input type="text" name="parentZalo" id="parent-zalo" placeholder="Nhập Zalo ID">
                     </div>
                     <div class="form-group">
-                        <label>Hiển thị thông tin giáo viên:</label>
+                        <label for="parent-show-teacher">Hiển thị thông tin giáo viên:</label>
                         <select name="isShowTeacher" id="parent-show-teacher">
                             <option value="0">Không cho phép xem</option>
                             <option value="1">Cho phép xem</option>
@@ -508,7 +501,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Thống Kê</h2>
                 <div class="form-group">
                     <div class="filter-type">
-                        <label>Chọn cách thống kê:</label>
+                        <label for="stats-filter-type">Chọn cách thống kê:</label>
                         <select id="stats-filter-type" onchange="changeFilterType()">
                             <option value="month">Theo tháng</option>
                             <option value="custom">Tùy chọn</option>
@@ -632,7 +625,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <h2>Gửi thông báo</h2>
                 <form id="notification-form" class="notification-form">
                     <div class="form-group">
-                        <label>Loại người nhận:</label>
+                        <label for="recipient-type">Loại người nhận:</label>
                         <select id="recipient-type" name="recipientType" onchange="changeRecipientType()" required>
                             <option value="">Chọn loại người nhận</option>
                             <option value="individual">Gửi cho 1 người</option>
@@ -647,8 +640,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <!-- Individual recipient -->
                     <div class="form-group" id="individual-recipient" style="display: none;">
-                        <label>Người nhận:</label>
-                        <select name="receiverId" class="recipient-select" style="width: 100%; padding:10px 12px;">
+                        <label for="receiver-id">Người nhận:</label>
+                        <select name="receiverId" id="receiver-id" class="recipient-select" style="width: 100%; padding:10px 12px;">
                             <option value="">Chọn người nhận</option>
                             <?php
                             // Get teachers
@@ -686,8 +679,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <!-- Multiple recipients -->
                     <div class="form-group" id="multiple-recipients" style="display: none;">
-                        <label>Người nhận (có thể chọn nhiều):</label>
-                        <select name="receiverIds[]" class="multiple-recipient-select" style="width: 100%; padding:10px 12px;" multiple>
+                        <label for="receiver-ids">Người nhận (có thể chọn nhiều):</label>
+                        <select name="receiverIds[]" id="receiver-ids" class="multiple-recipient-select" style="width: 100%; padding:10px 12px;" multiple>
                             <?php
                             // Get teachers
                             $teachers = getDataFromTable("teachers");
@@ -724,8 +717,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <!-- Class-based recipients -->
                     <div class="form-group" id="class-recipients" style="display: none;">
-                        <label>Chọn lớp:</label>
-                        <select name="classId" class="class-select" style="width: 100%; padding:10px 12px;">
+                        <label for="class-select">Chọn lớp:</label>
+                        <select name="classId" id="class-select" class="class-select" style="width: 100%; padding:10px 12px;">
                             <option value="">Chọn lớp</option>
                             <?php
                             $classes = getDataFromTable("classes");
@@ -738,16 +731,16 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             ?>
                         </select>
                         <div style="margin-top: 10px;">
-                            <label>Gửi cho:</label>
-                            <div class="checkbox-group" style="display:flex;">
-                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
-                                    <input type="checkbox" name="classRecipientTypes[]" value="students" style="height: 1rem;" checked> <span>Học sinh</span>
+                            <label for="checkbox-group">Gửi cho:</label>
+                            <div class="checkbox-group" id="checkbox-group" style="display:flex;">
+                                <label for="class-students" style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" id="class-students" name="classRecipientTypes[]" value="students" style="height: 1rem;" checked> <span>Học sinh</span>
                                 </label>
-                                <label style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
-                                    <input type="checkbox" name="classRecipientTypes[]" value="parents" style="height: 1rem;"><span> Phụ huynh</span>
+                                <label for="class-parents" style="margin-right: 15px; display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" id="class-parents" name="classRecipientTypes[]" value="parents" style="height: 1rem;"><span> Phụ huynh</span>
                                 </label>
-                                <label style=" display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
-                                    <input type="checkbox" name="classRecipientTypes[]" value="teacher" style="height: 1rem;"> <span>Giáo viên phụ trách</span>
+                                <label for="class-teachers" style=" display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                                    <input type="checkbox" id="class-teachers" name="classRecipientTypes[]" value="teacher" style="height: 1rem;"> <span>Giáo viên phụ trách</span>
                                 </label>
                             </div>
                         </div>
@@ -761,18 +754,18 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
 
                     <div class="form-group">
-                        <label>Chủ đề:</label>
-                        <input type="text" name="subject" required>
+                        <label for="notification-subject">Chủ đề:</label>
+                        <input type="text" name="subject" id="notification-subject" required>
                     </div>
                     <div class="form-group">
-                        <label>Nội dung:</label>
-                        <textarea name="content" required rows="4"></textarea>
+                        <label for="notification-content">Nội dung:</label>
+                        <textarea name="content" id="notification-content" required rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Phương thức gửi:</label>
-                        <div class="send-methods">
-                            <label>
-                                <input type="checkbox" name="sendMethods[]" value="email"> Gửi qua Email
+                        <label for="send-methods">Phương thức gửi:</label>
+                        <div class="send-methods" id="send-methods">
+                            <label for="send-email">
+                                <input type="checkbox" id="send-email" name="sendMethods[]" value="email"> Gửi qua Email
                             </label>
                         </div>
                     </div>
@@ -851,15 +844,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <h3>Đổi mật khẩu</h3>
                         <form id="admin-password-form">
                             <div class="form-group">
-                                <label>Mật khẩu hiện tại:</label>
+                                <label for="current-password">Mật khẩu hiện tại:</label>
                                 <input type="password" id="current-password" name="currentPassword" required>
                             </div>
                             <div class="form-group">
-                                <label>Mật khẩu mới:</label>
+                                <label for="new-password">Mật khẩu mới:</label>
                                 <input type="password" id="new-password" name="newPassword" required>
                             </div>
                             <div class="form-group">
-                                <label>Xác nhận mật khẩu mới:</label>
+                                <label for="confirm-password">Xác nhận mật khẩu mới:</label>
                                 <input type="password" id="confirm-password" name="confirmPassword" required>
                             </div>
                             <div class="form-actions">

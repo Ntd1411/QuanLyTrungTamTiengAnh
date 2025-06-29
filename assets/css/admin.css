@@ -1534,6 +1534,7 @@ textarea {
 }
 
 .dataTables_paginate .paginate_button {
+    background-color: #bfbfbf !important;
     padding: 6px 12px;
     margin: 0 2px;
     border: 1px solid #ddd;
