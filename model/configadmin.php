@@ -202,38 +202,90 @@ function addTeacher($fullname, $birthdate, $gender, $username, $password, $email
         $conn = connectdb();
         error_log("AddTeacher params: $fullname, $birthdate, $gender, $username, $email, $phone, $salary");
 
+        // Begin transaction
+        $conn->beginTransaction();
+
         // Kiểm tra username đã tồn tại chưa
         $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([':username' => $username]);
         if ($checkStmt->fetchColumn() > 0) {
+            $conn->rollback();
             return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
         }
 
-        // Chuẩn bị và gọi stored procedure
-        $stmt = $conn->prepare("CALL AddNewTeacher(?, ?, ?, ?, ?, ?, ?, ?)");
+        // Generate new teacher ID
+        $counterSql = "SELECT next_id FROM id_counters WHERE role_prefix = 'GV'";
+        $counterStmt = $conn->prepare($counterSql);
+        $counterStmt->execute();
+        $nextId = $counterStmt->fetchColumn();
+        
+        if (!$nextId) {
+            // Initialize counter if not exists
+            $initSql = "INSERT INTO id_counters (role_prefix, next_id) VALUES ('GV', 1)";
+            $conn->prepare($initSql)->execute();
+            $nextId = 1;
+        }
+        
+        $teacherId = 'GV' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+
+        // Update counter
+        $updateCounterSql = "UPDATE id_counters SET next_id = next_id + 1 WHERE role_prefix = 'GV'";
+        $conn->prepare($updateCounterSql)->execute();
+
+        // Hash password
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt->execute([
-            $username,
-            $password_hashed,
-            $fullname,
-            $gender,
-            $email,
-            $phone,
-            $birthdate,
-            $salary
+        // Insert user record
+        $userSql = "INSERT INTO users (UserID, Username, Password, Role) VALUES (:userId, :username, :password, 1)";
+        $userStmt = $conn->prepare($userSql);
+        $userResult = $userStmt->execute([
+            ':userId' => $teacherId,
+            ':username' => $username,
+            ':password' => $password_hashed
         ]);
 
+        if (!$userResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo tài khoản người dùng'];
+        }
+
+        // Insert teacher record
+        $teacherSql = "INSERT INTO teachers (UserID, FullName, Gender, Email, Phone, BirthDate, Salary) 
+                       VALUES (:userId, :fullname, :gender, :email, :phone, :birthdate, :salary)";
+        $teacherStmt = $conn->prepare($teacherSql);
+        $teacherResult = $teacherStmt->execute([
+            ':userId' => $teacherId,
+            ':fullname' => $fullname,
+            ':gender' => $gender,
+            ':email' => $email,
+            ':phone' => $phone,
+            ':birthdate' => $birthdate,
+            ':salary' => $salary
+        ]);
+
+        if (!$teacherResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo thông tin giáo viên'];
+        }
+
+        // Commit transaction
+        $conn->commit();
         return ['status' => 'success', 'message' => 'Thêm giáo viên thành công'];
+
     } catch (PDOException $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("Database Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
     } catch (Exception $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("General Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
     } finally {
-        $stmt = null;
         $conn = null;
     }
 }
@@ -299,50 +351,88 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
         $conn = connectdb();
         error_log("AddStudent params: $fullname, $birthdate, $gender, $username, $email, $phone, $classId");
 
-        // Kiểm tra username đã tồn tại chưa
-        $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
-        $checkStmt = $conn->prepare($checkSql);
-        $checkStmt->execute([':username' => $username]);
-        if ($checkStmt->fetchColumn() > 0) {
-            return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
-        }
+        // Begin transaction
+        $conn->beginTransaction();
 
-        // Thêm học sinh dùng stored procedure
-        $stmt = $conn->prepare("CALL AddNewStudent(?, ?, ?, ?, ?, ?, ?)");
+        // Generate new student ID
+        $counterSql = "SELECT next_id FROM id_counters WHERE role_prefix = 'HV'";
+        $counterStmt = $conn->prepare($counterSql);
+        $counterStmt->execute();
+        $nextId = $counterStmt->fetchColumn();
+        
+        if (!$nextId) {
+            // Initialize counter if not exists
+            $initSql = "INSERT INTO id_counters (role_prefix, next_id) VALUES ('HV', 1)";
+            $conn->prepare($initSql)->execute();
+            $nextId = 1;
+        }
+        
+        $studentId = 'HV' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+
+        // Update counter
+        $updateCounterSql = "UPDATE id_counters SET next_id = next_id + 1 WHERE role_prefix = 'HV'";
+        $conn->prepare($updateCounterSql)->execute();
+
+        // Hash password
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt->execute([
-            $username,
-            $password_hashed,
-            $fullname,
-            $gender,
-            $email,
-            $phone,
-            $birthdate
+        // Insert user record
+        $userSql = "INSERT INTO users (UserID, Username, Password, Role) VALUES (:userId, :username, :password, 2)";
+        $userStmt = $conn->prepare($userSql);
+        $userResult = $userStmt->execute([
+            ':userId' => $studentId,
+            ':username' => $username,
+            ':password' => $password_hashed
         ]);
 
-        // Lấy UserID của học sinh vừa thêm
-        $userId = $conn->query("SELECT UserID FROM users WHERE Username = '$username'")->fetch(PDO::FETCH_COLUMN);
-
-        // Cập nhật ClassID nếu có
-        if ($classId != "") {
-            $updateSql = "UPDATE students SET ClassID = :classId WHERE UserID = :userId";
-            $updateStmt = $conn->prepare($updateSql);
-            $updateStmt->execute([
-                ':classId' => $classId,
-                ':userId' => $userId
-            ]);
+        if (!$userResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo tài khoản người dùng'];
         }
 
-        // Cập nhật giảm giá học phí
-        if ($classId != "") {
-            $updateSql = "UPDATE tuition SET Discount = :discount 
-                         WHERE StudentID = :userId AND Status = 'Chưa đóng'";
-            $updateStmt = $conn->prepare($updateSql);
-            $updateStmt->execute([
-                ':discount' => $discount,
-                ':userId' => $userId
-            ]);
+        // Insert student record
+        $studentSql = "INSERT INTO students (UserID, FullName, Gender, Email, Phone, BirthDate, ClassID) 
+                       VALUES (:userId, :fullname, :gender, :email, :phone, :birthdate, :classId)";
+        $studentStmt = $conn->prepare($studentSql);
+        $studentResult = $studentStmt->execute([
+            ':userId' => $studentId,
+            ':fullname' => $fullname,
+            ':gender' => $gender,
+            ':email' => $email,
+            ':phone' => $phone,
+            ':birthdate' => $birthdate,
+            ':classId' => $classId ?: null
+        ]);
+
+        if (!$studentResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo thông tin học sinh'];
+        }
+
+        // Create tuition record if student is assigned to a class
+        if (!empty($classId)) {
+            // Get class tuition
+            $classSql = "SELECT Tuition, ClassName FROM classes WHERE ClassID = :classId";
+            $classStmt = $conn->prepare($classSql);
+            $classStmt->execute([':classId' => $classId]);
+            $classInfo = $classStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($classInfo) {
+                $tuitionSql = "INSERT INTO tuition (StudentID, Amount, Discount, DueDate, Status, Note) 
+                              VALUES (:studentId, :amount, :discount, DATE_ADD(NOW(), INTERVAL 10 DAY), 'Chưa đóng', :note)";
+                $tuitionStmt = $conn->prepare($tuitionSql);
+                $tuitionResult = $tuitionStmt->execute([
+                    ':studentId' => $studentId,
+                    ':amount' => $classInfo['Tuition'],
+                    ':discount' => $discount,
+                    ':note' => 'Học phí lớp ' . $classInfo['ClassName'] . ' - ' . date('m/Y')
+                ]);
+
+                if (!$tuitionResult) {
+                    $conn->rollback();
+                    return ['status' => 'error', 'message' => 'Lỗi khi tạo thông tin học phí'];
+                }
+            }
         }
 
         // Thêm mối quan hệ phụ huynh - học sinh nếu có
@@ -352,19 +442,33 @@ function addStudent($fullname, $birthdate, $gender, $username, $password, $email
 
             foreach ($parentIds as $parentId) {
                 if (!empty($parentId)) {
-                    $keyStmt->execute([
-                        ':studentId' => $userId,
+                    $keyResult = $keyStmt->execute([
+                        ':studentId' => $studentId,
                         ':parentId' => $parentId
                     ]);
+
+                    if (!$keyResult) {
+                        $conn->rollback();
+                        return ['status' => 'error', 'message' => 'Lỗi khi liên kết với phụ huynh'];
+                    }
                 }
             }
         }
 
+        // Commit transaction
+        $conn->commit();
         return ['status' => 'success', 'message' => 'Thêm học sinh thành công'];
+
     } catch (PDOException $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("Database Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
     } catch (Exception $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("General Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
     } finally {
@@ -379,57 +483,88 @@ function addParent($fullname, $birthdate, $gender, $username, $password, $email,
         $conn = connectdb();
         error_log("addParent params: $fullname, $birthdate, $gender, $username, $email, $phone, $zalo, $isShowTeacher");
 
+        // Begin transaction
+        $conn->beginTransaction();
+
         // Kiểm tra username đã tồn tại chưa
         $checkSql = "SELECT COUNT(*) FROM users WHERE Username = :username";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([':username' => $username]);
         if ($checkStmt->fetchColumn() > 0) {
+            $conn->rollback();
             return ['status' => 'error', 'message' => 'Tên đăng nhập đã tồn tại'];
         }
 
-        // Thêm phụ huynh dùng stored procedure
-        $stmt = $conn->prepare("CALL AddNewParent(?, ?, ?, ?, ?, ?, ?)");
+        // Generate new parent ID
+        $counterSql = "SELECT next_id FROM id_counters WHERE role_prefix = 'PH'";
+        $counterStmt = $conn->prepare($counterSql);
+        $counterStmt->execute();
+        $nextId = $counterStmt->fetchColumn();
+        
+        if (!$nextId) {
+            // Initialize counter if not exists
+            $initSql = "INSERT INTO id_counters (role_prefix, next_id) VALUES ('PH', 1)";
+            $conn->prepare($initSql)->execute();
+            $nextId = 1;
+        }
+        
+        $parentId = 'PH' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+
+        // Update counter
+        $updateCounterSql = "UPDATE id_counters SET next_id = next_id + 1 WHERE role_prefix = 'PH'";
+        $conn->prepare($updateCounterSql)->execute();
+
+        // Hash password
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt->execute([
-            $username,
-            $password_hashed,
-            $fullname,
-            $gender,
-            $email,
-            $phone,
-            $birthdate
+        // Insert user record
+        $userSql = "INSERT INTO users (UserID, Username, Password, Role) VALUES (:userId, :username, :password, 3)";
+        $userStmt = $conn->prepare($userSql);
+        $userResult = $userStmt->execute([
+            ':userId' => $parentId,
+            ':username' => $username,
+            ':password' => $password_hashed
         ]);
 
-        // Chờ stored procedure hoàn thành
-        $stmt->closeCursor();
-
-        // Lấy UserID của phụ huynh vừa thêm
-        $userId = $conn->query("SELECT UserID FROM users WHERE Username = '$username'")->fetch(PDO::FETCH_COLUMN);
-
-        // Bắt đầu transaction cho phần cập nhật
-        $conn->beginTransaction();
-
-        try {
-            // Cập nhật Zalo và isShowTeacher
-            $updateSql = "UPDATE parents SET ZaloID = :zalo, isShowTeacher = :isShow WHERE UserID = :userId";
-            $updateStmt = $conn->prepare($updateSql);
-            $updateStmt->execute([
-                ':zalo' => $zalo,
-                ':isShow' => $isShowTeacher,
-                ':userId' => $userId
-            ]);
-
-            $conn->commit();
-            return ['status' => 'success', 'message' => 'Thêm phụ huynh thành công'];
-        } catch (Exception $e) {
-            $conn->rollBack();
-            throw $e;
+        if (!$userResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo tài khoản người dùng'];
         }
+
+        // Insert parent record
+        $parentSql = "INSERT INTO parents (UserID, FullName, Gender, Email, Phone, BirthDate, ZaloID, isShowTeacher) 
+                      VALUES (:userId, :fullname, :gender, :email, :phone, :birthdate, :zalo, :isShow)";
+        $parentStmt = $conn->prepare($parentSql);
+        $parentResult = $parentStmt->execute([
+            ':userId' => $parentId,
+            ':fullname' => $fullname,
+            ':gender' => $gender,
+            ':email' => $email,
+            ':phone' => $phone,
+            ':birthdate' => $birthdate,
+            ':zalo' => $zalo,
+            ':isShow' => $isShowTeacher
+        ]);
+
+        if (!$parentResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi tạo thông tin phụ huynh'];
+        }
+
+        // Commit transaction
+        $conn->commit();
+        return ['status' => 'success', 'message' => 'Thêm phụ huynh thành công'];
+
     } catch (PDOException $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("Database Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi database: ' . $e->getMessage()];
     } catch (Exception $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("General Error: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
     } finally {
@@ -707,15 +842,22 @@ function updateClass($data)
 function updateTeacher($data)
 {
     try {
-        // Kiểm tra email đã tồn tại
-        if (isExistEmail($data['email'])) {
+        $conn = connectdb();
+        
+        // Get current teacher's email
+        $getCurrentEmailSql = "SELECT Email FROM teachers WHERE UserID = :id";
+        $getCurrentEmailStmt = $conn->prepare($getCurrentEmailSql);
+        $getCurrentEmailStmt->execute([':id' => $data['id']]);
+        $currentEmail = $getCurrentEmailStmt->fetchColumn();
+        
+        // Only check email existence if the new email is different from current email
+        if ($data['email'] !== $currentEmail && isExistEmail($data['email'])) {
             return ([
                 'status' => 'error',
                 'message' => 'Email đã được sử dụng bởi người khác!'
             ]);
-            exit;
         }
-        $conn = connectdb();
+        
         $sql = "UPDATE teachers SET 
                 FullName = :fullName,
                 Email = :email,
@@ -741,21 +883,41 @@ function updateTeacher($data)
             ['status' => 'error', 'message' => 'Cập nhật giáo viên thất bại'];
     } catch (Exception $e) {
         return ['status' => 'error', 'message' => $e->getMessage()];
+    } finally {
+        $conn = null;
     }
 }
 
 function updateStudent($data)
 {
     try {
-        // Kiểm tra email đã tồn tại
-        if (isExistEmail($data['email'])) {
+        $conn = connectdb();
+        
+        // Get current student's email
+        $getCurrentEmailSql = "SELECT Email FROM students WHERE UserID = :id";
+        $getCurrentEmailStmt = $conn->prepare($getCurrentEmailSql);
+        $getCurrentEmailStmt->execute([':id' => $data['id']]);
+        $currentEmail = $getCurrentEmailStmt->fetchColumn();
+        
+        // Only check email existence if the new email is different from current email
+        if ($data['email'] !== $currentEmail && isExistEmail($data['email'])) {
             return ([
                 'status' => 'error',
                 'message' => 'Email đã được sử dụng bởi người khác!'
             ]);
-            exit;
         }
-        $conn = connectdb();
+        
+        $conn->beginTransaction();
+
+        // Get current student info to check for class changes
+        $getCurrentSql = "SELECT ClassID FROM students WHERE UserID = :id";
+        $getCurrentStmt = $conn->prepare($getCurrentSql);
+        $getCurrentStmt->execute([':id' => $data['id']]);
+        $currentStudent = $getCurrentStmt->fetch(PDO::FETCH_ASSOC);
+        $oldClassId = $currentStudent['ClassID'];
+        $newClassId = $data['classId'] ?: null;
+
+        // Update student basic info
         $sql = "UPDATE students SET 
                 FullName = :fullName,
                 Email = :email,
@@ -773,17 +935,58 @@ function updateStudent($data)
             ':phone' => $data['phone'],
             ':gender' => $data['gender'],
             ':birthDate' => $data['birthDate'],
-            ':classId' => $data['classId']
+            ':classId' => $newClassId
         ]);
 
-        // Update tuition discount
-        $updateDiscountSql = "UPDATE tuition SET Discount = :discount 
-                            WHERE StudentID = :studentId AND Status = 'Chưa đóng'";
-        $updateDiscountStmt = $conn->prepare($updateDiscountSql);
-        $updateDiscountStmt->execute([
-            ':discount' => $data['studentDiscount'],
-            ':studentId' => $data['id']
-        ]);
+        if (!$result) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi cập nhật thông tin học sinh'];
+        }
+
+        // Handle tuition changes when class changes
+        if ($oldClassId != $newClassId) {
+            // Delete old unpaid tuition records
+            if ($oldClassId) {
+                $deleteOldTuitionSql = "DELETE FROM tuition WHERE StudentID = :studentId AND Status = 'Chưa đóng'";
+                $deleteOldTuitionStmt = $conn->prepare($deleteOldTuitionSql);
+                $deleteOldTuitionStmt->execute([':studentId' => $data['id']]);
+            }
+
+            // Create new tuition record if assigned to a new class
+            if ($newClassId) {
+                // Get new class tuition info
+                $getClassSql = "SELECT Tuition, ClassName FROM classes WHERE ClassID = :classId";
+                $getClassStmt = $conn->prepare($getClassSql);
+                $getClassStmt->execute([':classId' => $newClassId]);
+                $classInfo = $getClassStmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($classInfo) {
+                    $createTuitionSql = "INSERT INTO tuition (StudentID, Amount, Discount, DueDate, Status, Note) 
+                                        VALUES (:studentId, :amount, :discount, DATE_ADD(NOW(), INTERVAL 10 DAY), 'Chưa đóng', :note)";
+                    $createTuitionStmt = $conn->prepare($createTuitionSql);
+                    $tuitionResult = $createTuitionStmt->execute([
+                        ':studentId' => $data['id'],
+                        ':amount' => $classInfo['Tuition'],
+                        ':discount' => $data['studentDiscount'],
+                        ':note' => 'Học phí lớp ' . $classInfo['ClassName'] . ' - ' . date('m/Y')
+                    ]);
+
+                    if (!$tuitionResult) {
+                        $conn->rollback();
+                        return ['status' => 'error', 'message' => 'Lỗi khi tạo học phí cho lớp mới'];
+                    }
+                }
+            }
+        } else {
+            // If class doesn't change, just update discount for existing unpaid tuition
+            $updateDiscountSql = "UPDATE tuition SET Discount = :discount 
+                                WHERE StudentID = :studentId AND Status = 'Chưa đóng'";
+            $updateDiscountStmt = $conn->prepare($updateDiscountSql);
+            $updateDiscountStmt->execute([
+                ':discount' => $data['studentDiscount'],
+                ':studentId' => $data['id']
+            ]);
+        }
 
         // Update parent relationships
         // First delete existing relationships
@@ -797,32 +1000,51 @@ function updateStudent($data)
             $insertStmt = $conn->prepare($insertSql);
 
             foreach ($data['parentIds'] as $parentId) {
-                $insertStmt->execute([
+                $insertResult = $insertStmt->execute([
                     ':studentId' => $data['id'],
                     ':parentId' => $parentId
                 ]);
+
+                if (!$insertResult) {
+                    $conn->rollback();
+                    return ['status' => 'error', 'message' => 'Lỗi khi cập nhật thông tin phụ huynh'];
+                }
             }
         }
 
-
+        $conn->commit();
         return ['status' => 'success', 'message' => 'Cập nhật học sinh thành công'];
+
     } catch (Exception $e) {
-        return ['status' => 'error', 'message' => $e->getMessage()];
+        if ($conn) {
+            $conn->rollback();
+        }
+        error_log("Error in updateStudent: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
+    } finally {
+        $conn = null;
     }
 }
 
 function updateParent($data)
 {
     try {
-        // Kiểm tra email đã tồn tại
-        if (isExistEmail($data['email'])) {
+        $conn = connectdb();
+        
+        // Get current parent's email
+        $getCurrentEmailSql = "SELECT Email FROM parents WHERE UserID = :id";
+        $getCurrentEmailStmt = $conn->prepare($getCurrentEmailSql);
+        $getCurrentEmailStmt->execute([':id' => $data['id']]);
+        $currentEmail = $getCurrentEmailStmt->fetchColumn();
+        
+        // Only check email existence if the new email is different from current email
+        if ($data['email'] !== $currentEmail && isExistEmail($data['email'])) {
             return ([
                 'status' => 'error',
                 'message' => 'Email đã được sử dụng bởi người khác!'
             ]);
-            exit;
         }
-        $conn = connectdb();
+        
         $sql = "UPDATE parents SET 
                 FullName = :fullName,
                 Email = :email,
@@ -850,6 +1072,8 @@ function updateParent($data)
             ['status' => 'error', 'message' => 'Cập nhật phụ huynh thất bại'];
     } catch (Exception $e) {
         return ['status' => 'error', 'message' => $e->getMessage()];
+    } finally {
+        $conn = null;
     }
 }
 
@@ -858,27 +1082,66 @@ function deleteTeacher($id)
     try {
         $conn = connectdb();
 
-        // Check if teacher has classes
+        // Start transaction
+        $conn->beginTransaction();
+
+        // Check if teacher has active classes
         $checkClassesSql = "SELECT COUNT(*) FROM classes WHERE TeacherID = ? AND Status = 'Đang hoạt động'";
         $checkStmt = $conn->prepare($checkClassesSql);
         $checkStmt->execute([$id]);
         if ($checkStmt->fetchColumn() > 0) {
+            $conn->rollback();
             return ['status' => 'error', 'message' => 'Không thể xóa giáo viên đang phụ trách lớp'];
         }
 
-        // Call the stored procedure
-        $sql = "CALL DeleteTeacher(?)";
-        $stmt = $conn->prepare($sql);
-        $result = $stmt->execute([$id]);
+        // Update classes to remove teacher reference (set to NULL for completed/suspended classes)
+        $updateClassesSql = "UPDATE classes SET TeacherID = NULL WHERE TeacherID = ?";
+        $updateStmt = $conn->prepare($updateClassesSql);
+        $updateResult = $updateStmt->execute([$id]);
 
-        if ($result) {
-            return ['status' => 'success', 'message' => 'Xóa giáo viên thành công'];
-        } else {
-            return ['status' => 'error', 'message' => 'Xóa giáo viên thất bại'];
+        if (!$updateResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi cập nhật thông tin lớp học'];
         }
+
+        // Delete teacher record
+        $deleteTeacherSql = "DELETE FROM teachers WHERE UserID = ?";
+        $deleteTeacherStmt = $conn->prepare($deleteTeacherSql);
+        $teacherResult = $deleteTeacherStmt->execute([$id]);
+
+        if (!$teacherResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi xóa thông tin giáo viên'];
+        }
+
+        // Delete user account
+        $deleteUserSql = "DELETE FROM users WHERE UserID = ?";
+        $deleteUserStmt = $conn->prepare($deleteUserSql);
+        $userResult = $deleteUserStmt->execute([$id]);
+
+        if (!$userResult) {
+            $conn->rollback();
+            return ['status' => 'error', 'message' => 'Lỗi khi xóa tài khoản người dùng'];
+        }
+
+        // Commit transaction
+        $conn->commit();
+        return ['status' => 'success', 'message' => 'Xóa giáo viên thành công'];
+
     } catch (PDOException $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
         error_log("Error in deleteTeacher: " . $e->getMessage());
         return ['status' => 'error', 'message' => 'Không thể xóa giáo viên: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        if ($conn) {
+            $conn->rollback();
+        }
+        error_log("General Error in deleteTeacher: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'Lỗi: ' . $e->getMessage()];
+    } finally {
+        $conn = null;
     }
 }
 

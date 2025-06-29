@@ -140,20 +140,62 @@ function addStudentOrParent($fullname, $birthdate, $gender, $username, $password
 {
     $conn = connectdb();
     $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-    if ($role == 2) {
-        $stmt = $conn->prepare("CALL AddNewStudent(
-            '" . $username . "', '" . $password_hashed . "', '" . $fullname . "', '" . $gender . "',
-            '" . $email . "', '" . $phone . "', '" . $birthdate . "' )");
-        $stmt->execute();
-    } else if ($role == 3) {
-        $stmt = $conn->prepare("CALL AddNewParent(
-            '" . $username . "', '" . $password_hashed . "', '" . $fullname . "', '" . $gender . "',
-            '" . $email . "', '" . $phone . "', '" . $birthdate . "' )");
-        $stmt->execute();
-    } else {
-        echo "Có lỗi xảy ra!";
+    
+    try {
+        $conn->beginTransaction();
+        
+        // Generate UserID based on role
+        $userID = '';
+        if ($role == 2) {
+            // Student - prefix HV
+            $stmt = $conn->prepare("SELECT next_id FROM id_counters WHERE role_prefix = 'HV'");
+            $stmt->execute();
+            $counter = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nextId = $counter['next_id'];
+            $userID = 'HV' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+            
+            // Update counter
+            $stmt = $conn->prepare("UPDATE id_counters SET next_id = next_id + 1 WHERE role_prefix = 'HV'");
+            $stmt->execute();
+            
+        } else if ($role == 3) {
+            // Parent - prefix PH
+            $stmt = $conn->prepare("SELECT next_id FROM id_counters WHERE role_prefix = 'PH'");
+            $stmt->execute();
+            $counter = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nextId = $counter['next_id'];
+            $userID = 'PH' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+            
+            // Update counter
+            $stmt = $conn->prepare("UPDATE id_counters SET next_id = next_id + 1 WHERE role_prefix = 'PH'");
+            $stmt->execute();
+            
+        } else {
+            throw new Exception("Invalid role specified");
+        }
+        
+        // Insert into users table with generated UserID
+        $stmt = $conn->prepare("INSERT INTO users (UserID, Username, Password, Role) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$userID, $username, $password_hashed, $role]);
+        
+        if ($role == 2) {
+            // Insert student
+            $stmt = $conn->prepare("INSERT INTO students (UserID, FullName, Gender, Email, Phone, BirthDate) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$userID, $fullname, $gender, $email, $phone, $birthdate]);
+        } else if ($role == 3) {
+            // Insert parent
+            $stmt = $conn->prepare("INSERT INTO parents (UserID, FullName, Gender, Email, Phone, BirthDate) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$userID, $fullname, $gender, $email, $phone, $birthdate]);
+        }
+        
+        $conn->commit();
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        error_log("Add user error: " . $e->getMessage());
+        echo "Có lỗi xảy ra: " . $e->getMessage();
+    } finally {
+        $conn = null;
     }
-
-    $conn = null;
 }
 
