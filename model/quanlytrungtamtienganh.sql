@@ -277,21 +277,6 @@ INSERT INTO `parents` (`UserID`, `FullName`, `Gender`, `Email`, `Phone`, `BirthD
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `promotions`
---
-
-CREATE TABLE `promotions` (
-  `PromoID` int(11) NOT NULL,
-  `Content` text NOT NULL,
-  `StartDate` date NOT NULL,
-  `EndDate` date DEFAULT NULL,
-  `Status` tinyint(1) DEFAULT 1,
-  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Cấu trúc bảng cho bảng `students`
 --
 
@@ -424,7 +409,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`UserID`, `Username`, `Password`, `Role`, `CreatedAt`) VALUES
 ('0', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, '2025-06-17 08:22:54'),
-('GV001', 'giaovien1', 'matkhau_mahoa', 1, '2025-06-17 09:29:43'),
+('GV001', 'giaovien1', '$2y$10$Fk75byfTkU1JoLwjsWhTd.8fFUjCEfEMufA8b/imxf4lsDoDdwS6W', 1, '2025-06-17 09:29:43'),
 ('HV001', 'student', '$2y$10$Fk75byfTkU1JoLwjsWhTd.8fFUjCEfEMufA8b/imxf4lsDoDdwS6W', 2, '2025-06-17 08:52:51'),
 ('HV002', 'student_second', '$2y$10$V994R/NFtvD809nOirDs1uEH4vQlL4rL7.FPqyPiBr5sPRUi2Jz3u', 2, '2025-06-18 05:35:07'),
 ('HV003', 'test', '$2y$10$TVLNfmOeF2t26T4s6VVZXeeP/iQRt/bUg9qa.VnFuaolUA4AWB/VO', 2, '2025-06-18 08:29:57'),
