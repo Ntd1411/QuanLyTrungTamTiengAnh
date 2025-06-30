@@ -118,7 +118,7 @@ if (
                     <h3>Tỷ lệ đi học</h3>
                     <div class="progress-circle-container">
                         <div class="progress-circle" id="attendance-rate">
-                            <div class="progress-value">0%</div>
+                            <div class="progress-value"></div>
                         </div>
                         <div class="progress-label">Tỷ lệ tham gia</div>
                     </div>

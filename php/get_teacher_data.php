@@ -95,7 +95,7 @@ $received_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Lấy danh sách thông báo đã gửi
 $stmt = $conn->prepare("
-    SELECT m.SendDate AS SentAt, c.ClassName, c.SchoolYear, c.Room, m.Subject AS Type, m.Content
+    SELECT DISTINCT m.SendDate AS SentAt, c.ClassName, c.SchoolYear, c.Room, m.Subject AS Type, m.Content
     FROM messages m
     JOIN students s ON m.ReceiverID = s.UserID
     JOIN classes c ON s.ClassID = c.ClassID
