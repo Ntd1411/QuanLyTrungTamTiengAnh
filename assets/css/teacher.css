@@ -57,11 +57,14 @@
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 .table-container table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    padding-top: 15px;
 }
+
 .table-container th {
     background: var(--primary-color, #E4312A);
     color: white;
@@ -69,12 +72,58 @@
     text-align: left;
     font-weight: 500;
 }
+
 .table-container td {
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
 }
+
 .table-container tr:hover {
     background: #f8f9fa;
+}
+
+/* DataTables Custom Styling (Phần mở rộng) */
+
+.dataTables_wrapper {
+    padding: 20px;
+}
+
+/* Search Input */
+.dataTables_filter input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 8px; /* Khoảng cách với label */
+}
+
+/* Length Menu Select */
+.dataTables_length select {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 4px;
+}
+
+/* Pagination (Phân trang) */
+.dataTables_paginate .paginate_button {
+    background-color: #f0f0f0;
+    color: #333 !important; /* Màu chữ */
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dataTables_paginate .paginate_button:hover:not(.current) {
+    background: #e0e0e0; /* Màu hover */
+}
+
+.dataTables_paginate .paginate_button.current {
+    background: var(--primary-color, #E4312A) !important; /* Màu nền cho trang hiện tại */
+    color: white !important; /* Chữ trắng cho trang hiện tại */
+    border-color: var(--primary-color, #E4312A) !important; /* Viền cho trang hiện tại */
 }
 
 /* Add Log Form */
@@ -157,13 +206,16 @@
     transition: opacity 1.0s cubic-bezier(.4,2,.6,1), transform 1.0s cubic-bezier(.4,2,.6,1);
     will-change: opacity, transform;
     pointer-events: none;
-    display: block;
 }
 
 .class-students-list.active {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+}
+
+.table-container {
+    overflow-x: auto;
 }
 
 /* Forms */
@@ -247,6 +299,10 @@
 #attendance-history{
     display: none;
     margin-top:16px;
+}
+
+#hide-history-btn{
+    display: none;
 }
 
 /* Messages Section */
@@ -355,6 +411,48 @@
     color: #b91c1c;
 }
 
+/* Received Notifications */
+#teacher-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap; /* Để xuống dòng trên màn hình nhỏ */
+}
+
+#teacher-pagination-container button {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+#teacher-pagination-container button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+#teacher-pagination-container button.active {
+    background-color: var(--primary-color, #E4312A);
+    color: #fff;
+    border-color: var(--primary-color, #E4312A);
+    font-weight: bold;
+}
+
+#teacher-pagination-container button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#teacher-pagination-container span {
+    padding: 8px 4px;
+    color: #888;
+}
+
 /* Sent Notifications */
 #notifications .table-container {
     margin-bottom: 10px;
@@ -397,6 +495,12 @@
 
 #notifications .table-container tr:hover td {
     background: #f8f9fa;
+}
+
+#table-sent-notifications {
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 15px;
 }
 
 /* Profile Form */

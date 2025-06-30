@@ -228,7 +228,14 @@
     }
 }
 
-.payment-history table {
+/* DataTables Styles */
+.dataTables_wrapper {
+    padding: 20px 0;
+}
+
+/* Bảng */
+.payment-history table,
+.dataTables_wrapper table.dataTable {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -240,20 +247,178 @@
 }
 
 .payment-history th,
-.payment-history td {
+.dataTables_wrapper th {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.payment-history th {
     background-color: var(--primary-color);
     color: white;
     font-weight: 500;
 }
 
-.payment-history tr:hover {
+.payment-history td,
+.dataTables_wrapper td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.payment-history tr:hover,
+.dataTables_wrapper tbody tr:hover {
     background-color: #f8f9fa;
+}
+
+.dataTables_filter input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.dataTables_length select {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 4px;
+}
+
+.dataTables_paginate .paginate_button {
+    background-color: #f0f0f0;
+    color: #333 !important;
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dataTables_paginate .paginate_button:hover:not(.current) {
+    background: #e0e0e0;
+}
+
+
+.dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+}
+
+.dataTables_filter,
+.dataTables_length {
+    margin-bottom: 20px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+/* DataTables Responsive Styles */
+
+table.dataTable {
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.dataTable td {
+    white-space: nowrap;
+}
+
+/* Modal styling for responsive details */
+div.dtr-modal {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+}
+
+div.dtr-modal-content {
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+/* Nền mờ phía sau modal */
+.dtr-modal {
+    background-color: rgba(0, 0, 0, 0.4);
+    /* màu nền tối mờ */
+    z-index: 20000 !important;
+}
+
+/* Hộp modal */
+.dtr-modal-display {
+    background-color: #fff !important;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    margin: 5% auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Bảng trong modal */
+.dtr-modal .dtr-modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dtr-modal .dtr-modal-content table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #fff;
+}
+
+/* Header (chi tiết) */
+.dtr-modal .dtr-modal-content::before {
+    content: "Chi tiết";
+    display: block;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Áp dụng cho toàn bộ trang */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* Tổng thể */
+.dataTables_paginate .paginate_button {
+    background-color: #f0f0f0;
+    color: #333 !important;
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+@media screen and (max-width: 768px) {
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .dataTables_wrapper {
+        padding: 10px;
+    }
 }
 
 /* Messages Section */
@@ -315,6 +480,45 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 12px;
+}
+
+/* Pagination styles */
+#pagination-container {
+    max-width: 50%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#pagination-container button {
+    max-width: 75px;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+    align-items: right;
+}
+
+#pagination-container button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#pagination-container button:hover:not(:disabled) {
+    background-color: #ddd;
+}
+
+#pagination-container button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
 }
 
 /* Profile Form */

@@ -25,6 +25,11 @@ if (
     <link rel="stylesheet" href="../assets/css/student.css">
     <title>Student Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +76,8 @@ if (
                 </div>
             </div>
             <h2>Thông báo</h2>
+            <!-- Phân trang cho thông báo -->
+            <div id="student-pagination-container"></div>
             <!-- Bảng thông báo -->
             <div id="student-notifications" class="notification-container">
                 <div class="notification-list">
@@ -95,8 +102,10 @@ if (
                 </div>
                 <div class="classmates-list">
                     <h3>Danh sách học sinh trong lớp</h3>
+
+                    <!-- LUÔN DÙNG CẤU TRÚC NÀY -->
                     <div class="table-container">
-                        <table>
+                        <table id="table-classmates" class="display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -104,7 +113,9 @@ if (
                                     <th>Ngày sinh</th>
                                 </tr>
                             </thead>
-                            <tbody id="classmates-table"></tbody>
+                            <tbody>
+                                <!-- DataTables sẽ điền dữ liệu vào đây -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -139,8 +150,10 @@ if (
                 </div>
             </div>
             <div class="attendance-history">
-                <div class="history-container">
-                    <table>
+                <h3>Lịch sử điểm danh</h3>
+
+                <div class="table-container">
+                    <table id="table-attendance-history" class="display" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Ngày</th>
@@ -149,7 +162,7 @@ if (
                                 <th>Người điểm danh</th>
                             </tr>
                         </thead>
-                        <tbody id="attendance-history-body"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>

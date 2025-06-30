@@ -94,43 +94,150 @@ function loadPayments() {
         `;
         tbody.appendChild(tr);
     });
+
+    initializeDataTable('#payment-history');
 }
 
 // Load messages
 function loadMessages() {
     const messageList = document.querySelector('.message-list');
-    messageList.innerHTML = '';
+    messageList.innerHTML = ''; // Clear the list
 
-    parentData.messages.forEach((message, idx) => {
-        const messageItem = document.createElement('div');
-        messageItem.className = `message-item ${message.read ? 'read' : 'unread'}`;
-        messageItem.innerHTML = `
-            <h4>${message.subject}</h4>
-            <p>Từ: ${message.from}</p>
-            <p>Ngày: ${message.date}</p>
-        `;
-        messageItem.onclick = () => {
-            // Xóa class selected khỏi tất cả message-item
-            document.querySelectorAll('.message-item').forEach(item => item.classList.remove('selected'));
-            // Thêm class selected cho item được click
-            messageItem.classList.add('selected');
-            showMessageDetail(message);
-            // Đánh dấu tin nhắn là đã đọc
-            if (!message.read && message.id) {
-                fetch('../php/mark_message_read.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messageId: message.id })
-                }).then(() => {
-                    message.read = true;
-                    messageItem.classList.remove('unread');
-                    // Cập nhật số thông báo chưa đọc trên dashboard
-                    loadParentDashboard();
-                });
+    // Pagination variables
+    const messagesPerPage = 5; // Set default messages per page
+    let currentPage = 1; // Start on page 1
+    const totalMessages = parentData.messages.length;
+    const totalPages = Math.ceil(totalMessages / messagesPerPage);
+
+    function showPage(page) {
+        currentPage = page;
+        messageList.innerHTML = ''; // Clear the list
+
+        const startIndex = (currentPage - 1) * messagesPerPage;
+        const endIndex = startIndex + messagesPerPage;
+        const messagesToShow = parentData.messages.slice(startIndex, endIndex);
+
+        messagesToShow.forEach((message, idx) => {
+            const messageItem = document.createElement('div');
+            messageItem.className = `message-item ${message.read ? 'read' : 'unread'}`;
+            messageItem.innerHTML = `
+                <h4>${message.subject}</h4>
+                <p>Từ: ${message.from}</p>
+                <p>Ngày: ${message.date}</p>
+            `;
+            messageItem.onclick = () => {
+                // Xóa class selected khỏi tất cả message-item
+                document.querySelectorAll('.message-item').forEach(item => item.classList.remove('selected'));
+                // Thêm class selected cho item được click
+                messageItem.classList.add('selected');
+                showMessageDetail(message);
+                // Đánh dấu tin nhắn là đã đọc
+                if (!message.read && message.id) {
+                    fetch('../php/mark_message_read.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messageId: message.id })
+                    }).then(() => {
+                        message.read = true;
+                        messageItem.classList.remove('unread');
+                        // Cập nhật số thông báo chưa đọc trên dashboard
+                        loadParentDashboard();
+                    });
+                }
+            };
+            messageList.appendChild(messageItem);
+        });
+
+        // Update pagination controls
+        updatePaginationControls();
+    }
+
+    function updatePaginationControls() {
+        const paginationContainer = document.getElementById('pagination-container');
+        if (!paginationContainer) {
+            return; // Exit if pagination container doesn't exist
+        }
+
+        paginationContainer.innerHTML = ''; // Clear existing controls
+
+        // Previous button
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Trước';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
             }
-        };
-        messageList.appendChild(messageItem);
-    });
+        });
+        paginationContainer.appendChild(prevButton);
+
+        // Calculate page numbers to display
+        let pageNumbers = [];
+        if (totalPages <= 7) { // Show all pages if total pages is less than or equal to 7
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(i);
+            }
+        } else {
+            // Show first three pages, ellipsis, current page, and last page
+            if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) {
+                    pageNumbers.push(i);
+                }
+                pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            }
+            // Show last three pages, ellipsis, current page, and first page
+            else if (currentPage >= totalPages - 2) {
+                pageNumbers.push(1);
+                pageNumbers.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) {
+                    pageNumbers.push(i);
+                }
+            } else {
+                // Show first page, ellipsis, current page, and last page
+                pageNumbers.push(1);
+                pageNumbers.push('...');
+                pageNumbers.push(currentPage - 1);
+                pageNumbers.push(currentPage);
+                pageNumbers.push(currentPage + 1);
+                pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            }
+        }
+
+        // Page numbers
+        pageNumbers.forEach(pageNumber => {
+            if (pageNumber === '...') {
+                const ellipsisSpan = document.createElement('span');
+                ellipsisSpan.textContent = '...';
+                paginationContainer.appendChild(ellipsisSpan);
+            } else {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = pageNumber;
+                pageButton.classList.add('page-button');
+                if (pageNumber === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.addEventListener('click', () => {
+                    showPage(pageNumber);
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+        });
+
+        // Next button
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Sau';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+            }
+        });
+        paginationContainer.appendChild(nextButton);
+    }
+
+    showPage(currentPage);
 }
 
 // Show message detail
@@ -328,3 +435,58 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 });
+
+
+function initializeDataTable(tableId) {
+    try {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+        }
+
+        return $(tableId).DataTable({
+            responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.modal({
+                        header: function (row) {
+                            return '';
+                        }
+                    }),
+                    renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+                }
+            },
+            language: {
+                emptyTable: "Không có dữ liệu",
+                info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                infoFiltered: "(được lọc từ _MAX_ mục)",
+                infoPostFix: "",
+                thousands: ",",
+                lengthMenu: "Hiển thị _MENU_ mục",
+                loadingRecords: "Đang tải...",
+                processing: "Đang xử lý...",
+                search: "Tìm kiếm:",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                }
+            },
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 },
+                { responsivePriority: 3, targets: 1 }
+            ],
+            drawCallback: function () {
+                // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
+                $(tableId).css('width', '100%');
+                $(window).trigger('resize');
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing DataTable:', error);
+    }
+}

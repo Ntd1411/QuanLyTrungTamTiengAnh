@@ -71,7 +71,7 @@
     background: linear-gradient(145deg, #f5fff5, #e0ffe0);
 }
 
-/* Notification Board (copy từ parent.css và chỉnh lại tên class) */
+/* Notification Board */
 .notification-container {
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -120,6 +120,51 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 12px;
+}
+
+#student-pagination-container {
+    max-width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#student-pagination-container button {
+    max-width: 100px;
+    background-color: #fff;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+#student-pagination-container button:hover:not(:disabled) {
+    background-color: #000000;
+}
+
+#student-pagination-container button.active {
+    background-color: #fff;
+    color: #000000;
+    border-color: #fff;
+    font-weight: bold;
+}
+
+#student-pagination-container button:disabled {
+    background-color: grey;
+    color: #ffffff;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#student-pagination-container span {
+    padding: 8px 4px;
+    color: #888;
 }
 
 @media (max-width: 768px) {
@@ -297,50 +342,10 @@
 }
 
 .attendance-history h3 {
-    padding: 20px;
+    padding: 10px;
     margin: 0;
     background: linear-gradient(145deg, var(--primary-color), #c62828);
     color: white;
-}
-
-.history-container {
-    padding: 20px;
-    overflow-x: auto;
-}
-
-.attendance-history table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.attendance-history th,
-.attendance-history td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.attendance-history th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #333;
-}
-
-.attendance-history tr:hover {
-    background: #f8f9fa;
-}
-
-.attendance-history td:nth-child(2) {
-    font-weight: 600;
-}
-
-.attendance-history td:nth-child(2)[data-status="present"] {
-    color: #4CAF50;
-}
-
-.attendance-history td:nth-child(2)[data-status="absent"] {
-    color: #f44336;
 }
 
 /* Homework Section */
@@ -492,64 +497,182 @@ button:active {
     transform: translateY(0);
 }
 
-/* Classmates List Table */
-.classmates-list .table-container {
-    margin-top: 20px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.classmates-list table {
+/* For Initialize DataTable */
+/* --- 1. Container bao bọc bảng --- */
+.table-container {
     width: 100%;
-    border-collapse: collapse;
-    background: white;
+    overflow-x: auto; /* Cho phép cuộn ngang trên màn hình nhỏ */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    padding: 15px; /* Thêm padding để các control không bị sát mép */
 }
 
-.classmates-list th {
-    background: var(--primary-color);
+/* --- 2. Các quy tắc cơ bản cho thẻ Table --- */
+.table-container table.dataTable {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: collapse;
+}
+
+/* Tiêu đề bảng (th) */
+.table-container table.dataTable th {
+    background: var(--primary-color, #E4312A);
     color: white;
     padding: 15px;
     text-align: left;
     font-weight: 500;
+    font-size: 15px;
+    white-space: nowrap; /* Ngăn tiêu đề xuống dòng */
 }
 
-.classmates-list td {
+/* Các ô dữ liệu (td) */
+.table-container table.dataTable td {
     padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+/* Hiệu ứng khi di chuột qua hàng */
+.table-container table.dataTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* --- 3. Các control của DataTables --- */
+
+/* Ô tìm kiếm và Hiển thị số mục */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 20px;
+}
+
+.dataTables_filter input,
+.dataTables_length select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.dataTables_filter input:focus,
+.dataTables_length select:focus {
+    outline: none;
+    border-color: var(--primary-color, #E4312A);
+    box-shadow: 0 0 0 2px rgba(228, 49, 42, 0.2);
+}
+
+
+/* Phân trang */
+.dataTables_paginate .paginate_button {
+    background-color: #f0f0f0;
+    color: #333 !important;
+    padding: 8px 14px;
+    margin: 0 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    user-select: none;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: #e0e0e0;
+    border-color: #bbb;
+}
+
+.dataTables_paginate .paginate_button.current,
+.dataTables_paginate .paginate_button.current:hover {
+    background: var(--primary-color, #E4312A) !important;
+    color: white !important;
+    border-color: var(--primary-color, #E4312A) !important;
+    cursor: default;
+}
+
+.dataTables_paginate .paginate_button.disabled,
+.dataTables_paginate .paginate_button.disabled:hover {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f0f0f0 !important;
+    border-color: #ccc !important;
+}
+
+
+/* --- 4. DataTables Responsive Modal --- */
+div.dtr-modal {
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ hơn một chút */
+    z-index: 20000 !important;
+}
+
+div.dtr-modal-display {
+    background-color: #fff !important;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 500px;
+    width: 90%;
+    margin: 5% auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+div.dtr-modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.dtr-modal .dtr-modal-title {
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: var(--primary-color, #E4312A);
+}
+
+.dtr-modal .dtr-modal-close {
+    font-size: 24px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+.dtr-modal .dtr-modal-close:hover {
+    opacity: 1;
+}
+
+.dtr-modal table tr {
     border-bottom: 1px solid #eee;
 }
-
-.classmates-list tr:hover {
-    background: #f8f9fa;
+.dtr-modal table tr:last-child {
+    border-bottom: none;
+}
+.dtr-modal table td:first-child {
+    font-weight: bold;
+    color: #555;
 }
 
-.classmates-list td:last-child {
-    font-weight: 600;
+
+/* --- 5. Thanh cuộn tùy chỉnh (Global) --- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }
 
-.classmates-list .attendance-rate {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.9em;
+
+/* --- 6. Điều chỉnh cho màn hình nhỏ --- */
+@media screen and (max-width: 768px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+        float: none;
+        margin-bottom: 15px;
+    }
 }
 
-.classmates-list .rate-good {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.classmates-list .rate-warning {
-    background: #fff3e0;
-    color: #ef6c00;
-}
-
-.classmates-list .rate-poor {
-    background: #ffebee;
-    color: #c62828;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .main-content-student {
         padding: 15px;
