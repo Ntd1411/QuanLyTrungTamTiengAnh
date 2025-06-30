@@ -49,44 +49,107 @@ function loadStudentDashboard() {
 function loadStudentNotifications() {
     const notificationList = document.querySelector('.notification-list');
     const notificationContent = document.querySelector('.notification-content');
-    notificationList.innerHTML = '';
-    notificationContent.innerHTML = '<p>Chọn một thông báo để xem chi tiết</p>';
+    
+    notificationContent.innerHTML = '<p style="text-align:center; color:#888;">Chọn một thông báo để xem chi tiết</p>';
 
-    if (!studentData.messages || studentData.messages.length === 0) {
+    const allMessages = studentData.messages || [];
+    if (allMessages.length === 0) {
         notificationList.innerHTML = '<p>Không có thông báo nào.</p>';
+        const paginationContainer = document.getElementById('student-pagination-container');
+        if (paginationContainer) paginationContainer.innerHTML = '';
         return;
     }
 
-    studentData.messages.forEach((msg, idx) => {
-        const item = document.createElement('div');
-        item.className = `notification-item${msg.read ? '' : ' unread'}`;
-        item.innerHTML = `
-            <h4>${msg.subject}</h4>
-            <p>Từ: ${msg.from}</p>
-            <p>Ngày: ${msg.date}</p>
-        `;
-        item.onclick = () => {
-            document.querySelectorAll('.notification-item').forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
-            showStudentNotificationDetail(msg);
+    const messagesPerPage = 3;
+    let currentPage = 1;
+    const totalPages = Math.ceil(allMessages.length / messagesPerPage);
 
-            // Đánh dấu đã đọc nếu chưa đọc
-            if (!msg.read && msg.id) {
-                fetch('../php/mark_message_read.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messageId: msg.id })
-                }).then(() => {
-                    msg.read = true;
+    function showPage(page) {
+        currentPage = page;
+        notificationList.innerHTML = '';
+
+        const startIndex = (currentPage - 1) * messagesPerPage;
+        const endIndex = startIndex + messagesPerPage;
+        const messagesToShow = allMessages.slice(startIndex, endIndex);
+
+        messagesToShow.forEach(msg => {
+            const item = document.createElement('div');
+            item.className = `notification-item${msg.read ? '' : ' unread'}`;
+            item.innerHTML = `
+                <h4>${msg.subject}</h4>
+                <p style="font-size:13px; color:#555;">Từ: ${msg.from}</p>
+                <p style="font-size:12px; color:#888;">Ngày: ${msg.date}</p>
+            `;
+            item.onclick = () => {
+                document.querySelectorAll('.notification-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                showStudentNotificationDetail(msg);
+
+                if (!msg.read && msg.id) {
                     item.classList.remove('unread');
-                });
+                    fetch('../php/mark_message_read.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messageId: msg.id })
+                    }).then(() => {
+                        msg.read = true;
+                    });
+                }
+            };
+            notificationList.appendChild(item);
+        });
+
+        updatePaginationControls();
+    }
+
+    function updatePaginationControls() {
+        const paginationContainer = document.getElementById('student-pagination-container');
+        if (!paginationContainer) return;
+        paginationContainer.innerHTML = '';
+
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Trước';
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => showPage(currentPage - 1);
+        paginationContainer.appendChild(prevButton);
+
+        let pageNumbers = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
+        } else {
+            if (currentPage <= 3) {
+                pageNumbers.push(1, 2, 3, 4, '...', totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pageNumbers.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
             } else {
-                msg.read = true;
-                item.classList.remove('unread');
+                pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
             }
-        };
-        notificationList.appendChild(item);
-    });
+        }
+        
+        pageNumbers.forEach(pageNumber => {
+            if (pageNumber === '...') {
+                const ellipsisSpan = document.createElement('span');
+                ellipsisSpan.textContent = '...';
+                paginationContainer.appendChild(ellipsisSpan);
+            } else {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = pageNumber;
+                if (pageNumber === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.onclick = () => showPage(pageNumber);
+                paginationContainer.appendChild(pageButton);
+            }
+        });
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Sau';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => showPage(currentPage + 1);
+        paginationContainer.appendChild(nextButton);
+    }
+
+    showPage(1);
 }
 
 function showStudentNotificationDetail(msg) {
@@ -105,58 +168,68 @@ function showStudentNotificationDetail(msg) {
 
 // Load class information
 function loadClassInfo() {
-    document.getElementById('current-class').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : '';
-    document.getElementById('teacher-name').textContent = (studentData.class && studentData.class.teacher) ? studentData.class.teacher : '';
-    document.getElementById('class-schedule').textContent = (studentData.class && studentData.class.schedule) ? studentData.class.schedule : '';
+    const studentClass = studentData.class || {};
+    document.getElementById('current-class').textContent = studentClass.name || '';
+    document.getElementById('teacher-name').textContent = studentClass.teacher || '';
+    document.getElementById('class-schedule').textContent = studentClass.schedule || '';
 
-    // Hiển thị bảng danh sách học sinh
-    const classmatesTable = document.getElementById('classmates-table');
-    classmatesTable.innerHTML = '';
+    const classmates = studentClass.classmates || [];
 
-    if (studentData.class && Array.isArray(studentData.class.classmates)) {
-        studentData.class.classmates.forEach((mate, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${mate.FullName}</td>
-                <td>${mate.BirthDate ? mate.BirthDate : ''}</td>
-            `;
-            classmatesTable.appendChild(row);
-        });
-    }
+    const dataForTable = classmates.map((mate, index) => {
+        return [
+            index + 1,
+            mate.FullName,
+            mate.BirthDate || '' // Đảm bảo không có giá trị null/undefined
+        ];
+    });
+
+    // Gọi hàm khởi tạo DataTables
+    const table = initializeDataTable('#table-classmates');
+    
+    // Xóa dữ liệu cũ, thêm dữ liệu mới và vẽ lại bảng
+    table.clear();
+    table.rows.add(dataForTable);
+    table.draw();
 }
 
 // Load attendance history
 function loadAttendance() {
-    const attended = studentData.attendance ? studentData.attendance.attended : 0;
-    const absent = studentData.attendance ? studentData.attendance.absent : 0;
+    const attendanceData = studentData.attendance || {};
+    const attended = attendanceData.attended || 0;
+    const absent = attendanceData.absent || 0;
     const total = attended + absent;
 
     document.getElementById('total-sessions').textContent = total;
     document.getElementById('attended-count').textContent = attended;
     document.getElementById('absent-count').textContent = absent;
 
-    // Update progress circle
     updateAttendanceProgress(attended, total);
 
-    const historyBody = document.getElementById('attendance-history-body');
-    historyBody.innerHTML = '';
+    const history = attendanceData.history || [];
+    const teacherName = (studentData.class && studentData.class.teacher) ? studentData.class.teacher : '-';
 
-    if (studentData.attendance && Array.isArray(studentData.attendance.history)) {
-        studentData.attendance.history.forEach(record => {
-            const row = document.createElement('tr');
-            let statusText = '-';
-            if (record.Status === 'Có mặt') statusText = 'Có mặt';
-            else if (record.Status === 'Vắng mặt') statusText = 'Vắng mặt';
-            else if (record.Status === 'Đi muộn') statusText = 'Đi muộn';
-            row.innerHTML = `
-                <td>${record.Date}</td>
-                <td>${statusText}</td>
-                <td>${record.Note || '-'}</td>
-                <td>${studentData.class && studentData.class.teacher ? studentData.class.teacher : '-'}</td>
-            `;
-            historyBody.appendChild(row);
-        });
+    const dataForTable = history.map(record => {
+        let statusText = record.Status || '-'; // Mặc định là trạng thái gốc
+        if (statusText === 'present') statusText = 'Có mặt';
+        else if (statusText === 'absent') statusText = 'Vắng mặt';
+        else if (statusText === 'late') statusText = 'Đi muộn';
+
+        return [
+            record.Date,
+            statusText,
+            record.Note || '-',
+            teacherName
+        ];
+    });
+
+    // Gọi hàm khởi tạo DataTables
+    const table = initializeDataTable('#table-attendance-history');
+    
+    // Kiểm tra và cập nhật dữ liệu
+    if (table) {
+        table.clear();
+        table.rows.add(dataForTable);
+        table.draw();
     }
 }
 
@@ -328,4 +401,58 @@ function updateProfile() {
             alert('Có lỗi xảy ra khi cập nhật!');
             console.error(err);
         });
+}
+
+function initializeDataTable(tableId) {
+    try {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+        }
+
+        return $(tableId).DataTable({
+            responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.modal({
+                        header: function (row) {
+                            return '';
+                        }
+                    }),
+                    renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+                }
+            },
+            language: {
+                emptyTable: "Không có dữ liệu",
+                info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                infoFiltered: "(được lọc từ _MAX_ mục)",
+                infoPostFix: "",
+                thousands: ",",
+                lengthMenu: "Hiển thị _MENU_ mục",
+                loadingRecords: "Đang tải...",
+                processing: "Đang xử lý...",
+                search: "Tìm kiếm:",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                }
+            },
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 },
+                { responsivePriority: 3, targets: 1 }
+            ],
+            drawCallback: function () {
+                // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
+                $(tableId).css('width', '100%');
+                $(window).trigger('resize');
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing DataTable:', error);
+    }
 }

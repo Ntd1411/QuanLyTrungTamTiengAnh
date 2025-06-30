@@ -97,6 +97,8 @@ function loadTeachingLog() {
         `;
         logBody.appendChild(row);
     });
+
+    initializeDataTable('#teaching-log');
 }
 
 // Delete teaching log
@@ -191,40 +193,37 @@ function loadClassSelect() {
 function showClassStudents(classId) {
     const cls = teacherData.classes.find(c => (c.ClassID || c.id) == classId);
     const studentsListDiv = document.querySelector('.class-students-list');
-    const studentsTable = document.getElementById('teacher-class-students-table');
-    if (!cls || !studentsListDiv || !studentsTable) return;
 
-    // Reset trạng thái hoàn toàn
-    studentsListDiv.style.display = 'none'; // Ẩn hoàn toàn
-    studentsListDiv.classList.remove('active'); // Xóa lớp active
-    studentsTable.innerHTML = ''; // Xóa nội dung bảng
+    if (!cls || !studentsListDiv) return;
 
-    // Đợi DOM cập nhật trước khi hiển thị lại
-    setTimeout(() => {
-        studentsListDiv.style.display = 'block'; // Hiển thị lại
-        // Đợi một khung hình để đảm bảo trình duyệt nhận diện thay đổi
-        requestAnimationFrame(() => {
-            studentsListDiv.classList.add('active'); // Kích hoạt transition
-        });
-    }, 50); // Tăng thời gian chờ để đảm bảo reset hoàn tất
+    studentsListDiv.style.display = 'none';
+    studentsListDiv.classList.remove('active');
 
-    if (!cls.students || cls.students.length === 0) {
-        studentsTable.innerHTML = '<tr><td colspan="6" style="text-align:center;">Không có học sinh</td></tr>';
-        return;
+    let studentData = [];
+    if (cls.students && cls.students.length > 0) {
+        studentData = cls.students.map((student, idx) => [
+            idx + 1,
+            student.FullName,
+            student.attended || 0,
+            student.absent || 0,
+            `${student.participation || 0}%`,
+            student.UserID
+        ]);
     }
+    
+    const table = initializeDataTable('#student-datatable');
 
-    cls.students.forEach((student, idx) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${student.FullName}</td>
-            <td>${student.attended || 0}</td>
-            <td>${student.absent || 0}</td>
-            <td>${student.participation || 0}%</td>
-            <td>${student.UserID}</td>
-        `;
-        studentsTable.appendChild(row);
-    });
+    table.clear();
+    table.rows.add(studentData);
+    table.draw();
+
+    setTimeout(() => {
+        studentsListDiv.style.display = 'block';
+        requestAnimationFrame(() => {
+            studentsListDiv.classList.add('active');
+            $(window).trigger('resize');
+        });
+    }, 50);
 }
 
 // Load attendance list
@@ -309,38 +308,54 @@ function viewAttendanceHistory() {
     const classId = document.getElementById('class-select').value;
     const date = document.getElementById('attendance-date').value;
     if (!classId || !date) {
-        alert('Vui lòng chọn lớp và ngày');
+        alert('Vui lòng chọn lớp và ngày để xem lịch sử.');
         return;
     }
 
+    const historyDiv = document.getElementById('attendance-history');
+    historyDiv.style.display = 'block';
+
     fetch(`../php/get_attendance_history.php?classId=${classId}&date=${date}`)
-        .then(res => res.json())
-        .then(data => {
-            const historyDiv = document.getElementById('attendance-history');
-            const historyBody = document.getElementById('attendance-history-body');
-            historyBody.innerHTML = '';
-            if (!data || data.length === 0) {
-                historyBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Không có dữ liệu điểm danh cho ngày này</td></tr>';
-            } else {
-                data.forEach(row => {
-                    historyBody.innerHTML += `
-                        <tr>
-                            <td>${row.FullName}</td>
-                            <td>${row.Status}</td>
-                            <td>${row.Note || ''}</td>
-                            <td>
-                                <button class="update-attendance-btn" onclick="updateAttendance('${row.StudentID}', '${row.FullName}')">Sửa</button>
-                                <button class="delete-attendance-btn" data-student-id="${row.StudentID}" onclick="deleteAttendance('${row.StudentID}')">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
-                });
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Lỗi mạng: ${res.statusText}`);
             }
-            historyDiv.style.display = 'block';
+            return res.json();
+        })
+        .then(data => {
+            const dataForTable = data.map(row => {
+                const actions = `
+                    <button class="button-small" onclick="updateAttendance('${row.StudentID}', '${row.FullName}')">Sửa</button>
+                    <button class="button-small delete-btn" onclick="deleteAttendance('${row.StudentID}')">Xóa</button>
+                `;
+                
+                let statusText = row.Status;
+                if (row.Status === 'present') statusText = 'Có mặt';
+                else if (row.Status === 'absent') statusText = 'Vắng mặt';
+                else if (row.Status === 'late') statusText = 'Đi muộn';
+
+                return [
+                    row.FullName,
+                    statusText,
+                    row.Note || '',
+                    actions
+                ];
+            });
+
+            const table = initializeDataTable('#attendance-history-table');
+            table.clear();
+            table.rows.add(dataForTable);
+            table.draw();
+
+            document.getElementById('view-history-btn').style.display = 'none';
+            document.getElementById('hide-history-btn').style.display = 'inline-block';
+            
+            $(window).trigger('resize');
         })
         .catch(err => {
             alert('Không thể tải lịch sử điểm danh!');
-            console.error(err);
+            console.error('Lỗi khi fetch lịch sử điểm danh:', err);
+            hideAttendanceHistory();
         });
 }
 
@@ -350,6 +365,9 @@ function hideAttendanceHistory() {
     if (historyDiv) {
         historyDiv.style.display = 'none';
     }
+    
+    document.getElementById('view-history-btn').style.display = 'inline-block';
+    document.getElementById('hide-history-btn').style.display = 'none';
 }
 
 // Update attendance
@@ -513,39 +531,128 @@ function submitSendNotification() {
 function loadTeacherReceivedNotifications() {
     const list = document.getElementById('teacher-received-list');
     const detail = document.getElementById('teacher-received-detail');
-    list.innerHTML = '';
+    
+    // Đặt nội dung mặc định ban đầu
     detail.innerHTML = '<div style="color:#888;text-align:center;padding:16px;">Chọn một thông báo để xem chi tiết</div>';
 
-    (teacherData.received_notifications || []).forEach((msg, idx) => {
-        const item = document.createElement('div');
-        item.className = 'message-item' + (msg.IsRead == 0 ? ' unread' : '');
-        item.innerHTML = `
-            <div class="message-title">${msg.Type || msg.subject}</div>
-            <div class="message-meta">
-                <span>${msg.sender || 'Admin'}</span> | 
-                <span>${msg.SentAt || msg.date}</span>
-            </div>
-        `;
-        item.onclick = function () {
-            document.querySelectorAll('.message-item').forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
-            item.classList.remove('unread'); // bỏ viền đỏ khi click
-            showTeacherReceivedDetail(msg);
+    // Lấy dữ liệu và kiểm tra
+    const allMessages = teacherData.received_notifications || [];
+    if (allMessages.length === 0) {
+        list.innerHTML = '<div style="color:#888;padding:16px;">Không có thông báo nào.</div>';
+        // Xóa các nút phân trang cũ nếu có
+        const paginationContainer = document.getElementById('teacher-pagination-container');
+        if (paginationContainer) paginationContainer.innerHTML = '';
+        return;
+    }
+    
+    // Biến cho việc phân trang
+    const messagesPerPage = 5; // Số lượng thông báo trên mỗi trang
+    let currentPage = 1;
+    const totalPages = Math.ceil(allMessages.length / messagesPerPage);
 
-            // Nếu chưa đọc thì gọi API cập nhật
-            if (msg.IsRead == 0 && msg.MessageID) {
-                fetch('../php/mark_message_read.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messageId: msg.MessageID })
-                }).then(() => {
-                    msg.IsRead = 1; // Cập nhật trạng thái trên giao diện
-                });
+    // --- Hàm hiển thị một trang cụ thể ---
+    function showPage(page) {
+        currentPage = page;
+        list.innerHTML = ''; // Xóa danh sách cũ
+
+        const startIndex = (currentPage - 1) * messagesPerPage;
+        const endIndex = startIndex + messagesPerPage;
+        const messagesToShow = allMessages.slice(startIndex, endIndex);
+
+        messagesToShow.forEach(msg => {
+            const item = document.createElement('div');
+            // Dùng IsRead == 0 để xác định chưa đọc
+            item.className = 'message-item' + (msg.IsRead == 0 ? ' unread' : '');
+            
+            // Sử dụng các thuộc tính của teacherData
+            item.innerHTML = `
+                <div class="message-title">${msg.Type || msg.subject}</div>
+                <div class="message-meta">
+                    <span>${msg.sender || 'Admin'}</span> | 
+                    <span>${msg.SentAt || msg.date}</span>
+                </div>
+            `;
+
+            item.onclick = function () {
+                document.querySelectorAll('.message-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                showTeacherReceivedDetail(msg); // Gọi hàm hiển thị chi tiết có sẵn
+
+                // Nếu chưa đọc, gọi API cập nhật
+                if (msg.IsRead == 0 && msg.MessageID) {
+                    item.classList.remove('unread');
+                    fetch('../php/mark_message_read.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messageId: msg.MessageID })
+                    }).then(() => {
+                        msg.IsRead = 1; // Cập nhật trạng thái trên giao diện
+                    });
+                }
+            };
+            list.appendChild(item);
+        });
+
+        updatePaginationControls(); // Cập nhật lại các nút phân trang
+    }
+
+    // --- Hàm cập nhật các nút điều khiển phân trang ---
+    function updatePaginationControls() {
+        const paginationContainer = document.getElementById('teacher-pagination-container');
+        if (!paginationContainer) return;
+
+        paginationContainer.innerHTML = '';
+
+        // Nút "Trước"
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Trước';
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => showPage(currentPage - 1);
+        paginationContainer.appendChild(prevButton);
+
+        // Các nút số trang (logic phức tạp để hiển thị "...")
+        // ... (Sao chép logic từ hàm của phụ huynh)
+        let pageNumbers = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
+        } else {
+            if (currentPage <= 3) {
+                pageNumbers.push(1, 2, 3, 4, '...', totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pageNumbers.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+            } else {
+                pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
             }
-        };
-        list.appendChild(item);
-    });
+        }
+        
+        pageNumbers.forEach(pageNumber => {
+            if (pageNumber === '...') {
+                const ellipsisSpan = document.createElement('span');
+                ellipsisSpan.textContent = '...';
+                paginationContainer.appendChild(ellipsisSpan);
+            } else {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = pageNumber;
+                if (pageNumber === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.onclick = () => showPage(pageNumber);
+                paginationContainer.appendChild(pageButton);
+            }
+        });
+
+        // Nút "Sau"
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Sau';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => showPage(currentPage + 1);
+        paginationContainer.appendChild(nextButton);
+    }
+
+    // Bắt đầu bằng cách hiển thị trang đầu tiên
+    showPage(1);
 }
+
 
 function showTeacherReceivedDetail(msg) {
     const detail = document.getElementById('teacher-received-detail');
@@ -581,18 +688,22 @@ function fetchTeacherSentNotifications() {
 
 // Load sent notifications
 function loadTeacherSentNotifications() {
-    const body = document.getElementById('teacher-sent-table');
-    body.innerHTML = '';
-    (teacherData.sent_notifications || []).forEach(row => {
-        body.innerHTML += `
-            <tr>
-                <td>${row.SentAt}</td>
-                <td>${row.ClassName}${row.SchoolYear ? ' - ' + row.SchoolYear : ''}${row.Room ? ' - ' + row.Room : ''}</td>
-                <td>${row.Type}</td>
-                <td>${row.Content}</td>
-            </tr>
-        `;
+    const notifications = teacherData.sent_notifications || [];
+
+    const dataForTable = notifications.map(row => {
+        const className = `${row.ClassName}${row.SchoolYear ? ' - ' + row.SchoolYear : ''}${row.Room ? ' - ' + row.Room : ''}`;
+        return [
+            row.SentAt,
+            className,
+            row.Type,
+            row.Content
+        ];
     });
+
+    const table = initializeDataTable('#table-sent-notifications');
+    table.clear();
+    table.rows.add(dataForTable);
+    table.draw();
 }
 
 // Load teacher profile
@@ -799,3 +910,57 @@ document.querySelector('.summary-card[onclick*="showElement(\'schedule\')"]').on
 document.getElementById('class-select').addEventListener('change', function () {
     loadAttendanceList(this.value);
 });
+
+function initializeDataTable(tableId) {
+    try {
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+        }
+
+        return $(tableId).DataTable({
+            responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.modal({
+                        header: function (row) {
+                            return '';
+                        }
+                    }),
+                    renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+                }
+            },
+            language: {
+                emptyTable: "Không có dữ liệu",
+                info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                infoEmpty: "Hiển thị 0 đến 0 của 0 mục",
+                infoFiltered: "(được lọc từ _MAX_ mục)",
+                infoPostFix: "",
+                thousands: ",",
+                lengthMenu: "Hiển thị _MENU_ mục",
+                loadingRecords: "Đang tải...",
+                processing: "Đang xử lý...",
+                search: "Tìm kiếm:",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                }
+            },
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 },
+                { responsivePriority: 3, targets: 1 }
+            ],
+            drawCallback: function () {
+                // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng
+                $(tableId).css('width', '100%');
+                $(window).trigger('resize');
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing DataTable:', error);
+    }
+}

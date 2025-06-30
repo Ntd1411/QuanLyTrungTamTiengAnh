@@ -24,6 +24,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <link rel="stylesheet" href="../assets/css/teacher.css">
     <title>Teacher Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
 
 <body>
@@ -65,15 +70,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <h2>Chào mừng, giáo viên <span id="teacher-name">Giáo viên</span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('schedule')">
-                    <h3>Buổi dạy tiếp theo</h3>
+                    <h3>🔜 Buổi dạy tiếp theo</h3>
                     <div id="next-session-info"></div>
                 </div>
                 <div class="summary-card" onclick="showElement('my-classes')">
-                    <h3>Tổng học sinh các lớp đang dạy</h3>
+                    <h3>👨‍🎓 Tổng học sinh các lớp đang dạy</h3>
                     <p id="total-students">0</p>
                 </div>
                 <div class="summary-card">
-                    <h3>Số buổi đã dạy tháng này</h3>
+                    <h3>📅 Số buổi đã dạy tháng này</h3>
                     <p id="monthly-sessions">0</p>
                 </div>
             </div>
@@ -109,14 +114,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
             </div>
             <div class="teaching-log-table table-container">
-                <table>
+                <table id="teaching-log">
                     <thead>
                         <tr>
                             <th>Ngày dạy</th>
                             <th>Lớp</th>
                             <th>Trạng thái</th>
                             <th>Ghi chú</th>
-                            <th></th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="teaching-log-body"></tbody>
@@ -162,10 +167,12 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <div class="classes-container">
                 <!-- Danh sách lớp sẽ được thêm vào đây bằng JavaScript -->
             </div>
+
             <div class="class-students-list" style="display:none; margin-top:24px;">
                 <h3>Danh sách học sinh</h3>
                 <div class="table-container">
-                    <table>
+                    <!-- Thêm id="student-datatable" và class="display" -->
+                    <table id="student-datatable" class="display" style="width:100%">
                         <thead>
                             <tr>
                                 <th>STT</th>
@@ -176,7 +183,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Mã học sinh</th>
                             </tr>
                         </thead>
-                        <tbody id="teacher-class-students-table"></tbody>
+                        <!-- Bỏ id="teacher-class-students-table" khỏi tbody vì DataTables sẽ quản lý nó -->
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -200,11 +208,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
                 <div class="button-center">
                     <button onclick="submitAttendance()">Lưu điểm danh</button>
-                    <button onclick="viewAttendanceHistory()" style="margin-left:12px;">Xem lịch sử điểm danh</button>
-                    <button onclick="hideAttendanceHistory()" style="margin-left:12px;">Ẩn lịch sử điểm danh</button>
+                    <button id="view-history-btn" onclick="viewAttendanceHistory()" style="margin-left:12px;">Xem lịch sử điểm danh</button>
+                    <button id="hide-history-btn" onclick="hideAttendanceHistory()" style="margin-left:12px;">Ẩn lịch sử điểm danh</button>
                 </div>
                 <div id="attendance-history" class="table-container">
-                    <table>
+                    <table id="attendance-history-table" class="display" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Họ và tên</th>
@@ -213,7 +221,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="attendance-history-body"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -254,6 +262,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
             <!-- Bảng thông báo đã nhận -->
             <h3>Thông báo đã nhận</h3>
+            <div id="teacher-pagination-container"></div>
             <div class="message-container">
                 <div class="message-list" id="teacher-received-list">
                     <!-- Danh sách thông báo đã nhận sẽ được thêm bằng JS -->
@@ -268,7 +277,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <!-- Bảng thông báo đã gửi -->
             <h3>Thông báo đã gửi</h3>
             <div class="table-container">
-                <table id="table-sent-notifications">
+                <table id="table-sent-notifications" class="display">
                     <thead>
                         <tr>
                             <th>Ngày gửi</th>
@@ -277,7 +286,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <th>Nội dung</th>
                         </tr>
                     </thead>
-                    <tbody id="teacher-sent-table"></tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>

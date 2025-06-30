@@ -26,6 +26,11 @@ if (
     <link rel="stylesheet" href="../assets/css/parent.css">
     <title>Parent Dashboard - Trung tâm Tiếng Anh</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
 
 <body>
@@ -64,15 +69,15 @@ if (
             <h2>Chào mừng phụ huynh <span id="parent-name"></span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('children')">
-                    <h3>Số con đang học</h3>
+                    <h3>🤓 Số con đang học</h3>
                     <p id="total-children">0</p>
                 </div>
                 <div class="summary-card warning" onclick="showElement('payments')">
-                    <h3>Học phí chưa đóng</h3>
+                    <h3>💵 Học phí chưa đóng</h3>
                     <p id="unpaid-amount">0 VNĐ</p>
                 </div>
                 <div class="summary-card" onclick="showElement('messages')">
-                    <h3>Thông báo mới</h3>
+                    <h3>📬 Thông báo mới</h3>
                     <p id="new-messages">0</p>
                 </div>
             </div>
@@ -98,7 +103,7 @@ if (
                 </div>
                 <div class="payment-history">
                     <h3>Lịch sử đóng học phí</h3>
-                    <table>
+                    <table id="payment-history">
                         <thead>
                             <tr>
                                 <th>Ngày</th>
@@ -139,6 +144,9 @@ if (
 
         <!-- Messages Section -->
         <div id="messages" class="element">
+            <div id="pagination-container">
+                <!-- Phân trang sẽ được thêm vào đây -->
+            </div>
             <div class="message-container">
                 <div class="message-list">
                     <!-- Danh sách tin nhắn sẽ được thêm vào đây -->
