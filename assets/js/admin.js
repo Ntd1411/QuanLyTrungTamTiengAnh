@@ -1,30 +1,7 @@
-// Thêm protective code ngay đầu file
-(function () {
-    'use strict';
-
-    // Protect against Google Translate conflicts
-    if (typeof window.gtag !== 'undefined') {
-        window.gtag = function () { };
-    }
-
-    // Ensure jQuery is properly loaded
-    if (typeof $ === 'undefined' && typeof jQuery !== 'undefined') {
-        window.$ = jQuery;
-    }
-})();
-
-// Add error handler for uncaught exceptions
-window.addEventListener('error', function (e) {
-    if (e.message.includes('className.indexOf') ||
-        e.message.includes('bubble_compiled.js')) {
-        e.preventDefault();
-        console.warn('Google Translate conflict detected and handled');
-        return false;
-    }
-});
 
 // Hiển thị danh sách yêu cầu tư vấn
 function loadConsultingList() {
+    showLoading();
     fetch('admincrud.php?action=getConsultingList')
         .then(res => res.text())
         .then(html => {
@@ -47,7 +24,8 @@ function loadConsultingList() {
             setTimeout(() => {
                 initializeDataTable('#consulting-table');
             }, 10);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 document.addEventListener('DOMContentLoaded', loadConsultingList);
 
@@ -61,6 +39,7 @@ document.addEventListener('change', function (e) {
         body.append('id', id);
         body.append('status', status);
 
+        showLoading();
         fetch('admincrud.php', {
             method: 'POST',
             body: body
@@ -72,7 +51,9 @@ document.addEventListener('change', function (e) {
                 } else {
                     alert('Có lỗi khi cập nhật trạng thái!');
                 }
-            });
+            })
+            .finally(() => setTimeout(hideLoading, 300));
+
     }
 });
 
@@ -83,6 +64,7 @@ document.getElementById('class-form').addEventListener('submit', function (e) {
     const formData = new FormData(e.target);
     formData.append('action', 'addClass');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -90,7 +72,6 @@ document.getElementById('class-form').addEventListener('submit', function (e) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert(data.message);
                 e.target.reset();
                 loadClasses(); // Gọi hàm load lại danh sách
                 loadStudents();
@@ -103,7 +84,8 @@ document.getElementById('class-form').addEventListener('submit', function (e) {
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi thêm lớp: ' + error.message);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 function initializeDataTable(tableId) {
@@ -161,6 +143,7 @@ function initializeDataTable(tableId) {
 }
 
 function loadClasses() {
+    showLoading();
     fetch('admincrud.php?action=getClasses&t=' + Date.now(), {
         method: 'GET',
         cache: 'no-cache'
@@ -195,7 +178,8 @@ function loadClasses() {
         })
         .catch(error => {
             console.error('Error loading classes:', error);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Gọi loadClasses khi trang được tải
@@ -209,6 +193,7 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
     const formData = new FormData(this);
     formData.append('action', 'addTeacher');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -216,7 +201,6 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert(data.message);
                 this.reset();
                 loadStudents();
                 loadParents();
@@ -229,10 +213,12 @@ document.getElementById('teacher-form').addEventListener('submit', function (e) 
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi thêm giáo viên: ' + error.message);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 function loadTeachers() {
+    showLoading();
     fetch('admincrud.php?action=getTeachers&t=' + Date.now(), {
         method: 'GET',
         cache: 'no-cache'
@@ -265,7 +251,8 @@ function loadTeachers() {
         })
         .catch(error => {
             console.error('Error loading teachers:', error);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Gọi loadTeachers khi trang được tải
@@ -279,6 +266,7 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
     const formData = new FormData(this);
     formData.append('action', 'addStudent');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -286,7 +274,6 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert(data.message);
                 this.reset();
                 loadStudents();
                 loadParents();
@@ -299,10 +286,12 @@ document.getElementById('student-form').addEventListener('submit', function (e) 
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi thêm học sinh: ' + error.message);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 function loadStudents() {
+    showLoading();
     fetch('admincrud.php?action=getStudents&t=' + Date.now(), {
         method: 'GET',
         cache: 'no-cache'
@@ -338,7 +327,8 @@ function loadStudents() {
         })
         .catch(error => {
             console.error('Error loading students:', error);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Gọi loadStudents khi trang được tải
@@ -351,6 +341,7 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
     const formData = new FormData(this);
     formData.append('action', 'addParent');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -358,7 +349,6 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert(data.message);
                 this.reset();
                 loadStudents();
                 loadParents();
@@ -371,10 +361,12 @@ document.getElementById('parent-form').addEventListener('submit', function (e) {
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi thêm phụ huynh: ' + error.message);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 function loadParents() {
+    showLoading();
     fetch('admincrud.php?action=getParents&t=' + Date.now(), {
         method: 'GET',
         cache: 'no-cache'
@@ -409,7 +401,8 @@ function loadParents() {
         })
         .catch(error => {
             console.error('Error loading parents:', error);
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Gọi loadParents khi trang được tải
@@ -474,6 +467,7 @@ function loadStatistics() {
     // console.log(startDate);
     // console.log(endDate);
 
+    showLoading();
     fetch(`admincrud.php?action=loadStatistics&startDate=${startDate}&endDate=${endDate}`, {
         method: 'GET'
     })
@@ -499,7 +493,8 @@ function loadStatistics() {
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi tải thống kê');
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Add password change handler
@@ -509,6 +504,7 @@ document.getElementById('admin-password-form').addEventListener('submit', functi
     const formData = new FormData(this);
     formData.append('action', 'changeAdminPassword');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -525,12 +521,14 @@ document.getElementById('admin-password-form').addEventListener('submit', functi
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi đổi mật khẩu');
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 // Các hàm xử lý popup
 function showEditPopup(type, id) {
 
+    showLoading();
     fetch(`admincrud.php?action=get${type}&id=${id}`)
         .then(response => response.json())
         .then(data => {
@@ -555,7 +553,8 @@ function showEditPopup(type, id) {
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi lấy thông tin');
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 function fillEditForm(type, data) {
@@ -770,6 +769,8 @@ function deleteItem(type, id) {
     form.append('action', `delete${type}`)
     form.append('type', type);
     form.append('id', id);
+
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: form
@@ -789,7 +790,8 @@ function deleteItem(type, id) {
             } else {
                 alert('Lỗi: ' + data.message);
             }
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Xử lý form edit
@@ -799,6 +801,7 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
     const type = formData.get('type');
     // console.log(type);
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -817,7 +820,8 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
             } else {
                 alert('Lỗi: ' + data.message);
             }
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 // Add notification form handler
@@ -887,19 +891,7 @@ document.getElementById('notification-form').addEventListener('submit', function
     // Thêm vào formData dưới dạng JSON string
     formData.append('sendMethods', JSON.stringify(selectedMethods));
 
-    // Hiển thị loading khi gửi email
-    const submitButton = this.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    const isEmailSelected = selectedMethods.includes('email');
-
-    if (isEmailSelected) {
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi email...';
-    } else {
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-    }
-
+    showLoading();
     fetch('admincrud.php', {
         method: 'POST',
         body: formData
@@ -922,11 +914,7 @@ document.getElementById('notification-form').addEventListener('submit', function
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi gửi thông báo');
         })
-        .finally(() => {
-            // Khôi phục trạng thái ban đầu của button
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalText;
-        });
+        .finally(() => setTimeout(hideLoading, 300));
 });
 
 function loadMessages() {
@@ -991,6 +979,7 @@ document.getElementById('newsForm').addEventListener('submit', function (e) {
     const form = new FormData(this);
     form.append('action', 'addPost');
 
+    showLoading();
     fetch('admincrud.php', {
         method: 'post',
         body: form
@@ -1007,6 +996,7 @@ document.getElementById('newsForm').addEventListener('submit', function (e) {
 
         })
         .catch(error => alert("Có lỗi xảy ra khi đăng bài!"))
+        .finally(() => setTimeout(hideLoading, 300));
 })
 
 function loadNews() {
@@ -1121,6 +1111,7 @@ function showEditNews(id) {
     const form = new FormData();
     form.append('action', 'getNews');
     form.append('id', id);
+    showLoading();
     fetch(`admincrud.php`,
         {
             method: 'post',
@@ -1174,7 +1165,8 @@ function showEditNews(id) {
         .catch(error => {
             console.error('Error:', error);
             alert('Có lỗi xảy ra khi lấy thông tin bài viết');
-        });
+        })
+        .finally(() => setTimeout(hideLoading, 300));
 }
 
 // Add menu toggle function
@@ -1200,6 +1192,14 @@ document.addEventListener('click', function (e) {
     }
 });
 
+
+function showLoading() {
+    document.querySelector('.loading-screen').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.querySelector('.loading-screen').style.display = 'none';
+}
 
 
 

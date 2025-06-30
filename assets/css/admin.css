@@ -9,7 +9,6 @@
 .main-content-admin {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 30px;
     min-height: 100vh;
     background: #fff;
 }
@@ -763,8 +762,8 @@ button:disabled:hover {
 }
 
 .edit-popup {
-    max-height: 80vh;
-    width: 900px;
+    max-height: 95vh;
+    width: 1000px;
     background: white;
     padding: 30px 50px;
     border-radius: 8px;
@@ -776,6 +775,7 @@ button:disabled:hover {
 .edit-popup h3 {
     color: #2c3e50;
     font-size: 1.8rem;
+    margin-top: 30px;
     margin-bottom: 30px;
     padding-bottom: 15px;
     border-bottom: 3px solid var(--primary-color);
@@ -1147,11 +1147,93 @@ textarea {
     /* line-height: 35px !important;*/
 }
 
+/* Tổng thể vùng chọn */
+.select2-selection--multiple {
+  min-height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex !important;
+  flex-wrap: wrap;
+  cursor: text;
+}
+
+/* Các thẻ đã chọn */
+.select2-selection__choice {
+    flex: 1;
+    min-width: 50%;
+  background-color: var(--primary-color) !important;
+  height: 1.5rem;
+  display: flex !important;
+  align-items: center;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin: 4px 4px 0 0;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Dấu X xóa từng người */
+.select2-selection__choice__remove {
+  color: white !important;
+  padding: 5px;
+  margin-top: 3px;
+  margin-right: 6px !important;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.select2-selection__choice__remove:hover {
+  opacity: 0.8;
+}
+
+/* Input tìm kiếm nội bộ trong select2 */
+.select2-search__field {
+  border: none !important;
+  outline: none;
+  margin-top: 6px;
+  padding: 4px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+}
+
+.loading-text {
+    color: #fff3be;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
-    .main-content-admin {
-        padding: 15px;
-    }
 
     .dashboard-stats {
         grid-template-columns: repeat(2, 1fr);
@@ -1293,8 +1375,6 @@ textarea {
         /* Remove push effect */
         .main-content-admin {
             transition: none;
-            padding-left: 15px;
-            padding-right: 15px;
         }
 
         .main-content-admin.pushed {
@@ -1406,10 +1486,7 @@ textarea {
 
 /* New media query for mobile M (375px) */
 @media screen and (max-width: 375px) {
-    .main-content-admin {
-        padding: 10px;
-    }
-
+   
     header {
         max-height: 200px;
     }
@@ -1676,56 +1753,6 @@ div.dtr-modal-content {
     }
 }
 
-/* Tổng thể vùng chọn */
-.select2-selection--multiple {
-  min-height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 4px;
-  display: flex !important;
-  flex-wrap: wrap;
-  cursor: text;
-}
 
-/* Các thẻ đã chọn */
-.select2-selection__choice {
-    flex: 1;
-    min-width: 50%;
-  background-color: var(--primary-color) !important;
-  height: 1.5rem;
-  display: flex !important;
-  align-items: center;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 4px 10px;
-  margin: 4px 4px 0 0;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-}
 
-/* Dấu X xóa từng người */
-.select2-selection__choice__remove {
-  color: white !important;
-  padding: 5px;
-  margin-top: 3px;
-  margin-right: 6px !important;
-  font-weight: bold;
-  cursor: pointer;
-}
 
-.select2-selection__choice__remove:hover {
-  opacity: 0.8;
-}
-
-/* Input tìm kiếm nội bộ trong select2 */
-.select2-search__field {
-  border: none !important;
-  outline: none;
-  margin-top: 6px;
-  padding: 4px;
-  font-size: 14px;
-  flex: 1;
-  min-width: 120px;
-}

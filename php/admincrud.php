@@ -1040,8 +1040,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . number_format($class['Tuition'], 0, ',', '.') . " VNĐ</td>";
                         echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
                         echo "<td>
-                        <button onclick='showEditPopup(\"Class\" ," . $class['ClassID'] . ")'>Sửa</button>
-                        <button onclick='confirmDelete(\"Class\" ," . $class['ClassID'] . ")'>Xóa</button>
+                        <button onclick='showEditPopup(\"Class\" ," . $class['ClassID'] . ")'><i class=\"fa-solid fa-pencil\"></i></button>
+                        <button onclick='confirmDelete(\"Class\" ," . $class['ClassID'] . ")'><i class=\"fa-regular fa-trash-can\"></i></button>
                       </td>";
                         echo "</tr>";
                     }
@@ -1064,8 +1064,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "<td>" . number_format($teacher['Salary'], 0, ',', '.') . " VNĐ</td>";
                         echo "<td>" . htmlspecialchars($teacherClasses) . "</td>";
                         echo "<td>
-                <button onclick='showEditPopup(\"Teacher\", \"" . $teacher['UserID'] . "\")'>Sửa</button>
-                <button onclick='confirmDelete(\"Teacher\", \"" . $teacher['UserID'] . "\")'>Xóa</button>
+                <button onclick='showEditPopup(\"Teacher\", \"" . $teacher['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                <button onclick='confirmDelete(\"Teacher\", \"" . $teacher['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
                 </td>";
                         echo "</tr>";
                     }
@@ -1105,8 +1105,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['TuitionDiscount'] ? $student['TuitionDiscount'] . '%' : '0%') . "</td>";
                             echo "<td>
-                                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'>Sửa</button>
-                                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'>Xóa</button>
+                                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
                                 </td>";
                             echo "</tr>";
                         }
@@ -1151,8 +1151,8 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . number_format($parent['UnpaidAmount'], 0, ',', '.') . " VNĐ" . "</td>";
                             echo "<td>" . ($parent['isShowTeacher'] ? 'Có' : 'Không') . "</td>";
                             echo "<td>
-                                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'>Sửa</button>
-                                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'>Xóa</button>
+                                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
                                 </td>";
                             echo "</tr>";
                         }
@@ -1213,7 +1213,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($message['IsRead'] == 0 ? "Chưa đọc" : "Đã đọc") . "</td>";
                             echo "<td>
                                 <button class='btn-delete' onclick='confirmDelete(\"Message\", \"" . $message['MessageID'] . "\")' title='Xóa thông báo'>
-                                    <i class='fas fa-trash'></i> Xóa
+                                    <i class=\"fa-regular fa-trash-can\"></i>
                                 </button>
                                 </td>";
                             echo "</tr>";
