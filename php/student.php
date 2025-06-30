@@ -68,19 +68,19 @@ if (
             <h2>Chào mừng, <span id="student-name">Học sinh</span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('my-class')">
-                    <h3>Lớp học</h3>
+                    <h3>📚 Lớp học</h3>
                     <p id="class-name">Chưa trong lớp nào</p>
                 </div>
                 <div class="summary-card" onclick="showElement('attendance')">
-                    <h3>Buổi đã học</h3>
+                    <h3>✅ Buổi đã học</h3>
                     <p id="attended-sessions">0</p>
                 </div>
                 <div class="summary-card warning" onclick="showElement('attendance')">
-                    <h3>Buổi nghỉ</h3>
+                    <h3>❌ Buổi nghỉ</h3>
                     <p id="absent-sessions">0</p>
                 </div>
                 <div class="summary-card" onclick="showElement('homework')">
-                    <h3>Bài tập mới</h3>
+                    <h3>📝 Bài tập mới</h3>
                     <p id="new-homework">0</p>
                 </div>
             </div>

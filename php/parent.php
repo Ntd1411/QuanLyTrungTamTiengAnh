@@ -69,15 +69,15 @@ if (
             <h2>Chào mừng phụ huynh <span id="parent-name"></span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('children')">
-                    <h3>Số con đang học</h3>
+                    <h3>🤓 Số con đang học</h3>
                     <p id="total-children">0</p>
                 </div>
                 <div class="summary-card warning" onclick="showElement('payments')">
-                    <h3>Học phí chưa đóng</h3>
+                    <h3>💵 Học phí chưa đóng</h3>
                     <p id="unpaid-amount">0 VNĐ</p>
                 </div>
                 <div class="summary-card" onclick="showElement('messages')">
-                    <h3>Thông báo mới</h3>
+                    <h3>📬 Thông báo mới</h3>
                     <p id="new-messages">0</p>
                 </div>
             </div>

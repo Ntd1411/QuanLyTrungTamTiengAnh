@@ -70,15 +70,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <h2>Chào mừng, giáo viên <span id="teacher-name">Giáo viên</span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('schedule')">
-                    <h3>Buổi dạy tiếp theo</h3>
+                    <h3>🔜 Buổi dạy tiếp theo</h3>
                     <div id="next-session-info"></div>
                 </div>
                 <div class="summary-card" onclick="showElement('my-classes')">
-                    <h3>Tổng học sinh các lớp đang dạy</h3>
+                    <h3>👨‍🎓 Tổng học sinh các lớp đang dạy</h3>
                     <p id="total-students">0</p>
                 </div>
                 <div class="summary-card">
-                    <h3>Số buổi đã dạy tháng này</h3>
+                    <h3>📅 Số buổi đã dạy tháng này</h3>
                     <p id="monthly-sessions">0</p>
                 </div>
             </div>
