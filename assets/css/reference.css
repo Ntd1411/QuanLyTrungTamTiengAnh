@@ -151,6 +151,10 @@
 
 /* Responsive cho điện thoại */
 @media (max-width: 768px) {
+
+    aside {
+        display: none;
+    }
     .filter-controls {
         flex-direction: column;
         align-items: stretch;

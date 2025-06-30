@@ -3,8 +3,7 @@
     line-height: 1.6;
     color: #333;
     max-width: 100%;
-    margin: 20px 20px 20px 20px;
-    padding: 20px 15px;
+    padding: 50px 30px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -51,10 +50,4 @@
 
 .faq-container p {
     margin-bottom: 10px;
-}
-
-@media (max-width: 600px) {
-    .faq-container {
-        padding: 0 5px;
-    }
 }

@@ -72,7 +72,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <!-- Menu ngang -->
     <nav>
         <ul class="menu">
-            <li><a href="#home-admin" onclick="showElement('home-admin'); return false;">Trang Chủ</a></li>
+            <li><a href="#home-admin" onclick="showElement('home-admin'); return false;"><i class="fa-solid fa-house"></i> Trang Chủ</a></li>
             <li><a href="#manage-classes" onclick="showElement('manage-classes'); return false;">Lớp Học</a></li>
             <li><a href="#manage-teachers" onclick="showElement('manage-teachers'); return false;">Giáo Viên</a></li>
             <li><a href="#manage-students" onclick="showElement('manage-students'); return false;">Học Sinh</a></li>
@@ -147,10 +147,10 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div class="quick-actions">
                     <h3>Thao tác nhanh</h3>
                     <div class="action-buttons">
-                        <button onclick="showElement('manage-classes')">Quản lý lớp</button>
-                        <button onclick="showElement('manage-teachers')">Quản lý giáo viên</button>
-                        <button onclick="showElement('manage-students')">Quản lý học sinh</button>
-                        <button onclick="showElement('manage-parents')">Quản lý phụ huynh</button>
+                        <button onclick="showElement('manage-classes')"><i class="fa-solid fa-gear"></i> Quản lý lớp</button>
+                        <button onclick="showElement('manage-teachers')"><i class="fa-solid fa-gear"></i> Quản lý giáo viên</button>
+                        <button onclick="showElement('manage-students')"><i class="fa-solid fa-gear"></i> Quản lý học sinh</button>
+                        <button onclick="showElement('manage-parents')"><i class="fa-solid fa-gear"></i> Quản lý phụ huynh</button>
                     </div>
                 </div>
                 <!-- Bảng danh sách đăng ký tư vấn -->
@@ -228,7 +228,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('class-form').reset()" class="refresh">Làm mới</button>
-                        <button type="submit">Thêm lớp</button>
+                        <button type="submit"><i class="fa-solid fa-plus"></i> Thêm lớp</button>
                     </div>
                 </form>
 
@@ -298,7 +298,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('teacher-form').reset()" class="refresh">Làm mới</button>
-                        <button type="submit">Thêm giáo viên</button>
+                        <button type="submit"><i class="fa-solid fa-plus"></i> Thêm giáo viên</button>
                     </div>
                 </form>
 
@@ -394,7 +394,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('student-form').reset()" class="refresh">Làm mới</button>
-                        <button type="submit">Thêm học sinh</button>
+                        <button type="submit"><i class="fa-solid fa-plus"></i> Thêm học sinh</button>
                     </div>
                 </form>
 
@@ -470,7 +470,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="document.getElementById('parent-form').reset()" class="refresh">Làm mới</button>
-                        <button type="submit">Thêm phụ huynh</button>
+                        <button type="submit"><i class="fa-solid fa-plus"></i> Thêm phụ huynh</button>
                     </div>
                 </form>
 
@@ -611,7 +611,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <input type="text" id="author" name="author" required>
                     </div>
 
-                    <button type="submit">Đăng bài</button>
+                    <button type="submit"><i class="fa-solid fa-plus"></i> Đăng bài</button>
                 </form>
                 <h2 class="existPost">Bài viết đã có</h2>
                 <div id="newsList" class="newsList">
@@ -770,7 +770,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit">Gửi thông báo</button>
+                        <button type="submit"><i class="fa-solid fa-bell"></i> Gửi thông báo</button>
                         <button type="button" onclick="document.getElementById('notification-form').reset(); resetRecipientType()" class="refresh">Làm mới</button>
                     </div>
                 </form>
@@ -896,6 +896,16 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         </div>
     </div>
 
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-text">
+                <i class="fa-solid fa-plane fa-shake"></i>
+                Đang tải...
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
@@ -937,20 +947,20 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         // Add recipient type change function
         function changeRecipientType() {
             const recipientType = document.getElementById('recipient-type').value;
-            
+
             // Hide all recipient options
             document.getElementById('individual-recipient').style.display = 'none';
             document.getElementById('multiple-recipients').style.display = 'none';
             document.getElementById('class-recipients').style.display = 'none';
             document.getElementById('recipient-info').style.display = 'none';
-            
+
             // Clear required attributes
             document.querySelector('select[name="receiverId"]').removeAttribute('required');
             document.querySelector('select[name="receiverIds[]"]').removeAttribute('required');
             document.querySelector('select[name="classId"]').removeAttribute('required');
-            
+
             // Show appropriate option based on selection
-            switch(recipientType) {
+            switch (recipientType) {
                 case 'individual':
                     document.getElementById('individual-recipient').style.display = 'block';
                     document.querySelector('select[name="receiverId"]').setAttribute('required', 'required');
@@ -985,7 +995,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     break;
             }
         }
-        
+
         function resetRecipientType() {
             document.getElementById('recipient-type').value = '';
             changeRecipientType();

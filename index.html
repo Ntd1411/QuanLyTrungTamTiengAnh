@@ -6,10 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="./assets/icon/logo_ver3.png">
     <link rel="stylesheet" href="./assets/css/style.css">
-    <title>Học Viện Kỹ Thuật Mật Mã - ACTVN</title>
+    <title>KMA English Center - KEC</title>
+    <!-- Add Font Awesome for menu icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+
     <!-- Header với ảnh -->
     <header>
         <img src="./assets/img/poster.jpg" alt="Logo Website">
@@ -33,7 +43,7 @@
                 <a href="#" onclick="event.preventDefault()">Đào Tạo</a>
                 <ul class="submenu">
                     <li><a href="./view/english_for_kids.html">Tiếng Anh cho trẻ</a></li>
-                    <li><a href="">IELTS</a>
+                    <li><a href="" onclick="event.preventDefault()">IELTS</a>
                         <ul class="sub-submenu">
                             <li><a href="./view/ielts_basic.html">IELTS cơ bản</a></li>
                             <li><a href="./view/ielts_4.0_5.5.html">IELTS 4.0-5.5</a></li>

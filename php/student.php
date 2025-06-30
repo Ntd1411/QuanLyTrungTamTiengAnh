@@ -21,6 +21,7 @@ if (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/student.css">
     <title>Student Dashboard - Trung tâm Tiếng Anh</title>
@@ -33,6 +34,14 @@ if (
 </head>
 
 <body>
+
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
     </header>
@@ -202,7 +211,7 @@ if (
                     <label>Mật khẩu mới:</label>
                     <input type="password" id="new-password">
                 </div>
-                <button onclick="updateProfile()">Cập nhật thông tin</button>
+                <button class="btn-update-student" onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
         </div>
     </div>

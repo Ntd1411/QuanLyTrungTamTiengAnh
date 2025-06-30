@@ -19,6 +19,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/teacher.css">
     <title>Teacher Dashboard - Trung tâm Tiếng Anh</title>
@@ -31,6 +32,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 </head>
 
 <body>
+
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <!-- Header với ảnh -->
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">

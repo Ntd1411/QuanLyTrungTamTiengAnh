@@ -483,9 +483,12 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.btn-update-student {
+    width: 100%;
 }
 
 button:hover {
