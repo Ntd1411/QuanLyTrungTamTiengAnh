@@ -198,7 +198,7 @@ if (
                     <label>Mật khẩu mới:</label>
                     <input type="password" id="new-password">
                 </div>
-                <button onclick="updateProfile()">Cập nhật thông tin</button>
+                <button class="btn-update-student" onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
         </div>
     </div>
