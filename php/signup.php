@@ -93,6 +93,7 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -232,10 +233,13 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
                         </div>
                     </div>
                     <div>
-
                         <input type="checkbox" id="check" name="check">
                         <label for="check">Đồng ý với <a href="../view/terms-of-service.html">Điều khoản dịch vụ</a> và <a href="../view/privacy-policy.html">Chính sách bảo
                                 mật</a></label>
+                    </div>
+                    
+                    <div class="exist-account">
+                        Đã có tài khoản? <a href="../php/login.php">Đăng nhập ngay!</a>
                     </div>
                     <div id="error-message" style="color: red; background-color: antiquewhite; margin-bottom: 5px;line-height: 2rem; width: 100%;"></div>
                     <div id="check-error-placeholder"></div>
@@ -249,7 +253,7 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
     <div id="success-popup" class="popup" style="display: none;">
         <div class="popup-content">
             <h2>Đăng ký thành công!</h2>
-            <p>Bạn đã đăng ký tài khoản thành công.</p>
+            <p>Bạn đã đăng ký tài khoản thành công!</p>
             <button id="login-btn">Đăng nhập ngay</button>
         </div>
     </div>

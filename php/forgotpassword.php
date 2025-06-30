@@ -112,6 +112,7 @@ if (isset($_POST['forgot_password']) && $_POST['forgot_password']) {
     <meta charset="utf-8">
     <title>Quên mật khẩu - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
@@ -130,6 +131,14 @@ if (isset($_POST['forgot_password']) && $_POST['forgot_password']) {
 </head>
 
 <body>
+
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <!-- Header với ảnh -->
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
@@ -228,6 +237,7 @@ if (isset($_POST['forgot_password']) && $_POST['forgot_password']) {
         </div>
     </div>
 
+    <script src="../assets/js/main.js"></script>
     <script>
         document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
             e.preventDefault();

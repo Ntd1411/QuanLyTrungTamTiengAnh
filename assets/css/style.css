@@ -41,9 +41,9 @@ body {
 }
 
 .element:not(.active) {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
+  display: none;
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Animation Effects */
@@ -69,6 +69,7 @@ header {
   text-align: center;
   border-bottom: 3px solid #333;
   width: 100%;
+  overflow-x: hidden;
   height: auto;
 }
 
@@ -189,7 +190,8 @@ nav {
   }
 
   nav .sub-submenu a {
-    padding: 10px 30px; /* Additional padding for third level */
+    padding: 10px 30px;
+    /* Additional padding for third level */
   }
 
   nav .sub-submenu a:hover {
@@ -607,10 +609,23 @@ input.error {
 
 .popup-content {
   background-color: white;
-  padding: 20px;
+  padding: 40px 30px;
   border-radius: 5px;
   text-align: center;
 }
+
+.popup-content h2 {
+  text-align: left;
+  margin-bottom: 30px;
+  border-bottom: 5px solid var(--primary-color);
+  padding-bottom: 10px;
+}
+
+.exist-account {
+  width: 100%;
+  text-align: left;
+}
+
 
 #login-btn {
   background-color: var(--primary-color);
@@ -618,8 +633,8 @@ input.error {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
+  margin: 20px auto 0;
   cursor: pointer;
-  margin-top: 10px;
 }
 
 #login-btn:hover {
@@ -627,291 +642,290 @@ input.error {
 }
 
 .statistics__time {
-    display: flex;
-    margin-top: 30px;
-    align-items: center;
-    gap: 30px;
+  display: flex;
+  margin-top: 30px;
+  align-items: center;
+  gap: 30px;
 }
 
 /* Password Change Form Styles */
 .password-change-form {
-    background: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin: 50px auto 20px;
-    max-width: 500px;
-    border: 1px solid #e0e0e0;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 50px auto 20px;
+  max-width: 500px;
+  border: 1px solid #e0e0e0;
 }
 
 .password-change-form h3 {
-    color: #2c3e50;
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 1.5em;
-    border-bottom: 2px solid #E4312A;
-    padding-bottom: 10px;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.5em;
+  border-bottom: 2px solid #E4312A;
+  padding-bottom: 10px;
 }
 
 .password-change-form .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .password-change-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: #2c3e50;
-    font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
 .password-change-form input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
 }
 
 .password-change-form input[type="password"]:focus {
-    border-color: #E4312A;
-    outline: none;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+  border-color: #E4312A;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
 }
 
 .password-change-form .form-actions {
-    text-align: center;
-    margin-top: 25px;
+  text-align: center;
+  margin-top: 25px;
 }
 
 .password-change-form button {
-    background-color: #E4312A;
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
+  background-color: #E4312A;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
 }
 
 .password-change-form button:hover {
-    background-color: #E4312A;
+  background-color: #E4312A;
 }
 
 .password-change-form button:active {
-    transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 .password-change-form input[type="password"]::placeholder {
-    color: #95a5a6;
+  color: #95a5a6;
 }
 
 .password-change-form .form-group.error input {
-    border-color: #e74c3c;
+  border-color: #e74c3c;
 }
 
 .password-change-form .form-group.success input {
-    border-color: #E4312A;
+  border-color: #E4312A;
 }
 
 /* Áp dụng cho toàn bộ trang */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 8px;
+  background: #f0f0f0;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #999;
-    border-radius: 8px;
+  background: #999;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #666;
+  background: #666;
 }
 
 /* Responsive Design for Home Page */
 .menu-toggle {
-    display: none;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 992px) {
-    .menu-toggle {
-        display: block;
-    }
+  .menu-toggle {
+    display: block;
+  }
 
-    nav {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background: var(--primary-color);
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: 0.3s ease;
-            z-index: 999;
-            overflow-y: auto;
-        }
+  nav {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background: var(--primary-color);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+  }
 
-        nav.active {
-            left: 0;
-        }
+  nav.active {
+    left: 0;
+  }
 
-        nav .menu {
-            background: var(--primary-color);
-            flex-direction: column;
-            padding: 20px;
-            padding-top: 60px;
-        }
+  nav .menu {
+    background: var(--primary-color);
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 60px;
+  }
 
-        nav .menu li {
-            width: 100%;
-            margin: 10px 0;
-        }
+  nav .menu li {
+    width: 100%;
+    margin: 10px 0;
+  }
 
-        nav .menu a {
-            width: 100%;
-            display: block;
-            padding: 12px 15px;
-            color: #fff;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
+  nav .menu a {
+    width: 100%;
+    display: block;
+    padding: 12px 15px;
+    color: #fff;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
 
-        nav .menu a:hover {
-            background: #f8f9fa;
-            color: var(--primary-color);
-        }
+  nav .menu a:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+  }
 
-        nav .submenu {
-            position: static;
-            width: 100%;
-            box-shadow: none;
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-        }
+  nav .submenu {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+  }
 
-        nav .submenu li {
-            padding: 0;
-        }
+  nav .submenu li {
+    padding: 0;
+  }
 
-        nav .submenu a:hover {
-            background: #f8f9fa !important;
-            color: var(--primary-color) !important;
-        }
+  nav .submenu a:hover {
+    background: #f8f9fa !important;
+    color: var(--primary-color) !important;
+  }
 
-        nav .submenu a {
-            padding: 10px 20px;
-        }
+  nav .submenu a {
+    padding: 10px 20px;
+  }
 
-    .menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 998;
-    }
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+  }
 
-    .menu-overlay.active {
-        display: block;
-    }
+  .menu-overlay.active {
+    display: block;
+  }
 
-    .main-content {
-        flex-direction: column;
-    }
+  .main-content {
+    flex-direction: column;
+  }
 
-    .sidebar-left,
-    .sidebar-right,
-    .content {
-        flex: none;
-        width: 100%;
-        border: none;
-    }
+  .sidebar-left,
+  .sidebar-right,
+  .content {
+    flex: none;
+    width: 100%;
+    border: none;
+  }
 
-    .sidebar-left,
-    .sidebar-right {
-        max-width: 400px;
-        margin: 0 auto;
-    }
+  .sidebar-left,
+  .sidebar-right {
+    max-width: 400px;
+    margin: 0 auto;
+  }
 
-    .home {
-        flex-direction: column;
-    }
+  .home {
+    flex-direction: column;
+  }
 
-    .ad-banner {
-        position: static;
-        margin: 20px auto;
-    }
+  .ad-banner {
+    position: static;
+    margin: 20px auto;
+  }
 }
 
 @media screen and (max-width: 768px) {
-    header img {
-        max-height: 200px;
-    }
+  header img {
+    max-height: 100px;
+  }
 
-    .content {
-        padding: 15px;
-    }
+  .content {
+    padding: 15px;
+  }
 
-    .content h1 {
-        font-size: 1.8rem;
-    }
+  .content h1 {
+    font-size: 1.8rem;
+  }
 
-    .content h2 {
-        font-size: 1.4rem;
-    }
+  .content h2 {
+    font-size: 1.4rem;
+  }
 }
 
 @media screen and (max-width: 576px) {
-    .menu-toggle {
-        top: 15px;
-        left: 15px;
-        padding: 8px;
-    }
+  .menu-toggle {
+    top: 15px;
+    left: 15px;
+    padding: 8px;
+  }
 
-    header img {
-        max-height: 150px;
-    }
+  header img {
+    max-height: 100px;
+  }
 
-    .content h1 {
-        font-size: 1.5rem;
-    }
+  .content h1 {
+    font-size: 1.5rem;
+  }
 
-    .content h2 {
-        font-size: 1.2rem;
-    }
+  .content h2 {
+    font-size: 1.2rem;
+  }
 
-    .content p {
-        font-size: 0.9rem;
-    }
+  .content p {
+    font-size: 0.9rem;
+  }
 
-    footer {
-        padding: 20px;
-        font-size: 0.9rem;
-    }
+  footer {
+    padding: 20px;
+    font-size: 0.9rem;
+  }
 
-    footer h3 {
-        font-size: 1rem;
-    }
+  footer h3 {
+    font-size: 1rem;
+  }
 }
-
