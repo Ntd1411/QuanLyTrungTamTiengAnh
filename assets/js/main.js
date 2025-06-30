@@ -46,3 +46,38 @@ function showElement(id) {
         mainContent.classList.remove('pushed');
     }
 }
+
+// Add menu toggle function
+function toggleMenu() {
+    const nav = document.querySelector('nav');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    // Check if we're on admin page
+    const mainContent = document.querySelector('.main-content-admin');
+    
+    menuOverlay.classList.toggle('active');
+    nav.classList.toggle('active');
+    
+    // Only toggle pushed class if on admin page
+    if (mainContent) {
+        mainContent.classList.toggle('pushed');
+    }
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function (e) {
+    const nav = document.querySelector('nav');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuOverlay = document.querySelector('.menu-overlay');
+
+    if (nav.classList.contains('active') &&
+        !nav.contains(e.target) &&
+        !menuToggle.contains(e.target)) {
+        nav.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        // Check if we're on admin page before removing pushed class
+        const mainContent = document.querySelector('.main-content-admin');
+        if (mainContent) {
+            mainContent.classList.remove('pushed');
+        }
+    }
+});

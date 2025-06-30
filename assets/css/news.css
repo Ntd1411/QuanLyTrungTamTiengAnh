@@ -158,6 +158,10 @@
 
 /* Responsive cho điện thoại */
 @media (max-width: 768px) {
+    aside {
+        display: none;
+    }
+
     .news-list-grid {
         grid-template-columns: 1fr; /* Một cột trên màn hình nhỏ */
         gap: 25px;

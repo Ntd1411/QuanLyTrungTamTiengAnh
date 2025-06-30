@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khóa học TOEIC 550-650</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/english_course.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +15,14 @@
 </head>
 
 <body>
+
+        <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <nav>
         <ul class="menu">
             <li>
@@ -252,6 +261,7 @@
         </footer>
     </div>
 
+    <script src="../assets/js/main.js"></script>
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT_ID.js" crossorigin="anonymous"></script>
     <script src="../assets/js/all_english_courses.js"></script>
 </body>

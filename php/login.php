@@ -97,10 +97,19 @@ if (isset($_POST['login']) && ($_POST['login'])) {
     <meta charset="utf-8">
     <title>Đăng nhập - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
+
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <!-- Header với ảnh -->
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
@@ -191,7 +200,7 @@ if (isset($_POST['login']) && ($_POST['login'])) {
         </div>
     </div>
 
-
+    <script src="../assets/js/main.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();

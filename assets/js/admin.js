@@ -124,12 +124,12 @@ function initializeDataTable(tableId) {
                     previous: "Trước"
                 }
             },
-            pageLength: 10,
+            pageLength: -1,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 },
-                { responsivePriority: 2, targets: -1 },
-                { responsivePriority: 3, targets: 1 }
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: -1 }
             ],
             drawCallback: function () {
                 // Đảm bảo responsive được kích hoạt sau khi vẽ lại bảng

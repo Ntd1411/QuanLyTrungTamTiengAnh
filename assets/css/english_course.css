@@ -224,7 +224,6 @@ footer {
     /* Adjust Menu Styles Here - adapt to your menu CSS */
     .menu {
         flex-direction: column;
-        text-align: center;
         margin-top: 10px;
     }
 

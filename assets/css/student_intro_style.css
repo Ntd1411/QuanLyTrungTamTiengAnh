@@ -122,50 +122,109 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+    .student-container-title h1 {
+        font-size: 35px;
+        padding: 15px;
+    }
+
     .student-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 20px;
+        margin: 20px;
+        padding: 15px;
     }
 
     .student-image {
-        margin: 0 0 20px 0;
-        flex: none;
+        margin: 15px;
     }
 
     .student-image img {
-        width: 150px;
-        height: 150px;
+        max-width: 450px;
+    }
+}
+
+@media (max-width: 768px) {
+    .student-container {
+        flex-direction: column;
+        text-align: center;
+        margin: 15px;
+    }
+
+    .student-container-title h1 {
+        font-size: 28px;
+        padding: 10px;
+    }
+
+    .student-image {
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    .student-image img {
+        max-width: 350px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .student-info {
+        padding: 15px;
+    }
+
+    .student-info h2 {
+        font-size: 22px;
+    }
+
+    .student-info h3 {
+        font-size: 18px;
+    }
+
+    .student-info li {
+        text-align: left;
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .student-container-title h1 {
+        font-size: 24px;
+    }
+
+    .student-container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .student-image img {
+        max-width: 280px;
+    }
+
+    .student-info {
+        padding: 10px;
     }
 
     .student-info h2 {
         font-size: 20px;
     }
 
-    .student-info li {
-        padding-left: 0;
-        text-align: left;
+    .student-info h3 {
+        font-size: 16px;
     }
 
-    .student-info li:before {
-        display: none;
+    .student-info li {
+        font-size: 14px;
+        margin-bottom: 8px;
     }
 }
 
-@media (max-width: 480px) {
-    .student-info {
-        padding: 20px;
-    }
-
-    .student-container {
-        padding: 15px;
-        margin-bottom: 25px;
+@media (max-width: 375px) {
+    .student-container-title h1 {
+        font-size: 20px;
     }
 
     .student-image img {
-        width: 120px;
-        height: 120px;
+        max-width: 220px;
+    }
+
+    .student-info h2 {
+        font-size: 18px;
     }
 }

@@ -95,10 +95,20 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
     <meta charset="utf-8">
     <title>Đăng ký - KEC</title>
     <link rel="icon" href="../assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
+
+    <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+
     <!-- Header với ảnh -->
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
@@ -244,6 +254,7 @@ if (isset($_POST['signup']) && ($_POST['signup'])) {
         </div>
     </div>
 
+    <script src="../assets/js/main.js"></script>
     <script src="../assets/js/validation.js"></script>
     <script>
         document.getElementById('signup-form').addEventListener('submit', function(e) {
