@@ -30,27 +30,21 @@ if (
 
 <body>
 
-    <!-- Add menu toggle button -->
-    <button class="menu-toggle" onclick="toggleMenu()">
-        <i class="fas fa-bars"></i>
-    </button>
 
-    <!-- Add menu overlay -->
-    <div class="menu-overlay" onclick="toggleMenu()"></div>
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
     </header>
 
     <nav>
         <ul class="menu">
-            <li><a href="#home-student" onclick="showElement('home-student'); return false;">Trang Chủ</a></li>
-            <li><a href="#my-class" onclick="showElement('my-class'); return false;">Lớp Học</a></li>
-            <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
-            <li><a href="#homework" onclick="showElement('homework'); return false;">Bài Tập</a></li>
+            <li><a onclick="showElement('home-student'); event.preventDefault();">Trang Chủ</a></li>
+            <li><a onclick="showElement('my-class'); event.preventDefault();">Lớp Học</a></li>
+            <li><a onclick="showElement('attendance'); event.preventDefault();">Điểm Danh</a></li>
+            <li><a onclick="showElement('homework'); event.preventDefault();">Bài Tập</a></li>
             <li>
-                <a href="#account" onclick="event.preventDefault()">Tài Khoản</a>
+                <a onclick="event.preventDefault()">Tài Khoản</a>
                 <ul class="submenu">
-                    <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
+                    <li><a onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>
@@ -209,6 +203,14 @@ if (
         <p>Điện thoại: (024) 3854 2211 | Fax: (024) 3854 2344</p>
         <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
     </footer>
+
+        <!-- Add menu toggle button -->
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Add menu overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
 
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/student.js"></script>

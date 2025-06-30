@@ -43,15 +43,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     <!-- Menu ngang -->
     <nav>
         <ul class="menu">
-            <li><a href="#home-teacher" onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
-            <li><a href="#schedule" onclick="showElement('schedule'); return false;">Lịch Dạy</a></li>
-            <li><a href="#my-classes" onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
-            <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
-            <li><a href="#notifications" onclick="showElement('notifications'); return false;">Thông Báo</a></li>
+            <li><a onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
+            <li><a onclick="showElement('schedule'); return false;">Lịch Dạy</a></li>
+            <li><a onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
+            <li><a onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
+            <li><a onclick="showElement('notifications'); return false;">Thông Báo</a></li>
             <li>
-                <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
+                <a onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
-                    <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
+                    <li><a onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>

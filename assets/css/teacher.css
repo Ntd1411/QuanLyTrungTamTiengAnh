@@ -1,7 +1,6 @@
 .main-content-teacher {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
     min-height: 100vh;
     background-color: #fff;
 }
@@ -491,8 +490,10 @@ button:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .message-container {
+        grid-template-columns: 1fr;
+    }
     .main-content-teacher {
-        padding: 10px;
     }
 
     .dashboard-summary {

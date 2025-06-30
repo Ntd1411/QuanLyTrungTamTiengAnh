@@ -44,14 +44,14 @@ if (
 
     <nav>
         <ul class="menu">
-            <li><a href="#home-parent" onclick="showElement('home-parent'); return false;">Trang Chủ</a></li>
-            <li><a href="#children" onclick="showElement('children'); return false;">Con</a></li>
-            <li><a href="#payments" onclick="showElement('payments'); return false;">Học Phí</a></li>
-            <li><a href="#messages" onclick="showElement('messages'); return false;">Thông báo</a></li>
+            <li><a onclick="showElement('home-parent'); return false;">Trang Chủ</a></li>
+            <li><a onclick="showElement('children'); return false;">Con</a></li>
+            <li><a onclick="showElement('payments'); return false;">Học Phí</a></li>
+            <li><a onclick="showElement('messages'); return false;">Thông báo</a></li>
             <li>
-                <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
+                <a onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
-                    <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
+                    <li><a onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>
@@ -178,7 +178,7 @@ if (
                     <label>Mật khẩu mới:</label>
                     <input type="password" id="profile-new-password">
                 </div>
-                <button onclick="updateProfile()">Cập nhật thông tin</button>
+                <button class="btn-update" onclick="updateProfile()">Cập nhật thông tin</button>
             </div>
         </div>
     </div>

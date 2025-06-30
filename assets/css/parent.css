@@ -1,7 +1,6 @@
 .main-content-parent {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
     min-height: 100vh;
     background-color: #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -362,6 +361,9 @@ button {
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+.btn-update {
     width: 100%;
 }
 
@@ -374,7 +376,6 @@ button:hover {
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content-parent {
-        padding: 15px;
     }
 
     .message-container {

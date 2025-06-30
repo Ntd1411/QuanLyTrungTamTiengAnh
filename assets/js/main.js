@@ -45,6 +45,11 @@ function showElement(id) {
         menuOverlay.classList.remove('active');
         mainContent.classList.remove('pushed');
     }
+    
+    if (window.innerWidth <= 992) { // Chỉ đóng menu khi ở chế độ mobile
+        nav.classList.remove('active');
+        menuOverlay.classList.remove('active');
+    }
 }
 
 // Add menu toggle function
@@ -52,14 +57,18 @@ function toggleMenu() {
     const nav = document.querySelector('nav');
     const menuOverlay = document.querySelector('.menu-overlay');
     // Check if we're on admin page
-    const mainContent = document.querySelector('.main-content-admin');
-    
+    const mainContentAdmin = document.querySelector('.main-content-admin');
+    const mainContentStudent = document.querySelector('.main-content-student');
+
     menuOverlay.classList.toggle('active');
     nav.classList.toggle('active');
     
     // Only toggle pushed class if on admin page
-    if (mainContent) {
-        mainContent.classList.toggle('pushed');
+    if (mainContentAdmin) {
+        mainContentAdmin.classList.toggle('pushed');
+    }
+    if (mainContentStudent) {
+        mainContentStudent.classList.toggle('pushed');
     }
 }
 
