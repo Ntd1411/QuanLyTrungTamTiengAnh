@@ -25,9 +25,33 @@ if (!$teacher) {
 }
 
 // Lấy danh sách lớp giáo viên phụ trách
-$sql = "SELECT ClassID, ClassName, SchoolYear, StartDate, EndDate, ClassTime, Room
-        FROM classes
-        WHERE TeacherID = ?";
+$sql = "SELECT
+    c.ClassID,
+    c.ClassName,
+    c.SchoolYear,
+    c.StartDate,
+    c.EndDate,
+    c.ClassTime,
+    c.Room,
+    -- Dùng COUNT(ts.SessionID) để chỉ đếm các buổi dạy thực sự tồn tại sau khi JOIN
+    COUNT(ts.SessionID) AS TaughtSessions
+FROM
+    classes c
+-- Sử dụng LEFT JOIN để vẫn hiển thị lớp học dù chưa có buổi dạy nào
+LEFT JOIN
+    teaching_sessions ts
+    ON c.ClassID = ts.ClassID
+    AND ts.Status = 'Đã dạy'
+WHERE
+    c.TeacherID = ?
+GROUP BY
+    c.ClassID,
+    c.ClassName,
+    c.SchoolYear,
+    c.StartDate,
+    c.EndDate,
+    c.ClassTime,
+    c.Room;";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$teacher['UserID']]);
 $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,12 +94,11 @@ $stmt->execute([$teacher['UserID']]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $monthly_sessions = $row ? (int)$row['monthly_sessions'] : 0;
 
-// Lấy nhật ký dạy tháng này
+// Lấy nhật ký dạy trong năm
 $sql = "SELECT ts.SessionID, ts.SessionDate, c.ClassName, c.SchoolYear, c.Room, ts.Status, ts.Note
         FROM teaching_sessions ts
         JOIN classes c ON ts.ClassID = c.ClassID
         WHERE ts.TeacherID = ?
-        AND MONTH(ts.SessionDate) = MONTH(CURDATE())
         AND YEAR(ts.SessionDate) = YEAR(CURDATE())
         ORDER BY ts.SessionDate DESC";
 $stmt = $conn->prepare($sql);

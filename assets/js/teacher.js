@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-// Load dashboard data
+// Các hàm phục vụ tải dữ liệu cho phần dashboard giáo viên
+
 function loadTeacherDashboard() {
     document.getElementById('teacher-name').textContent = teacherData.name;
 
@@ -66,6 +67,7 @@ function loadTeacherDashboard() {
                 <p><strong>Ngày đóng lớp:</strong> ${cls.EndDate || ''}</p>
                 <p><strong>Lịch học:</strong> ${cls.ClassTime || ''}</p>
                 <p><strong>Phòng học:</strong> ${cls.Room || ''}</p>
+                <p><strong>Số buổi đã dạy:</strong> ${cls.TaughtSessions || 0}</p>
             </div>
             `;
             // Thêm sự kiện click để hiện danh sách học sinh
@@ -76,7 +78,7 @@ function loadTeacherDashboard() {
     }
 }
 
-// Load teaching log
+// Tải nhật ký dạy
 function loadTeachingLog() {
     const logBody = document.getElementById('teaching-log-body');
     logBody.innerHTML = '';
@@ -101,7 +103,7 @@ function loadTeachingLog() {
     initializeDataTable('#teaching-log');
 }
 
-// Delete teaching log
+// Xóa nhật ký dạy
 function deleteTeachingLog(SessionID) {
     if (!confirm('Bạn có chắc chắn muốn xóa nhật ký này?')) return;
     fetch('../php/delete_teaching_log.php', {
@@ -130,7 +132,7 @@ function deleteTeachingLog(SessionID) {
         });
 }
 
-//Popup Log Form
+// Form popup thêm nhật ký dạy
 // Hiện popup
 document.getElementById('add-log-btn').onclick = function () {
     // Đổ danh sách lớp vào select với cú pháp: Tên lớp - Năm học
@@ -177,7 +179,7 @@ function submitAddLog() {
         });
 }
 
-// Load class selection
+// Tải lớp trong select gửi thông báo
 function loadClassSelect() {
     const classSelects = document.querySelectorAll('#class-select, #notification-class');
     classSelects.forEach(select => {
@@ -189,7 +191,7 @@ function loadClassSelect() {
     });
 }
 
-// Show class students
+// Hiển thị danh sách học sinh của lớp
 function showClassStudents(classId) {
     const cls = teacherData.classes.find(c => (c.ClassID || c.id) == classId);
     const studentsListDiv = document.querySelector('.class-students-list');
@@ -226,7 +228,7 @@ function showClassStudents(classId) {
     }, 50);
 }
 
-// Load attendance list
+// Tải danh sách điểm danh
 function loadAttendanceList(classId) {
     const cls = teacherData.classes.find(c => (c.ClassID || c.id) == classId);
     if (!cls) return;
@@ -254,7 +256,7 @@ function loadAttendanceList(classId) {
     });
 }
 
-// Submit attendance
+// Lưu điểm danh
 function submitAttendance() {
     const classId = document.getElementById('class-select').value;
     const date = document.getElementById('attendance-date').value;
@@ -303,7 +305,7 @@ function submitAttendance() {
         });
 }
 
-// View attendance history
+// Xem lịch sử điểm danh
 function viewAttendanceHistory() {
     const classId = document.getElementById('class-select').value;
     const date = document.getElementById('attendance-date').value;
@@ -359,7 +361,7 @@ function viewAttendanceHistory() {
         });
 }
 
-// Hide attendance history
+// Ân hiện lịch sử điểm danh
 function hideAttendanceHistory() {
     const historyDiv = document.getElementById('attendance-history');
     if (historyDiv) {
@@ -370,7 +372,7 @@ function hideAttendanceHistory() {
     document.getElementById('hide-history-btn').style.display = 'none';
 }
 
-// Update attendance
+// Sửa điểm danh
 function updateAttendance(studentId, studentName) {
     // Điền dữ liệu vào form
     document.getElementById('student-name-input').value = studentName;
@@ -382,6 +384,7 @@ function updateAttendance(studentId, studentName) {
     document.getElementById('attendance-modal').style.display = 'flex';
 }
 
+// Lưu điểm danh đã sửa
 function saveUpdate() {
     const studentId = document.getElementById('student-id-input').value; // Lấy từ hidden input
     const classId = document.getElementById('class-select').value;
@@ -402,8 +405,8 @@ function saveUpdate() {
         .then(data => {
             if (data.success) {
                 alert('Đã cập nhật điểm danh!');
-                viewAttendanceHistory();
-                document.getElementById('attendance-modal').style.display = 'none'; // Sửa cách xóa modal
+                viewAttendanceHistory(); // Refresh lại bảng
+                document.getElementById('attendance-modal').style.display = 'none';
             } else {
                 alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
             }
@@ -414,7 +417,7 @@ function saveUpdate() {
         });
 }
 
-// Delete attendance
+// Xóa điểm danh
 function deleteAttendance(studentId) {
     const classId = document.getElementById('class-select').value;
     const date = document.getElementById('attendance-date').value;
@@ -441,7 +444,7 @@ function deleteAttendance(studentId) {
         });
 }
 
-// Popup Notification Form
+// Form popup gửi thông báo
 document.getElementById('send-notification-btn').onclick = function () {
     const select = document.getElementById('notification-class-select');
     select.innerHTML = '';
@@ -469,7 +472,7 @@ function closeSendNotificationModal() {
     document.getElementById('send-notification-modal').style.display = 'none';
 }
 
-// Send notification
+// Gửi thông báo
 function submitSendNotification() {
     const classId = document.getElementById('notification-class-select').value;
     const type = document.getElementById('notification-type-select').value;
@@ -491,6 +494,12 @@ function submitSendNotification() {
             if (data.success) {
                 // Nếu là bài tập về nhà, thêm vào bảng homework
                 if (type === 'Bài tập về nhà') {
+
+                    if (!deadline) {
+                        alert('Vui lòng nhập hạn nộp bài tập');
+                        return;
+                    }
+
                     fetch('../php/add_homework.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -527,7 +536,7 @@ function submitSendNotification() {
         });
 }
 
-// Load received notifications
+// Tải thông báo đã nhận
 function loadTeacherReceivedNotifications() {
     const list = document.getElementById('teacher-received-list');
     const detail = document.getElementById('teacher-received-detail');
@@ -550,7 +559,7 @@ function loadTeacherReceivedNotifications() {
     let currentPage = 1;
     const totalPages = Math.ceil(allMessages.length / messagesPerPage);
 
-    // --- Hàm hiển thị một trang cụ thể ---
+    // Hàm hiển thị một trang cụ thể
     function showPage(page) {
         currentPage = page;
         list.innerHTML = ''; // Xóa danh sách cũ
@@ -627,10 +636,14 @@ function loadTeacherReceivedNotifications() {
         
         pageNumbers.forEach(pageNumber => {
             if (pageNumber === '...') {
+                // Nếu phần tử mảng là dấu ...
+
                 const ellipsisSpan = document.createElement('span');
                 ellipsisSpan.textContent = '...';
                 paginationContainer.appendChild(ellipsisSpan);
             } else {
+                // Nếu phần tử mảng là 1 con số
+
                 const pageButton = document.createElement('button');
                 pageButton.textContent = pageNumber;
                 if (pageNumber === currentPage) {
@@ -686,7 +699,7 @@ function fetchTeacherSentNotifications() {
         });
 }
 
-// Load sent notifications
+// Tải thông báo đã gửi
 function loadTeacherSentNotifications() {
     const notifications = teacherData.sent_notifications || [];
 
@@ -706,14 +719,14 @@ function loadTeacherSentNotifications() {
     table.draw();
 }
 
-// Load teacher profile
+// Tải thông tin cá nhân của giáo viên
 function loadTeacherProfile() {
     document.getElementById('profile-name').value = teacherData.name || '';
     document.getElementById('profile-email').value = teacherData.email || '';
     document.getElementById('profile-phone').value = teacherData.phone || '';
 }
 
-// Update profile
+// Cập nhật thông tin cá nhân
 function updateProfile() {
     const newPhone = document.getElementById('profile-phone').value;
     const newPassword = document.getElementById('profile-new-password').value;
@@ -777,7 +790,7 @@ function updateProfile() {
         });
 }
 
-// View schedule
+// Xem lịch dạy (rất phức tạp)
 document.getElementById('view-schedule-btn').onclick = viewSchedule;
 function viewSchedule() {
     const scheduleBody = document.getElementById('schedule-body');
@@ -842,6 +855,7 @@ function parseClassTime(classTime) {
     return { days, time: timePart };
 }
 
+// Lấy buổi học tiếp theo trong 3 tuần tới
 function getNextTeachingSession() {
     const now = new Date();
     let nextSession = null;
@@ -884,6 +898,7 @@ function getNextTeachingSession() {
     return nextSession;
 }
 
+// Hiển thị lịch dạy của buổi dạy tiếp theo khi click vào thẻ tóm tắt
 document.querySelector('.summary-card[onclick*="showElement(\'schedule\')"]').onclick = function () {
     const nextSession = getNextTeachingSession();
     if (nextSession && nextSession.date) {
