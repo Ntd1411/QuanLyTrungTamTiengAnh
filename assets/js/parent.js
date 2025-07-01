@@ -52,8 +52,72 @@ function loadChildren() {
             <p>Học phí: ${child.fee.toLocaleString()} VNĐ</p>
             <p>Đã đóng: ${child.paid.toLocaleString()} VNĐ</p>
         `;
+
+        // Hiển thị lịch sử đi học khi click
+        childCard.style.cursor = 'pointer';
+        childCard.onclick = () => showAttendanceHistoryOfChild(child.id);
+
         childrenList.appendChild(childCard);
     });
+}
+
+/**
+ * Hiển thị lịch sử điểm danh bằng cách sử dụng API của DataTables.
+ * Đây là cách làm đúng chuẩn và hiệu quả nhất.
+ *
+ * @param {string|number} childId ID của bé.
+ */
+function showAttendanceHistoryOfChild(childId) {
+    const child = parentData.children.find(c => c.id == childId);
+    const historyDiv = document.querySelector('.attendance-history-list');
+
+    if (!child || !historyDiv) {
+        console.error("Không tìm thấy thông tin của con hoặc div lịch sử.");
+        return;
+    }
+
+    historyDiv.style.display = 'none';
+    historyDiv.classList.remove('active');
+
+    document.getElementById('attendance-history-title').textContent = `Lịch sử điểm danh: ${child.name}`;
+
+    // Bước 1: Chuẩn bị dữ liệu dạng mảng các mảng
+    let dataForTable = [];
+    if (child.attendanceList && child.attendanceList.length > 0) {
+        dataForTable = child.attendanceList.map((session, idx) => {
+            return [
+                idx + 1,
+                session.AttendanceDate,
+                session.Status,
+                session.Note || 'Không có'
+            ];
+        });
+    }
+
+    // Bước 2: Lấy instance DataTable và cập nhật dữ liệu
+    // Sử dụng hàm initializeDataTable an toàn (có destroy)
+    const table = initializeDataTable('#attendance-history-table');
+
+    // Dùng API để xóa dữ liệu cũ và thêm dữ liệu mới
+    table.clear(); // Xóa tất cả các hàng hiện tại
+    table.rows.add(dataForTable); // Thêm dữ liệu mới
+    table.draw(); // Vẽ lại bảng
+
+    // Bước 3: Hiển thị lại div chứa bảng
+    setTimeout(() => {
+        historyDiv.style.display = 'block';
+        requestAnimationFrame(() => {
+            historyDiv.classList.add('active');
+        });
+    }, 50);
+}
+
+function hideAttendanceHistoryOfChild(childId) {
+    const historyDiv = document.querySelector('.attendance-history-list');
+    if (historyDiv) {
+        historyDiv.style.display = 'none';
+        historyDiv.classList.remove('active');
+    }
 }
 
 // Load payment information
@@ -435,7 +499,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 });
-
 
 function initializeDataTable(tableId) {
     try {

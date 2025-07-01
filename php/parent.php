@@ -42,7 +42,7 @@ if (
 
     <!-- Add menu overlay -->
     <div class="menu-overlay" onclick="toggleMenu()"></div>
-    
+
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
     </header>
@@ -87,6 +87,25 @@ if (
         <div id="children" class="element">
             <div class="children-list">
                 <!-- Danh sách con sẽ được thêm vào đây bằng JavaScript -->
+            </div>
+
+            <!-- Lịch sử điểm danh của con -->
+            <div class="attendance-history-list" class="element" style="display: none;">
+                <h3 id="attendance-history-title">Lịch sử điểm danh: </h3>
+                <table id="attendance-history-table" class="display responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Ngày</th>
+                            <th>Trạng thái</th>
+                            <th>Lý do/Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody class="attendance-history-body">
+                        <!-- Dữ liệu sẽ được JavaScript điền vào đây -->
+                    </tbody>
+                </table>
+                <button class="button-small" onclick="hideAttendanceHistoryOfChild()">Đóng</button>
             </div>
         </div>
 
