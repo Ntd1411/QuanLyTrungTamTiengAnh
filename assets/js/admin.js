@@ -231,7 +231,7 @@ function loadTeachers() {
                                 <th>Số điện thoại</th>
                                 <th>Ngày sinh</th>
                                 <th>Lương</th>
-                                <th>ID Lớp phụ trách</th>
+                                <th>Lớp phụ trách</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -301,7 +301,7 @@ function loadStudents() {
                                 <th>Email</th>
                                 <th>Số điện thoại</th>
                                 <th>Ngày sinh</th>
-                                <th>ID Lớp</th>
+                                <th>Lớp</th>
                                 <th>Phụ huynh</th>
                                 <th>Số buổi học</th>
                                 <th>Số buổi nghỉ</th>

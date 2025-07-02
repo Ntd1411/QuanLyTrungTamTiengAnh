@@ -290,15 +290,13 @@ function addTeacher($fullname, $birthdate, $gender, $username, $password, $email
     }
 }
 
-function getTeacherClasses($teacherId)
-{
+function getTeacherClasses($teacherId) {
     try {
         if (!$teacherId) return null;
 
         $conn = connectdb();
 
-
-        $sql = "SELECT GROUP_CONCAT(ClassID SEPARATOR ', ') as Classes 
+        $sql = "SELECT GROUP_CONCAT(CONCAT(ClassName, ' (', SchoolYear, ')') SEPARATOR ', ') as Classes 
                 FROM classes 
                 WHERE TeacherID = :teacherId 
                 AND Status = 'Đang hoạt động'";

@@ -1174,16 +1174,17 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             case "getStudents":
                 try {
                     $conn = connectdb();
-                    // Updated query to include attendance counts
+                    // Updated query to include parent names and IDs
                     $sql = "SELECT s.*,
                c.ClassName, c.SchoolYear,
-               GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
+               GROUP_CONCAT(DISTINCT CONCAT(p.FullName, ' (', spk.parent_id, ')') SEPARATOR ', ') as Parents,
                t.Discount as TuitionDiscount,
                COUNT(CASE WHEN a.Status = 'Có mặt' THEN 1 END) as AttendedClasses,
                COUNT(CASE WHEN a.Status = 'Vắng mặt' THEN 1 END) as AbsentClasses
                FROM students s
                LEFT JOIN classes c ON s.ClassID = c.ClassID 
                LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
+               LEFT JOIN parents p ON spk.parent_id = p.UserID
                LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
                LEFT JOIN attendance a ON s.UserID = a.StudentID
                GROUP BY s.UserID";
@@ -1223,17 +1224,14 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             case "getParents":
                 try {
                     $conn = connectdb();
-                    $sql = "SELECT p.*, 
-                            GROUP_CONCAT(DISTINCT s.UserID SEPARATOR ', ') as Children,
-                            COALESCE(SUM(CASE 
-                                WHEN t.Status = 'Chưa đóng' THEN t.Amount * (1 - t.Discount/100)
-                                ELSE 0 
-                            END), 0) as UnpaidAmount
-                            FROM parents p
-                            LEFT JOIN student_parent_keys spk ON p.UserID = spk.parent_id
-                            LEFT JOIN students s ON spk.student_id = s.UserID
-                            LEFT JOIN tuition t ON s.UserID = t.StudentID
-                            GROUP BY p.UserID";
+                    $sql = "SELECT p.*,
+               GROUP_CONCAT(DISTINCT CONCAT(s.FullName, ' (', s.UserID, ')') SEPARATOR ', ') as Children,
+               SUM(CASE WHEN t.Status = 'Chưa đóng' THEN t.Amount * (1 - t.Discount/100) ELSE 0 END) as UnpaidAmount
+               FROM parents p
+               LEFT JOIN student_parent_keys spk ON p.UserID = spk.parent_id
+               LEFT JOIN students s ON spk.student_id = s.UserID
+               LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
+               GROUP BY p.UserID";
 
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
@@ -1248,22 +1246,22 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($parent['Email']) . "</td>";
                             echo "<td>" . htmlspecialchars($parent['Phone']) . "</td>";
                             echo "<td>" . htmlspecialchars($parent['BirthDate']) . "</td>";
-                            echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? "Chưa có") . "</td>";
-                            echo "<td>" . htmlspecialchars($parent['Children'] ?? "Chưa có con") . "</td>";
-                            echo "<td>" . number_format($parent['UnpaidAmount'], 0, ',', '.') . " VNĐ" . "</td>";
-                            echo "<td>" . ($parent['isShowTeacher'] ? 'Có' : 'Không') . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['ZaloID'] ?? 'Chưa có') . "</td>";
+                            echo "<td>" . htmlspecialchars($parent['Children'] ?? 'Chưa có con') . "</td>";
+                            echo "<td>" . number_format($parent['UnpaidAmount'] ?? 0, 0, ',', '.') . "đ</td>";
+                            echo "<td>" . ($parent['isShowTeacher'] ? 'Cho phép' : 'Không cho phép') . "</td>";
                             echo "<td>
-                                <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
-                                <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
-                                </td>";
+                    <button onclick='showEditPopup(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                    <button onclick='confirmDelete(\"Parent\", \"" . $parent['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
+                    </td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='10'>Không có dữ liệu</td></tr>";
+                        echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
                     }
                 } catch (PDOException $e) {
                     error_log("Error in getParents: " . $e->getMessage());
-                    echo "<tr><td colspan='10'>Lỗi khi tải dữ liệu</td></tr>";
+                    echo "<tr><td colspan='11'>Lỗi khi tải dữ liệu: " . $e->getMessage() . "</td></tr>";
                 }
                 exit;
             case "loadStatistics":
