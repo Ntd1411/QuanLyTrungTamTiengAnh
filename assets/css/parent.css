@@ -1,4 +1,5 @@
 .main-content-parent {
+    padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
     min-height: 100vh;
@@ -83,10 +84,26 @@
     border-bottom: 2px solid var(--primary-color);
 }
 
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.attendance-history-list {
+    animation: slideUpFadeIn 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 /* Payment Section */
 .payment-summary {
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
@@ -580,6 +597,7 @@ button:hover {
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content-parent {
+        padding: 20px;
     }
 
     .message-container {

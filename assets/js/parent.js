@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-// Load dashboard data
+// Tải dữ liệu trang dashboard
 function loadParentDashboard() {
     document.getElementById('parent-name').textContent = parentData.name;
     document.getElementById('total-children').textContent = parentData.numChildren;
@@ -35,7 +35,7 @@ function loadParentDashboard() {
     }
 }
 
-// Load children information
+// Tải dữ liệu con
 function loadChildren() {
     const childrenList = document.querySelector('.children-list');
     childrenList.innerHTML = '';
@@ -52,11 +52,65 @@ function loadChildren() {
             <p>Học phí: ${child.fee.toLocaleString()} VNĐ</p>
             <p>Đã đóng: ${child.paid.toLocaleString()} VNĐ</p>
         `;
+
+        // Hiển thị lịch sử đi học khi click
+        childCard.style.cursor = 'pointer';
+        childCard.onclick = () => showAttendanceHistoryOfChild(child.id);
+
         childrenList.appendChild(childCard);
     });
 }
 
-// Load payment information
+// Hiển thị lịch sử điểm danh của con được chọn
+function showAttendanceHistoryOfChild(childId) {
+    const child = parentData.children.find(c => c.id == childId);
+    const historyDiv = document.querySelector('.attendance-history-list');
+
+    if (!child || !historyDiv) {
+        console.error("Không tìm thấy thông tin của con hoặc div lịch sử.");
+        return;
+    }
+
+    historyDiv.style.display = 'none';
+    historyDiv.classList.remove('active');
+
+    document.getElementById('attendance-history-title').textContent = `Lịch sử điểm danh: ${child.name}`;
+
+    let dataForTable = [];
+    if (child.attendanceList && child.attendanceList.length > 0) {
+        dataForTable = child.attendanceList.map((session, idx) => {
+            return [
+                idx + 1,
+                session.AttendanceDate,
+                session.Status,
+                session.Note || 'Không có'
+            ];
+        });
+    }
+
+    const table = initializeDataTable('#attendance-history-table');
+
+    table.clear();
+    table.rows.add(dataForTable);
+    table.draw();
+
+    setTimeout(() => {
+        historyDiv.style.display = 'block';
+        requestAnimationFrame(() => {
+            historyDiv.classList.add('active');
+        });
+    }, 50);
+}
+
+function hideAttendanceHistoryOfChild(childId) {
+    const historyDiv = document.querySelector('.attendance-history-list');
+    if (historyDiv) {
+        historyDiv.style.display = 'none';
+        historyDiv.classList.remove('active');
+    }
+}
+
+// Tải thông tin học phí
 function loadPayments() {
     const totalFee = parentData.children.reduce((sum, child) => sum + child.fee, 0);
     const totalPaid = parentData.children.reduce((sum, child) => sum + child.paid, 0);
@@ -67,7 +121,7 @@ function loadPayments() {
     document.getElementById('paid-amount').textContent = totalPaid.toLocaleString() + ' VNĐ';
     document.getElementById('remaining-amount').textContent = (totalFee - totalPaid - discount).toLocaleString() + ' VNĐ';
 
-    // --- Thêm đoạn này để hiển thị lịch sử đóng học phí ---
+    // Hiển thị lịch sử đóng học phí
     const tbody = document.getElementById('payment-history-body');
     tbody.innerHTML = '';
     // Gom tất cả lịch sử của các con vào một mảng
@@ -75,7 +129,7 @@ function loadPayments() {
     parentData.children.forEach(child => {
         (child.paymentHistory || []).forEach(payment => {
             allPayments.push({
-                ...payment,
+                ...payment, // Spread Syntax
                 childName: child.name
             });
         });
@@ -98,20 +152,20 @@ function loadPayments() {
     initializeDataTable('#payment-history');
 }
 
-// Load messages
+// Tải tin nhắn
 function loadMessages() {
     const messageList = document.querySelector('.message-list');
-    messageList.innerHTML = ''; // Clear the list
+    messageList.innerHTML = '';
 
-    // Pagination variables
-    const messagesPerPage = 5; // Set default messages per page
-    let currentPage = 1; // Start on page 1
+    // Phân trang cho bảng tin nhắn
+    const messagesPerPage = 5; // Số tin nhắn mặc định trên 1 trang
+    let currentPage = 1; // Bắt đầu hiển thị từ trang 1
     const totalMessages = parentData.messages.length;
     const totalPages = Math.ceil(totalMessages / messagesPerPage);
 
     function showPage(page) {
         currentPage = page;
-        messageList.innerHTML = ''; // Clear the list
+        messageList.innerHTML = '';
 
         const startIndex = (currentPage - 1) * messagesPerPage;
         const endIndex = startIndex + messagesPerPage;
@@ -148,19 +202,19 @@ function loadMessages() {
             messageList.appendChild(messageItem);
         });
 
-        // Update pagination controls
+        // Cập nhật thanh phân trang
         updatePaginationControls();
     }
 
     function updatePaginationControls() {
         const paginationContainer = document.getElementById('pagination-container');
         if (!paginationContainer) {
-            return; // Exit if pagination container doesn't exist
+            return; // Trường hợp container chưa tồn tại
         }
 
-        paginationContainer.innerHTML = ''; // Clear existing controls
+        paginationContainer.innerHTML = ''; // Xóa hiển thị phân trang cũ
 
-        // Previous button
+        // Nút "Trước"
         const prevButton = document.createElement('button');
         prevButton.textContent = 'Trước';
         prevButton.disabled = currentPage === 1;
@@ -171,14 +225,14 @@ function loadMessages() {
         });
         paginationContainer.appendChild(prevButton);
 
-        // Calculate page numbers to display
+        // Tính số trang hiển thị trong trường hợp quá nhiều trang
         let pageNumbers = [];
-        if (totalPages <= 7) { // Show all pages if total pages is less than or equal to 7
+        if (totalPages <= 7) { // Hiện tất cả trên thanh phân trang nếu số trang không lớn hơn 7
             for (let i = 1; i <= totalPages; i++) {
                 pageNumbers.push(i);
             }
         } else {
-            // Show first three pages, ellipsis, current page, and last page
+            // Trường hợp đang ở trang đầu hoặc gần đầu
             if (currentPage <= 3) {
                 for (let i = 1; i <= 4; i++) {
                     pageNumbers.push(i);
@@ -186,7 +240,7 @@ function loadMessages() {
                 pageNumbers.push('...');
                 pageNumbers.push(totalPages);
             }
-            // Show last three pages, ellipsis, current page, and first page
+            // Trường hợp ở cuối hoặc gần cuối
             else if (currentPage >= totalPages - 2) {
                 pageNumbers.push(1);
                 pageNumbers.push('...');
@@ -194,7 +248,7 @@ function loadMessages() {
                     pageNumbers.push(i);
                 }
             } else {
-                // Show first page, ellipsis, current page, and last page
+                // Trường hợp đang ở giữa
                 pageNumbers.push(1);
                 pageNumbers.push('...');
                 pageNumbers.push(currentPage - 1);
@@ -205,7 +259,7 @@ function loadMessages() {
             }
         }
 
-        // Page numbers
+        // Đánh số trang và để lên thanh phân trang
         pageNumbers.forEach(pageNumber => {
             if (pageNumber === '...') {
                 const ellipsisSpan = document.createElement('span');
@@ -225,7 +279,7 @@ function loadMessages() {
             }
         });
 
-        // Next button
+        // Nút "Sau"
         const nextButton = document.createElement('button');
         nextButton.textContent = 'Sau';
         nextButton.disabled = currentPage === totalPages;
@@ -240,7 +294,7 @@ function loadMessages() {
     showPage(currentPage);
 }
 
-// Show message detail
+// Hiển thị tin nhắn chi tiết
 function showMessageDetail(message) {
     const messageContent = document.querySelector('.message-content');
     messageContent.innerHTML = `
@@ -253,10 +307,10 @@ function showMessageDetail(message) {
     messageContent.classList.remove('message-content');
     void messageContent.offsetWidth; // trigger reflow
     messageContent.classList.add('message-content');
-    loadParentDashboard(); // Update unread count
+    loadParentDashboard(); // Để cập nhật tin nhắn chưa đọc
 }
 
-// Load parent profile
+// Tải thông tin cá nhân phụ huynh
 function loadParentProfile() {
     document.getElementById('profile-name').value = parentData.name;
     document.getElementById('profile-email').value = parentData.email;
@@ -264,7 +318,7 @@ function loadParentProfile() {
     document.getElementById('profile-zalo').value = parentData.zalo;
 }
 
-// Update profile
+// Cập nhật thông tin cá nhân
 function updateProfile() {
     const newEmail = document.getElementById('profile-email').value;
     const newPhone = document.getElementById('profile-phone').value;
@@ -330,7 +384,7 @@ function updateProfile() {
         });
 }
 
-// Pay fee
+// Nộp học phí
 function payFees() {
     document.getElementById('pay-fee-modal').classList.add('show');
     const select = document.getElementById('fee-student');
@@ -357,6 +411,7 @@ function payFees() {
     }
 }
 
+// Cập nhật số tiền cần đóng và ghi chú nộp tiền
 function updateFeeAmountAndNote() {
     const select = document.getElementById('fee-student');
     const amountInput = document.getElementById('fee-amount');
@@ -386,11 +441,12 @@ function updateFeeAmountAndNote() {
     }
 }
 
+// Ẩn form nộp học phí
 function hidePayFeeForm() {
     document.getElementById('pay-fee-modal').classList.remove('show');
 }
 
-// Handle form submit
+// Xử lý gửi form
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('feeForm');
     if (form) {
@@ -437,6 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// Hàm khởi tạo bảng
 function initializeDataTable(tableId) {
     try {
         if ($.fn.DataTable.isDataTable(tableId)) {

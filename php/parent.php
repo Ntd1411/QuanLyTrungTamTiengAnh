@@ -35,14 +35,14 @@ if (
 
 <body>
 
-    <!-- Add menu toggle button -->
+    <!-- Nút hiện menu cho màn hình nhỏ -->
     <button class="menu-toggle" onclick="toggleMenu()">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Add menu overlay -->
+    <!-- Lớp phủ khi hiện menu -->
     <div class="menu-overlay" onclick="toggleMenu()"></div>
-    
+
     <header>
         <img src="../assets/img/poster.jpg" alt="Logo Website">
     </header>
@@ -64,7 +64,7 @@ if (
     </nav>
 
     <div class="main-content-parent">
-        <!-- Home Section -->
+        <!-- Phần trang chủ -->
         <div id="home-parent" class="element active">
             <h2>Chào mừng phụ huynh <span id="parent-name"></span></h2>
             <div class="dashboard-summary">
@@ -83,14 +83,33 @@ if (
             </div>
         </div>
 
-        <!-- Children Section -->
+        <!-- Phần con -->
         <div id="children" class="element">
             <div class="children-list">
                 <!-- Danh sách con sẽ được thêm vào đây bằng JavaScript -->
             </div>
+
+            <!-- Lịch sử điểm danh của con -->
+            <div class="attendance-history-list" class="element" style="display: none;">
+                <h3 id="attendance-history-title">Lịch sử điểm danh: </h3>
+                <table id="attendance-history-table" class="display responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Ngày</th>
+                            <th>Trạng thái</th>
+                            <th>Lý do/Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody class="attendance-history-body">
+                        <!-- Dữ liệu sẽ được JavaScript điền vào đây -->
+                    </tbody>
+                </table>
+                <button class="button-small" onclick="hideAttendanceHistoryOfChild()">Đóng</button>
+            </div>
         </div>
 
-        <!-- Payments Section -->
+        <!-- Phần học phí -->
         <div id="payments" class="element">
             <div class="payment-summary">
                 <h3>Tổng quan</h3>
@@ -119,7 +138,7 @@ if (
             </div>
         </div>
 
-        <!-- Popup Modal Form -->
+        <!-- Form popup đóng học phí -->
         <div id="pay-fee-modal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="hidePayFeeForm()">&times;</span>
@@ -142,7 +161,7 @@ if (
             </div>
         </div>
 
-        <!-- Messages Section -->
+        <!-- Phần tin nhắn -->
         <div id="messages" class="element">
             <div id="pagination-container">
                 <!-- Phân trang sẽ được thêm vào đây -->
@@ -159,7 +178,7 @@ if (
             </div>
         </div>
 
-        <!-- Profile Section -->
+        <!-- Phần thông tin cá nhân -->
         <div id="profile" class="element">
             <div class="profile-form">
                 <div class="form-group">

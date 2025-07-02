@@ -33,45 +33,45 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
 <body>
 
-    <!-- Add menu toggle button -->
+    <!-- Nút hiện menu cho điện thoại -->
     <button class="menu-toggle" onclick="toggleMenu()">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Add menu overlay -->
+    <!-- Lớp phủ lên trang phía sau khi hiện menu -->
     <div class="menu-overlay" onclick="toggleMenu()"></div>
     <!-- Header với ảnh -->
     <header>
-        <img src="../assets/img/poster.jpg" alt="Logo Website">
+        <img src="../assets/img/poster.jpg" alt="Poster Website">
     </header>
 
     <!-- Menu ngang -->
     <nav>
         <ul class="menu">
-            <li><a onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
-            <li><a onclick="showElement('schedule'); return false;">Lịch Dạy</a></li>
-            <li><a onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
-            <li><a onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
-            <li><a onclick="showElement('notifications'); return false;">Thông Báo</a></li>
+            <li><a href="#home-teacher" onclick="showElement('home-teacher'); return false;">Trang Chủ</a></li>
+            <li><a href="#schedule" onclick="showElement('schedule'); return false;">Lịch Dạy</a></li>
+            <li><a href="#my-classes" onclick="showElement('my-classes'); return false;">Lớp Dạy</a></li>
+            <li><a href="#attendance" onclick="showElement('attendance'); return false;">Điểm Danh</a></li>
+            <li><a href="#notifications" onclick="showElement('notifications'); return false;">Thông Báo</a></li>
             <li>
-                <a onclick="event.preventDefault();">Tài Khoản</a>
+                <a href="#account" onclick="event.preventDefault();">Tài Khoản</a>
                 <ul class="submenu">
-                    <li><a onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
+                    <li><a href="#profile" onclick="showElement('profile'); return false;">Thông tin cá nhân</a></li>
                     <li><a href="./logout.php">Đăng Xuất</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Nội dung chính -->
     <div class="main-content-teacher">
-        <!-- Home Section -->
+        <!-- Phần trang chủ -->
         <div id="home-teacher" class="element active">
-            <h2>Chào mừng, giáo viên <span id="teacher-name">Giáo viên</span></h2>
+            <h2>Chào mừng, giáo viên <span id="teacher-name"></span></h2>
             <div class="dashboard-summary">
                 <div class="summary-card" onclick="showElement('schedule')">
                     <h3>🔜 Buổi dạy tiếp theo</h3>
-                    <div id="next-session-info"></div>
+                    <div id="next-session-info">Không có thông tin</div>
                 </div>
                 <div class="summary-card" onclick="showElement('my-classes')">
                     <h3>👨‍🎓 Tổng học sinh các lớp đang dạy</h3>
@@ -83,7 +83,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 </div>
             </div>
             <div class="log-header">
-                <h2>Nhật ký dạy tháng này</h2>
+                <h2>Nhật ký dạy</h2>
                 <button id="add-log-btn" class="add-log-btn">+ Thêm nhật ký</button>
             </div>
             <div id="add-log-modal" class="modal" style="display:none;">
@@ -129,7 +129,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             </div>
         </div>
 
-        <!-- Schedule Section -->
+        <!-- Phần lịch dạy -->
         <div id="schedule" class="element">
             <h2>Lịch Dạy</h2>
             <div class="schedule-container">
@@ -155,23 +155,22 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             </tr>
                         </thead>
                         <tbody id="schedule-body">
-                            <!-- Schedule will be populated by JavaScript -->
+                            <!-- Lịch sẽ được cung cấp bởi JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- My Classes Section -->
+        <!-- Phần lớp học -->
         <div id="my-classes" class="element">
             <div class="classes-container">
                 <!-- Danh sách lớp sẽ được thêm vào đây bằng JavaScript -->
             </div>
 
-            <div class="class-students-list" style="display:none; margin-top:24px;">
+            <div class="class-students-list" style="display:none;">
                 <h3>Danh sách học sinh</h3>
                 <div class="table-container">
-                    <!-- Thêm id="student-datatable" và class="display" -->
                     <table id="student-datatable" class="display" style="width:100%">
                         <thead>
                             <tr>
@@ -183,14 +182,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Mã học sinh</th>
                             </tr>
                         </thead>
-                        <!-- Bỏ id="teacher-class-students-table" khỏi tbody vì DataTables sẽ quản lý nó -->
-                        <tbody></tbody>
+                        <tbody>
+                            <!-- Danh sách học sinh sẽ được thêm vào đây bằng JavaScript -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Attendance Section -->
+        <!-- Phần điểm danh học viên -->
         <div id="attendance" class="element">
             <div class="attendance-form">
                 <div class="form-group">
@@ -221,12 +221,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            <!-- Lịch sử điểm danh sẽ được thêm vào đây bằng JavaScript -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+        <!-- Popup sửa điểm danh -->
         <div id="attendance-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <span class="close-modal" onclick="document.getElementById('attendance-modal').style.display='none'">X</span>
@@ -247,17 +250,17 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     <label>Ghi chú:</label>
                     <input type="text" id="note-input">
                 </div>
-                <input type="hidden" id="student-id-input"> <!-- Thêm hidden input -->
+                <input type="hidden" id="student-id-input"> <!-- Input ẩn lưu ID học sinh -->
                 <button onclick="saveUpdate()">Cập nhật</button>
                 <button onclick="document.getElementById('attendance-modal').style.display='none'">Hủy</button>
             </div>
         </div>
 
-        <!-- Notifications Section -->
+        <!-- Phần thông báo -->
         <div id="notifications" class="element">
             <!-- Nút gửi thông báo -->
             <div class="notifications-header">
-                <button id="send-notification-btn" class="add-log-btn">+ Gửi thông báo cho học sinh</button>
+                <button id="send-notification-btn">+ Gửi thông báo cho học sinh</button>
             </div>
 
             <!-- Bảng thông báo đã nhận -->
@@ -286,7 +289,9 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             <th>Nội dung</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <!-- Danh sách thông báo đã gửi sẽ được thêm bằng JS -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -321,7 +326,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             </div>
         </div>
 
-        <!-- Profile Section -->
+        <!-- Phần thông tin cá nhân -->
         <div id="profile" class="element">
             <div class="profile-form">
                 <div class="form-group">

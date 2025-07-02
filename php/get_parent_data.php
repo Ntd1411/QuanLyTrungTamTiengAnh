@@ -108,12 +108,22 @@ foreach ($children as $child) {
     $stmt->execute([$child['UserID'], $child['ClassID']]);
     $absent = (int)$stmt->fetchColumn();
 
+    // Lấy danh sách buổi nghỉ của con
+    $sql = "SELECT a.AttendanceID, a.AttendanceDate, a.Status, a.Note
+            FROM attendance a
+            WHERE a.StudentID = ? AND a.ClassID = ?
+            ORDER BY a.AttendanceDate DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$child['UserID'], $child['ClassID']]);
+    $attendanceList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     $childrenData[] = [
         'id' => $child['UserID'],
         'name' => $child['FullName'],
         'class' => $child['ClassName'],
         'attended' => $attended,
         'absent' => $absent,
+        'attendanceList' => $attendanceList,
         'teacher' => $child['TeacherName'],
         'fee' => (int)($feeData['fee'] ?? 0),
         'paid' => $paid,
