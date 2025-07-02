@@ -79,6 +79,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             <li><a href="#manage-parents" onclick="showElement('manage-parents'); return false;">Phụ Huynh</a></li>
             <li><a href="#statistics" onclick="showElement('statistics'); return false;">Thống Kê</a></li>
             <li><a href="#manage-news" onclick="showElement('manage-news'); return false;">Tin tức</a></li>
+            <li><a href="#manageads" onclick="showElement('manageads');  return false;">Quảng cáo</a></li>
             <li><a href="#noti" onclick="showElement('noti');  return false;">Thông báo</a></li>
 
             <li>
@@ -617,6 +618,80 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 <div id="newsList" class="newsList">
 
                     <!-- Danh sách tin tức sẽ được load từ database -->
+                </div>
+            </div>
+
+            <!-- manage ads -->
+            <div id="manageads" class="element">
+                <h2>Quản lý Quảng Cáo</h2>
+
+                <!-- Form thêm quảng cáo mới -->
+                <form id="ads-form" class="ads-form">
+                    <div class="form-group">
+                        <label for="ads-subject">Tiêu đề:</label>
+                        <input type="text" id="ads-subject" name="subject" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ads-content">Nội dung:</label>
+                        <textarea id="ads-content" name="content" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ads-image">Hình ảnh:</label>
+                        <input type="file" id="ads-image" name="image" accept="image/*" onchange="previewImage(this, 'adsImagePreview')" required>
+                        <div id="adsImagePreview" class="image-preview">
+                            <!-- Ảnh xem trước sẽ hiển thị ở đây -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ads-start-date">Ngày bắt đầu:</label>
+                        <input type="date" id="ads-start-date" name="start_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ads-end-date">Ngày kết thúc:</label>
+                        <input type="date" id="ads-end-date" name="end_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ads-status">Trạng thái:</label>
+                        <select id="ads-status" name="status" required>
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Không hoạt động</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" onclick="document.getElementById('ads-form').reset(); document.getElementById('adsImagePreview').innerHTML = '';" class="refresh">
+                            <i class="fas fa-sync"></i> Làm mới
+                        </button>
+                        <button type="submit">
+                            <i class="fas fa-plus"></i> Thêm quảng cáo
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Bảng danh sách quảng cáo -->
+                <div class="table-container">
+                    <table id="ads-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tiêu đề</th>
+                                <th>Nội dung</th>
+                                <th>Hình ảnh</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ads-table-body">
+                            <!-- Dữ liệu sẽ được load bằng JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 

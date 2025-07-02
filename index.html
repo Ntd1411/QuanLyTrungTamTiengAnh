@@ -145,7 +145,12 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- Popup Quảng Cáo -->
+    <div id="ad-popup" class="ad-popup">
+        
+    </div>
+    
     <!-- Footer -->
     <footer>
         <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
@@ -155,6 +160,12 @@
     </footer>
 
     <script type="text/javascript" src="./assets/js/main.js"></script>
+    <script>
+        setTimeout(() => {
+            document.addEventListener("DOMContentLoaded", loadAd());
+        }, 1000);
+        
+    </script>
 </body>
 
 </html>

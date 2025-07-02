@@ -213,7 +213,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 if (!preg_match('/^[0-9]+$/', $_POST['studentPhone'])) {
                     echo json_encode([
                         'status' => 'error',
-                        'message' => 'Số điện thoại chỉ được chứa số' 
+                        'message' => 'Số điện thoại chỉ được chứa số'
                     ]);
                     exit;
                 }
@@ -233,7 +233,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $studentDiscount = $_POST['studentDiscount'] ?? 0;
                 if (!is_numeric($studentDiscount) || $studentDiscount < 0 || $studentDiscount > 100) {
                     echo json_encode([
-                        'status' => 'error', 
+                        'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
                     ]);
                     exit;
@@ -279,7 +279,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
 
                 $result = addStudent(
                     $studentFullName,
-                    $studentDate, 
+                    $studentDate,
                     $studentGender,
                     $studentUsername,
                     $studentPassword,
@@ -335,7 +335,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
-                        'status' => 'error', 
+                        'status' => 'error',
                         'message' => 'Ngày sinh không thể lớn hơn ngày hiện tại'
                     ]);
                     exit;
@@ -585,9 +585,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate discount
-                if (!is_numeric($_POST['studentDiscount']) || 
-                    $_POST['studentDiscount'] < 0 || 
-                    $_POST['studentDiscount'] > 100) {
+                if (
+                    !is_numeric($_POST['studentDiscount']) ||
+                    $_POST['studentDiscount'] < 0 ||
+                    $_POST['studentDiscount'] > 100
+                ) {
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'Giảm giá phải là số từ 0 đến 100'
@@ -625,7 +627,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 }
 
                 // Validate birthdate
-                $birthdate = strtotime($_POST['birthDate']); 
+                $birthdate = strtotime($_POST['birthDate']);
                 $today = strtotime(date('Y-m-d'));
                 if ($birthdate > $today) {
                     echo json_encode([
@@ -640,6 +642,104 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 exit;
                 break;
 
+            case "updateAd":
+                try {
+                    $id = $_POST['id'];
+                    $startDate = $_POST['start_date'];
+                    $endDate = $_POST['end_date'];
+                    $status = $_POST['status'];
+
+                    if (strtotime($startDate) > strtotime($endDate)) {
+                        throw new Exception('Ngày bắt đầu không thể sau ngày kết thúc');
+                    }
+
+                    $conn = connectdb();
+
+                    // Check for overlapping active ads (excluding current ad)
+                    if ($status === 'active') {
+                        $checkSql = "SELECT COUNT(*) FROM advertisements 
+                           WHERE status = 'active'
+                           AND id != :id
+                           AND (
+                               (start_date <= :startDate AND end_date >= :startDate)
+                               OR 
+                               (start_date <= :endDate AND end_date >= :endDate)
+                               OR
+                               (start_date >= :startDate AND end_date <= :endDate)
+                           )";
+
+                        $checkStmt = $conn->prepare($checkSql);
+                        $checkStmt->execute([
+                            ':id' => $id,
+                            ':startDate' => $startDate,
+                            ':endDate' => $endDate
+                        ]);
+
+                        if ($checkStmt->fetchColumn() > 0) {
+                            throw new Exception('Đã có quảng cáo hoạt động trong khoảng thời gian này');
+                        }
+                    }
+
+                    $params = [
+                        ':id' => $id,
+                        ':subject' => $_POST['subject'],
+                        ':content' => $_POST['content'],
+                        ':start_date' => $startDate,
+                        ':end_date' => $endDate,
+                        ':status' => $status
+                    ];
+
+                    $sql = "UPDATE advertisements SET 
+                    subject = :subject,
+                    content = :content, 
+                    start_date = :start_date,
+                    end_date = :end_date,
+                    status = :status";
+
+                    // Handle image update if new image is uploaded
+                    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                        // Validate and save new image
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                        $fileType = $_FILES['image']['type'];
+                        if (!in_array($fileType, $allowedTypes)) {
+                            throw new Exception('Chỉ chấp nhận file hình ảnh (JPG, PNG, GIF)');
+                        }
+
+                        if ($_FILES['image']['size'] > 20 * 1024 * 1024) {
+                            throw new Exception('Kích thước file không được vượt quá 20MB');
+                        }
+
+                        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                        $filename = uniqid('ad_') . '.' . $ext;
+                        $uploadPath = '../assets/img/' . $filename;
+
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+                            $sql .= ", image = :image";
+                            $params[':image'] = $filename;
+                        }
+                    }
+
+                    $sql .= " WHERE id = :id";
+                    $stmt = $conn->prepare($sql);
+                    $result = $stmt->execute($params);
+
+                    if ($result) {
+                        echo json_encode([
+                            'status' => 'success',
+                            'message' => 'Cập nhật quảng cáo thành công'
+                        ]);
+                        exit;
+                    } else {
+                        throw new Exception('Không thể cập nhật quảng cáo');
+                    }
+                } catch (Exception $e) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => $e->getMessage()
+                    ]);
+                    exit;
+                }
+
             case "sendNotification":
                 if (empty($_POST['recipientType']) || empty($_POST['subject']) || empty($_POST['content'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Vui lòng điền đầy đủ thông tin']);
@@ -653,11 +753,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                     $recipientType = $_POST['recipientType'];
                     $subject = $_POST['subject'];
                     $content = $_POST['content'];
-                    
+
                     // Get recipients based on type
                     $recipients = [];
-                    
-                    switch($recipientType) {
+
+                    switch ($recipientType) {
                         case 'individual':
                             if (empty($_POST['receiverId'])) {
                                 echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn người nhận']);
@@ -665,7 +765,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             }
                             $recipients[] = $_POST['receiverId'];
                             break;
-                            
+
                         case 'multiple':
                             $receiverIds = json_decode($_POST['receiverIds'], true);
                             if (empty($receiverIds)) {
@@ -674,7 +774,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             }
                             $recipients = $receiverIds;
                             break;
-                            
+
                         case 'class':
                             if (empty($_POST['classId'])) {
                                 echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn lớp']);
@@ -682,12 +782,12 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             }
                             $classId = $_POST['classId'];
                             $classRecipientTypes = json_decode($_POST['classRecipientTypes'], true);
-                            
+
                             if (empty($classRecipientTypes)) {
                                 echo json_encode(['status' => 'error', 'message' => 'Vui lòng chọn loại người nhận']);
                                 exit;
                             }
-                            
+
                             // Get recipients from class
                             if (in_array('students', $classRecipientTypes)) {
                                 $sql = "SELECT UserID FROM students WHERE ClassID = :classId";
@@ -696,7 +796,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 $students = $stmt->fetchAll(PDO::FETCH_COLUMN);
                                 $recipients = array_merge($recipients, $students);
                             }
-                            
+
                             if (in_array('parents', $classRecipientTypes)) {
                                 $sql = "SELECT DISTINCT spk.parent_id FROM student_parent_keys spk 
                                        JOIN students s ON spk.student_id = s.UserID 
@@ -706,7 +806,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 $parents = $stmt->fetchAll(PDO::FETCH_COLUMN);
                                 $recipients = array_merge($recipients, $parents);
                             }
-                            
+
                             if (in_array('teacher', $classRecipientTypes)) {
                                 $sql = "SELECT TeacherID FROM classes WHERE ClassID = :classId";
                                 $stmt = $conn->prepare($sql);
@@ -717,49 +817,49 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 }
                             }
                             break;
-                            
+
                         case 'all-teachers':
                             $sql = "SELECT UserID FROM teachers";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                             $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
                             break;
-                            
+
                         case 'all-parents':
                             $sql = "SELECT UserID FROM parents";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                             $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
                             break;
-                            
+
                         case 'all-students':
                             $sql = "SELECT UserID FROM students";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                             $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
                             break;
-                            
+
                         case 'all-everyone':
                             $sql = "SELECT UserID FROM teachers UNION SELECT UserID FROM students UNION SELECT UserID FROM parents";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                             $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
                             break;
-                            
+
                         default:
                             echo json_encode(['status' => 'error', 'message' => 'Loại người nhận không hợp lệ']);
                             exit;
                     }
-                    
+
                     if (empty($recipients)) {
                         echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy người nhận']);
                         exit;
                     }
-                    
+
                     $successCount = 0;
                     $errorCount = 0;
                     $emailErrors = [];
-                    
+
                     // Process each recipient
                     foreach ($recipients as $recipientId) {
                         try {
@@ -775,7 +875,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 $stmt->execute([':recipientId' => $recipientId]);
                                 $recipientEmail = $stmt->fetchColumn();
                             }
-                            
+
                             // Send email if requested and email exists
                             $emailSent = ['status' => 'success'];
                             if ($sendEmail && $recipientEmail) {
@@ -784,36 +884,35 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                     $emailErrors[] = "Email to $recipientEmail: " . $emailSent['message'];
                                 }
                             }
-                            
+
                             // Save to database (save even if email fails for record keeping)
                             $sql = "INSERT INTO messages (SenderID, ReceiverID, Subject, Content, SendDate, IsRead) 
                                     VALUES ('0', :receiverId, :subject, :content, NOW(), 0)";
-                            
+
                             $stmt = $conn->prepare($sql);
                             $result = $stmt->execute([
                                 ':receiverId' => $recipientId,
                                 ':subject' => $subject,
                                 ':content' => $content
                             ]);
-                            
+
                             if ($result) {
                                 $successCount++;
                             } else {
                                 $errorCount++;
                             }
-                            
                         } catch (Exception $e) {
                             $errorCount++;
                             error_log("Error sending to recipient $recipientId: " . $e->getMessage());
                         }
                     }
-                    
+
                     // Prepare response message
                     $message = "✅ Đã gửi thành công cho $successCount người";
                     if ($errorCount > 0) {
                         $message .= ", thất bại $errorCount người";
                     }
-                    
+
                     if ($sendEmail) {
                         if (empty($emailErrors)) {
                             $message .= " (bao gồm cả email)";
@@ -824,12 +923,11 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             }
                         }
                     }
-                    
+
                     echo json_encode([
                         'status' => 'success',
                         'message' => $message
                     ]);
-                    
                 } catch (Exception $e) {
                     error_log("Error sending notification: " . $e->getMessage());
                     echo json_encode([
@@ -1076,15 +1174,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             case "getStudents":
                 try {
                     $conn = connectdb();
-                    // Get students with their info including tuition discount
-                    $sql = "SELECT s.*, c.ClassName, c.SchoolYear,
-                           GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
-                           t.Discount as TuitionDiscount
-                           FROM students s
-                           LEFT JOIN classes c ON s.ClassID = c.ClassID
-                           LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
-                           LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
-                           GROUP BY s.UserID";
+                    // Updated query to include attendance counts
+                    $sql = "SELECT s.*,
+               c.ClassName, c.SchoolYear,
+               GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
+               t.Discount as TuitionDiscount,
+               COUNT(CASE WHEN a.Status = 'Có mặt' THEN 1 END) as AttendedClasses,
+               COUNT(CASE WHEN a.Status = 'Vắng mặt' THEN 1 END) as AbsentClasses
+               FROM students s
+               LEFT JOIN classes c ON s.ClassID = c.ClassID 
+               LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
+               LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
+               LEFT JOIN attendance a ON s.UserID = a.StudentID
+               GROUP BY s.UserID";
 
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
@@ -1099,15 +1201,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($student['Email']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['Phone']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['BirthDate']) . "</td>";
-                            echo "<td>" . htmlspecialchars($student['ClassName']) . " (" . $student['SchoolYear'] . ")" . "</td>";
+                            echo "<td>" . htmlspecialchars($student['ClassName'] ? $student['ClassName'] . " (" . $student['SchoolYear'] . ")" : "Chưa có lớp") . "</td>";
                             echo "<td>" . htmlspecialchars($student['Parents'] ?? "Chưa có phụ huynh") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['TuitionDiscount'] ? $student['TuitionDiscount'] . '%' : '0%') . "</td>";
                             echo "<td>
-                                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
-                                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
-                                </td>";
+                    <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                    <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
+                    </td>";
                             echo "</tr>";
                         }
                     } else {
@@ -1284,6 +1386,29 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         <td>" . htmlspecialchars($row['created_at']) . "</td>
                         <td>{$btn}</td>
                     </tr>";
+                }
+                exit;
+                break;
+
+            case "getAllAds":
+                try {
+                    $conn = connectdb();
+                    $sql = "SELECT * FROM advertisements ORDER BY created_at DESC";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+
+                    $ads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    echo json_encode([
+                        "status" => "success",
+                        "ads" => $ads
+                    ]);
+                    exit;
+                } catch (PDOException $e) {
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "Lỗi truy vấn: " . $e->getMessage()
+                    ]);
                 }
                 exit;
                 break;
