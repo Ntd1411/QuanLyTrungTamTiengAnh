@@ -57,13 +57,13 @@ function loadNews() {
                     <div class="news-item">
                         <img src="../assets/img/${item.image}" alt="${item.title}" class="news-img">
                         <div class="news-info">
-                            <h3><a href="#" class="news-title-link">${item.title}</a></h3>
+                            <h3><a href="../php/news_detail.php?id=${item.id}" class="news-title-link">${item.title}</a></h3>
                             <p class="news-meta">
                                 <span class="news-date">${formatDate(item.date)}</span> | 
                                 <span class="news-author">${item.author}</span>
                             </p>
                             <p class="news-excerpt">${item.excerpt}</p>
-                            <a href="../view/news_detail.html" class="read-more">Đọc thêm</a>
+                            <a href="../php/news_detail.php?id=${item.id}" class="read-more">Đọc thêm</a>
                         </div>
                     </div>
                 `;

@@ -1,3 +1,16 @@
+<?php
+  $id = $_GET['id'];
+
+  require_once '../model/config.php';
+  $conn = connectdb();
+  
+  $sql = 'SELECT * FROM news WHERE id = ?';
+
+  $stmt = $conn->prepare($sql);
+  $stmt->execute([$id]);
+  $news = $stmt->fetch(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -86,22 +99,22 @@
     <div class="element active">
       <main class="main-content">
         <div class="news-detail-container">
-          <h1 id="article-title" class="news-detail-title"></h1>
+          <h1 id="article-title" class="news-detail-title"><?php echo $news['title']?></h1>
           <p class="news-detail-meta">
-            <span id="article-author"></span> |
-            <span id="article-date"></span>
+            <span id="article-author"><?php echo $news['author']?></span> |
+            <span id="article-date"><?php echo $news['date']?></span>
           </p>
           <div class="news-detail-image-wrapper">
             <img
               id="article-image"
-              src=""
+              src="../assets/img/<?php echo $news['image']?>"
               alt="Hình ảnh bài viết"
               class="news-detail-image"
             />
           </div>
-          <div id="article-content" class="news-detail-content"></div>
+          <div id="article-content" class="news-detail-content"><?php echo $news['content']?></div>
           <div class="news-detail-back-link">
-            <a href="./news.html">&laquo; Quay lại danh sách tin tức</a>
+            <a href="../view/news.html">&laquo; Quay lại danh sách tin tức</a>
           </div>
         </div>
       </main>
@@ -120,7 +133,6 @@
     </div>
 
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/news_detail.js"></script>
   </body>
 </html>
 
