@@ -1201,12 +1201,15 @@ function deleteParent($id)
 {
     try {
         $conn = connectdb();
-
-        // Start transaction
         $conn->beginTransaction();
 
         try {
-            // Delete parent-student relationships first
+            // Delete payment history for all linked students
+                $deletePaymentsSql = "DELETE FROM payment_history WHERE parentID = ?";
+                $stmt = $conn->prepare($deletePaymentsSql);
+                $stmt->execute([$id]);
+
+            // Delete parent-student relationships
             $deleteRelationshipsSql = "DELETE FROM student_parent_keys WHERE parent_id = ?";
             $stmt = $conn->prepare($deleteRelationshipsSql);
             $stmt->execute([$id]);
@@ -1249,7 +1252,12 @@ function deleteClass($id)
             return ['status' => 'error', 'message' => 'Không thể xóa lớp vì còn học sinh trong lớp'];
         }
 
-        // Delete teaching sessions first
+        // Delete homeworks first
+        $deleteHomeworkSql = "DELETE FROM homework WHERE ClassID = :id";
+        $deleteHomeworkStmt = $conn->prepare($deleteHomeworkSql);
+        $deleteHomeworkStmt->execute([':id' => $id]);
+
+        // Delete teaching sessions
         $deleteTeachingSql = "DELETE FROM teaching_sessions WHERE ClassID = :id";
         $deleteTeachingStmt = $conn->prepare($deleteTeachingSql);
         $deleteTeachingStmt->execute([':id' => $id]);
