@@ -115,13 +115,7 @@ function deleteTeachingLog(SessionID) {
         .then(data => {
             if (data.success) {
                 alert('Đã xóa nhật ký!');
-                // Lấy lại dữ liệu giáo viên và render lại bảng
-                fetch('../php/get_teacher_data.php')
-                    .then(res => res.json())
-                    .then(newData => {
-                        teacherData = newData;
-                        loadTeachingLog();
-                    });
+                location.reload();
             } else {
                 alert('Xóa thất bại!');
             }
@@ -926,6 +920,7 @@ document.getElementById('class-select').addEventListener('change', function () {
     loadAttendanceList(this.value);
 });
 
+// Hàm khởi tạo bảng
 function initializeDataTable(tableId) {
     try {
         if ($.fn.DataTable.isDataTable(tableId)) {
