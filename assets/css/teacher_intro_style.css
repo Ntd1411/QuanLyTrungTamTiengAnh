@@ -5,7 +5,7 @@
 /* Phần chung */
 .teacher-info {
     padding: 20px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     background: #f8f9fa;
     max-width: 100%;
 }
