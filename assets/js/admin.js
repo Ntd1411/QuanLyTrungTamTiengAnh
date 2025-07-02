@@ -940,7 +940,7 @@ function loadMessages() {
         .catch(error => {
             console.error('Error loading messages:', error);
             document.getElementById('message-table-body').innerHTML =
-                '<tr><td colspan="5" class="error-message">Lỗi khi tải thông báo</td></tr>';
+                '<tr><td colspan="6" class="error-message">Lỗi khi tải thông báo</td></tr>';
         });
 }
 

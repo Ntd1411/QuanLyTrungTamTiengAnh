@@ -1079,8 +1079,6 @@ function deleteTeacher($id)
 {
     try {
         $conn = connectdb();
-
-        // Start transaction
         $conn->beginTransaction();
 
         // Check if teacher has active classes
@@ -1092,7 +1090,17 @@ function deleteTeacher($id)
             return ['status' => 'error', 'message' => 'Không thể xóa giáo viên đang phụ trách lớp'];
         }
 
-        // Update classes to remove teacher reference (set to NULL for completed/suspended classes)
+        // Delete teaching sessions
+        $deleteTeachingSql = "DELETE FROM teaching_sessions WHERE TeacherID = ?";
+        $deleteTeachingStmt = $conn->prepare($deleteTeachingSql);
+        $deleteTeachingStmt->execute([$id]);
+
+        // Delete messages
+        $deleteMessagesSql = "DELETE FROM messages WHERE SenderID = ? OR ReceiverID = ?";
+        $deleteMessagesStmt = $conn->prepare($deleteMessagesSql);
+        $deleteMessagesStmt->execute([$id, $id]);
+
+        // Update classes to remove teacher reference
         $updateClassesSql = "UPDATE classes SET TeacherID = NULL WHERE TeacherID = ?";
         $updateStmt = $conn->prepare($updateClassesSql);
         $updateResult = $updateStmt->execute([$id]);
@@ -1122,7 +1130,6 @@ function deleteTeacher($id)
             return ['status' => 'error', 'message' => 'Lỗi khi xóa tài khoản người dùng'];
         }
 
-        // Commit transaction
         $conn->commit();
         return ['status' => 'success', 'message' => 'Xóa giáo viên thành công'];
 
