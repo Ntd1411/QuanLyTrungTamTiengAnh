@@ -1242,13 +1242,15 @@ function deleteClass($id)
             return ['status' => 'error', 'message' => 'Không thể xóa lớp vì còn học sinh trong lớp'];
         }
 
-        // Check if class has attendance records
-        $checkAttendanceSql = "SELECT COUNT(*) FROM attendance WHERE ClassID = :id";
+        // Delete teaching sessions first
+        $deleteTeachingSql = "DELETE FROM teaching_sessions WHERE ClassID = :id";
+        $deleteTeachingStmt = $conn->prepare($deleteTeachingSql);
+        $deleteTeachingStmt->execute([':id' => $id]);
+
+        // Delete attendance records
+        $checkAttendanceSql = "DELETE FROM attendance WHERE ClassID = :id";
         $checkStmt = $conn->prepare($checkAttendanceSql);
         $checkStmt->execute([':id' => $id]);
-        if ($checkStmt->fetchColumn() > 0) {
-            return ['status' => 'error', 'message' => 'Không thể xóa lớp vì có dữ liệu điểm danh'];
-        }
 
         // Delete the class
         $sql = "DELETE FROM classes WHERE ClassID = :id";
