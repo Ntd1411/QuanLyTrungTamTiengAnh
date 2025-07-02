@@ -1,0 +1,137 @@
+/* assets/css/news_detail.css */
+
+/* Định nghĩa biến màu chính (nếu chưa có trong style.css hoặc muốn ghi đè) */
+:root {
+    --primary-color: #E4312A; /* Màu đỏ thương hiệu KEC */
+    --text-color: #333;
+    --heading-color: #2c3e50;
+    --bg-color: #f8f9fa;
+    --border-color: #e0e0e0;
+}
+
+/* Container chính cho nội dung bài viết */
+.news-detail-container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin: 30px auto; /* Căn giữa và tạo khoảng cách */
+    max-width: 900px; /* Chiều rộng tối đa để nội dung dễ đọc */
+}
+
+/* Tiêu đề bài viết */
+.news-detail-title {
+    color: var(--heading-color);
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    text-align: center;
+    line-height: 1.3;
+}
+
+/* Thông tin meta (tác giả, ngày) */
+.news-detail-meta {
+    text-align: center;
+    font-size: 0.95em;
+    color: #777;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+/* Wrapper cho hình ảnh */
+.news-detail-image-wrapper {
+    text-align: center; /* Căn giữa hình ảnh */
+    margin-bottom: 30px;
+    background-color: #f0f0f0; /* Nền nhẹ cho hình ảnh */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.news-detail-image {
+    max-width: 100%; /* Đảm bảo hình ảnh không tràn ra ngoài container */
+    height: auto; /* Giữ tỷ lệ khung hình */
+    border-radius: 6px;
+    display: block; /* Loại bỏ khoảng trắng dưới ảnh */
+    margin: 0 auto; /* Căn giữa ảnh thực sự */
+}
+
+/* Nội dung chi tiết bài viết */
+.news-detail-content {
+    font-size: 1.1em;
+    line-height: 1.8;
+    color: var(--text-color);
+    text-align: justify; /* Căn đều hai bên */
+}
+
+.news-detail-content p {
+    margin-bottom: 1em; /* Khoảng cách giữa các đoạn văn */
+}
+
+.news-detail-content h3 {
+    color: var(--heading-color);
+    font-size: 1.4em;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.news-detail-content ul,
+.news-detail-content ol {
+    margin-bottom: 1em;
+    padding-left: 2em;
+}
+
+.news-detail-content ul li,
+.news-detail-content ol li {
+    margin-bottom: 0.5em;
+}
+
+/* Link quay lại */
+.news-detail-back-link {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.news-detail-back-link a {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.news-detail-back-link a:hover {
+    background-color: #b30000; /* Đỏ đậm hơn khi hover */
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .news-detail-container {
+        padding: 20px 25px;
+        margin: 20px auto;
+    }
+    .news-detail-title {
+        font-size: 2em;
+    }
+    .news-detail-content {
+        font-size: 1em;
+    }
+    .news-detail-content h3 {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-detail-container {
+        padding: 15px 15px;
+    }
+    .news-detail-title {
+        font-size: 1.6em;
+    }
+}

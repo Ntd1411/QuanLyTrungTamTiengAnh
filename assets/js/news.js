@@ -63,7 +63,7 @@ function loadNews() {
                                 <span class="news-author">${item.author}</span>
                             </p>
                             <p class="news-excerpt">${item.excerpt}</p>
-                            <a href="#" class="read-more">Đọc thêm</a>
+                            <a href="../view/news_detail.html" class="read-more">Đọc thêm</a>
                         </div>
                     </div>
                 `;
