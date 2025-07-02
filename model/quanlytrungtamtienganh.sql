@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 29, 2025 lúc 11:38 AM
+-- Thời gian đã tạo: Th7 02, 2025 lúc 07:32 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -20,6 +20,31 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `quanlytrungtamtienganh`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `advertisements`
+--
+
+CREATE TABLE `advertisements` (
+  `id` int(11) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `image` varchar(255) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `advertisements`
+--
+
+INSERT INTO `advertisements` (`id`, `subject`, `content`, `image`, `start_date`, `end_date`, `status`, `created_at`) VALUES
+(1, 'Khuyến mãi đặc biệt - Giảm 30% học phí', 'Đăng ký ngay hôm nay để nhận ưu đãi đặc biệt giảm 30% học phí cho tất cả các khóa học', 'ielts_basic_illustration.png', '2025-07-02', '2025-07-31', 'active', '2025-07-01 16:40:35'),
+(2, 'test', 'hihihihi', 'ad_686416ab0c6a7.png', '2025-07-03', '2025-07-03', 'inactive', '2025-07-01 17:11:07');
 
 -- --------------------------------------------------------
 
@@ -72,7 +97,7 @@ CREATE TABLE `classes` (
 --
 
 INSERT INTO `classes` (`ClassID`, `ClassName`, `SchoolYear`, `TeacherID`, `StartDate`, `EndDate`, `ClassTime`, `Room`, `Tuition`, `Status`, `CreatedAt`) VALUES
-(1, 'Lớp Tiếng Anh Căn Bản A1', 2025, 'GV002', '2025-07-01', '2025-12-30', 'Thứ 2, 4, 6 - 19:00', 'A103', 1800000, 'Đang hoạt động', '2025-06-28 15:34:56'),
+(1, 'Lớp Tiếng Anh Căn Bản A1', 2025, 'GV003', '2025-07-01', '2025-12-30', 'Thứ 2, 4, 6 - 19:00', 'P201', 1800000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (2, 'Lớp Tiếng Anh Căn Bản A2', 2025, 'GV003', '2025-07-01', '2025-12-30', 'Thứ 3, 5, 7 - 19:00', 'A104', 1800000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (3, 'Lớp Tiếng Anh Trung Cấp B1', 2025, 'GV004', '2025-07-15', '2026-01-15', 'Thứ 2, 4, 6 - 18:30', 'B101', 2200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (4, 'Lớp Tiếng Anh Trung Cấp B2', 2025, 'GV005', '2025-07-15', '2026-01-15', 'Thứ 3, 5, 7 - 18:30', 'B102', 2200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
@@ -92,7 +117,10 @@ INSERT INTO `classes` (`ClassID`, `ClassName`, `SchoolYear`, `TeacherID`, `Start
 (18, 'Lớp Tiếng Anh Doanh Nghiệp', 2025, 'GV019', '2025-08-01', '2025-12-30', 'Thứ 7 - 08:00', 'H101', 3000000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (19, 'Lớp Tiếng Anh Chuyên Ngành IT', 2025, 'GV020', '2025-08-01', '2025-12-30', 'CN - 08:00', 'H102', 3200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (20, 'Lớp Tiếng Anh Cơ Bản - Khoá 1', 2024, 'GV002', '2024-01-15', '2024-06-15', 'Thứ 2, 4, 6 - 18:00', 'A105', 1600000, 'Đã kết thúc', '2025-06-28 15:34:56'),
-(21, 'Lớp IELTS 6.0 - Khoá 2', 2024, 'GV008', '2024-03-01', '2024-08-30', 'Thứ 7, CN - 09:00', 'D104', 3800000, 'Đã kết thúc', '2025-06-28 15:34:56');
+(21, 'Lớp IELTS 6.0 - Khoá 2', 2024, 'GV008', '2024-03-01', '2024-08-30', 'Thứ 7, CN - 09:00', 'D104', 3800000, 'Đã kết thúc', '2025-06-28 15:34:56'),
+(104, 'Lớp Tiếng Anh Cơ Bản', 2000, 'GV006', '2025-06-25', '2025-07-04', 'Thứ 2, 4, 6 - 18:00', 'P203', 34324, 'Đang hoạt động', '2025-06-29 14:48:56'),
+(105, 'Lớp Tiếng Anh Cơ Bản', 2222, 'GV003', '2025-06-10', '2025-06-27', 'Thứ 3, 5, 7 - 20:00', 'P201', 34234, 'Đang hoạt động', '2025-06-29 14:50:49'),
+(106, 'Lớp Tiếng Anh Cơ Bản', 5463, 'GV003', '2025-06-11', '2025-06-24', 'Thứ 2, 4, 6 - 18:00', 'P202', 564645, 'Đang hoạt động', '2025-06-29 15:44:45');
 
 -- --------------------------------------------------------
 
@@ -184,7 +212,7 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`MessageID`, `SenderID`, `ReceiverID`, `Subject`, `Content`, `SendDate`, `IsRead`, `CreatedAt`) VALUES
-(41, '0', 'GV002', 'test', 'gdfgfd', '2025-06-28 22:57:31', 0, '2025-06-28 15:57:31'),
+(41, '0', 'GV002', 'test', 'gdfgfd', '2025-06-28 22:57:31', 1, '2025-06-28 15:57:31'),
 (42, 'GV005', 'HV006', 'Bài tập về nhà', 'fdgdf', '2025-06-28 23:12:01', 0, '2025-06-28 16:12:01'),
 (43, 'GV005', 'HV007', 'Bài tập về nhà', 'fdgdf', '2025-06-28 23:12:01', 1, '2025-06-28 16:12:01'),
 (44, 'GV005', 'HV008', 'Bài tập về nhà', 'fdgdf', '2025-06-28 23:12:01', 0, '2025-06-28 16:12:01'),
@@ -245,7 +273,7 @@ CREATE TABLE `parents` (
 --
 
 INSERT INTO `parents` (`UserID`, `FullName`, `Gender`, `Email`, `Phone`, `BirthDate`, `ZaloID`, `CreatedAt`, `UnpaidAmount`, `isShowTeacher`) VALUES
-('PH002', 'Nguyễn Văn Bình', 'Nam', 'nguyenvanbinhph@email.com', '0912345678', '1975-03-20', 'nguyenvanbinh75', '2025-06-28 15:43:08', 0, 1),
+('PH002', 'Nguyễn Văn Bình', 'Nữ', 'nguyenvanbinhph@email.com', '0912345678', '1975-03-20', 'nguyenvanbinh75', '2025-06-28 15:43:08', 0, 1),
 ('PH003', 'Trần Thị Lan', 'Nữ', 'tranthilanph@email.com', '0912345679', '1978-07-15', 'tranthilan78', '2025-06-28 15:43:08', 0, 0),
 ('PH004', 'Lê Văn Hùng', 'Nam', 'levanhungph@email.com', '0912345680', '1973-11-08', 'levanhung73', '2025-06-28 15:43:08', 0, 1),
 ('PH005', 'Phạm Thị Mai', 'Nữ', 'phamthimaiph@email.com', '0912345681', '1980-02-14', 'phamthimai80', '2025-06-28 15:43:08', 0, 0),
@@ -460,7 +488,7 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO `teachers` (`UserID`, `FullName`, `Gender`, `Email`, `Phone`, `BirthDate`, `Salary`, `CreatedAt`) VALUES
-('GV002', 'Nguyễn Thị Lan', 'Nữ', 'gv002@email.com', '0123456781', '1985-03-15', 8000000, '2025-06-28 15:32:53'),
+('GV002', 'Nguyễn Thị Lan', 'Nam', 'gv002@email.com', '0123456781', '1985-03-15', 8000000, '2025-06-28 15:32:53'),
 ('GV003', 'Trần Văn Minh', 'Nam', 'gv003@email.com', '0123456782', '1988-07-22', 7500000, '2025-06-28 15:32:53'),
 ('GV004', 'Lê Thị Hương', 'Nữ', 'gv004@email.com', '0123456783', '1990-11-08', 7200000, '2025-06-28 15:32:53'),
 ('GV005', 'Phạm Đức Anh', 'Nam', 'gv005@email.com', '0123456999', '1987-02-14', 8500000, '2025-06-28 15:32:53'),
@@ -707,6 +735,12 @@ INSERT INTO `users` (`UserID`, `Username`, `Password`, `Role`, `CreatedAt`) VALU
 --
 
 --
+-- Chỉ mục cho bảng `advertisements`
+--
+ALTER TABLE `advertisements`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `attendance`
 --
 ALTER TABLE `attendance`
@@ -821,6 +855,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT cho bảng `advertisements`
+--
+ALTER TABLE `advertisements`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT cho bảng `attendance`
 --
 ALTER TABLE `attendance`
@@ -830,7 +870,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT cho bảng `classes`
 --
 ALTER TABLE `classes`
-  MODIFY `ClassID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `ClassID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT cho bảng `consulting`
@@ -848,7 +888,7 @@ ALTER TABLE `homework`
 -- AUTO_INCREMENT cho bảng `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `MessageID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `MessageID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT cho bảng `news`

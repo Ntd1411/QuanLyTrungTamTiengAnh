@@ -1174,15 +1174,19 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
             case "getStudents":
                 try {
                     $conn = connectdb();
-                    // Get students with their info including tuition discount
-                    $sql = "SELECT s.*, c.ClassName, c.SchoolYear,
-                           GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
-                           t.Discount as TuitionDiscount
-                           FROM students s
-                           LEFT JOIN classes c ON s.ClassID = c.ClassID
-                           LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
-                           LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
-                           GROUP BY s.UserID";
+                    // Updated query to include attendance counts
+                    $sql = "SELECT s.*,
+               c.ClassName, c.SchoolYear,
+               GROUP_CONCAT(DISTINCT spk.parent_id SEPARATOR ', ') as Parents,
+               t.Discount as TuitionDiscount,
+               COUNT(CASE WHEN a.Status = 'Có mặt' THEN 1 END) as AttendedClasses,
+               COUNT(CASE WHEN a.Status = 'Vắng mặt' THEN 1 END) as AbsentClasses
+               FROM students s
+               LEFT JOIN classes c ON s.ClassID = c.ClassID 
+               LEFT JOIN student_parent_keys spk ON s.UserID = spk.student_id
+               LEFT JOIN tuition t ON s.UserID = t.StudentID AND t.Status = 'Chưa đóng'
+               LEFT JOIN attendance a ON s.UserID = a.StudentID
+               GROUP BY s.UserID";
 
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
@@ -1197,15 +1201,15 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "<td>" . htmlspecialchars($student['Email']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['Phone']) . "</td>";
                             echo "<td>" . htmlspecialchars($student['BirthDate']) . "</td>";
-                            echo "<td>" . htmlspecialchars($student['ClassName']) . " (" . $student['SchoolYear'] . ")" . "</td>";
+                            echo "<td>" . htmlspecialchars($student['ClassName'] ? $student['ClassName'] . " (" . $student['SchoolYear'] . ")" : "Chưa có lớp") . "</td>";
                             echo "<td>" . htmlspecialchars($student['Parents'] ?? "Chưa có phụ huynh") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AttendedClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['AbsentClasses'] ?? "0") . "</td>";
                             echo "<td>" . htmlspecialchars($student['TuitionDiscount'] ? $student['TuitionDiscount'] . '%' : '0%') . "</td>";
                             echo "<td>
-                                <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
-                                <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
-                                </td>";
+                    <button onclick='showEditPopup(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                    <button onclick='confirmDelete(\"Student\", \"" . $student['UserID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
+                    </td>";
                             echo "</tr>";
                         }
                     } else {
