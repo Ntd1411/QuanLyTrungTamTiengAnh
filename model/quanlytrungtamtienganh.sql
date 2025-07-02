@@ -287,8 +287,8 @@ CREATE TABLE `consulting` (
 --
 
 INSERT INTO `consulting` (`id`, `fullname`, `birthyear`, `phone`, `email`, `course`, `message`, `created_at`, `status`) VALUES
-(1, 'Nguyễn Tuấn Dũng', '2000', '0361172245', 'ntd@gmail.com', 'Khóa học Tiếng Anh cho trẻ', 'Tôi muốn tìm một khóa học tiếng Anh trẻ em cho bé nhà tôi', '2025-06-28 15:52:04', 'Chưa tư vấn'),
-(2, 'Hoàng Vũ Trúc Anh', '1000', '0361172245', 'hvta@gmail.com', 'Khóa học IELTS', 'Tôi muốn tìm một khóa học IELTS cho con trai', '2025-06-28 15:53:12', 'Chưa tư vấn');
+(1, 'Nguyễn Tuấn Dũng', '2000', '0361172245', 'ntd@gmail.com', 'Khóa học IELTS', 'Tôi muốn tìm một khóa học IELTS cho con gái tôi', '2025-06-28 15:52:04', 'Chưa tư vấn'),
+(2, 'Hoàng Vũ Trúc Anh', '2000', '0361172245', 'hvta@gmail.com', 'Khóa học tiếng Anh cho trẻ', 'Tôi muốn tìm một khóa học tiếng Anh thiếu nhi cho bé nhà', '2025-06-28 15:53:12', 'Chưa tư vấn');
 
 -- --------------------------------------------------------
 
@@ -748,8 +748,8 @@ INSERT INTO `parents` (`UserID`, `FullName`, `Gender`, `Email`, `Phone`, `BirthD
 ('PH027', 'Nguyễn Thị Ấm', 'Nữ', 'nguyenthiamph@email.com', '0912345703', '1979-11-15', 'nguyenthiam79', '2025-06-28 15:43:08', 0, 0),
 ('PH028', 'Lê Văn Đức', 'Nam', 'levanducph@email.com', '0912345704', '1974-05-22', 'levanduc74', '2025-06-28 15:43:08', 0, 1),
 ('PH029', 'Phạm Thị Nga', 'Nữ', 'phamthingaph@email.com', '0912345705', '1981-09-18', 'phamthinga81', '2025-06-28 15:43:08', 0, 0),
-('PH032', 'Hoàng Vũ Trúc Anh', 'Nữ', 'hvta@gmail.com', '0987564321', '2025-06-23', '1111', '2025-07-02 13:43:53', 0, 1),
-('PH033', 'Nguyễn Tuấn Dũng', 'Nam', 'ntd@gmail.com', '0987654321', '2004-11-14', '2222', '2025-07-02 15:07:05', 0, 0);
+('PH032', 'Hoàng Vũ Trúc Anh', 'Nữ', 'hvta@gmail.com', '0987564321', '2000-06-23', '1111', '2025-07-02 13:43:53', 0, 1),
+('PH033', 'Nguyễn Tuấn Dũng', 'Nam', 'ntd@gmail.com', '0987654321', '2000-11-14', '2222', '2025-07-02 15:07:05', 0, 0);
 
 -- --------------------------------------------------------
 
