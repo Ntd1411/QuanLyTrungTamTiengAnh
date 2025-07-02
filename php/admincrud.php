@@ -459,6 +459,50 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                 exit;
                 break;
 
+            case "deleteAds":
+                try {
+                    $id = $_POST['id'] ?? 0;
+
+                    $conn = connectdb();
+
+                    // First get the image filename
+                    $sql = "SELECT image FROM advertisements WHERE id = :id";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([':id' => $id]);
+                    $ad = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if ($ad) {
+                        // Delete the image file
+                        $imagePath = "../assets/img/" . $ad['image'];
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath);
+                        }
+
+                        // Delete the database record
+                        $sql = "DELETE FROM advertisements WHERE id = :id";
+                        $stmt = $conn->prepare($sql);
+                        $result = $stmt->execute([':id' => $id]);
+
+                        if ($result) {
+                            echo json_encode([
+                                'status' => 'success',
+                                'message' => 'Xóa quảng cáo thành công'
+                            ]);
+                        } else {
+                            throw new Exception('Không thể xóa quảng cáo');
+                        }
+                    } else {
+                        throw new Exception('Không tìm thấy quảng cáo');
+                    }
+                } catch (Exception $e) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => $e->getMessage()
+                    ]);
+                }
+                exit;
+                break;
+
             case "updateClass":
                 if (empty($_POST['id']) || empty($_POST['className']) || empty($_POST['teacherId'])) {
                     echo json_encode(['status' => 'error', 'message' => 'Thiếu thông tin cần thiết']);
