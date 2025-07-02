@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th7 02, 2025 lúc 07:32 AM
+-- Thời gian đã tạo: Th7 02, 2025 lúc 05:19 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -43,8 +43,7 @@ CREATE TABLE `advertisements` (
 --
 
 INSERT INTO `advertisements` (`id`, `subject`, `content`, `image`, `start_date`, `end_date`, `status`, `created_at`) VALUES
-(1, 'Khuyến mãi đặc biệt - Giảm 30% học phí', 'Đăng ký ngay hôm nay để nhận ưu đãi đặc biệt giảm 30% học phí cho tất cả các khóa học', 'ielts_basic_illustration.png', '2025-07-02', '2025-07-31', 'active', '2025-07-01 16:40:35'),
-(2, 'test', 'hihihihi', 'ad_686416ab0c6a7.png', '2025-07-03', '2025-07-03', 'inactive', '2025-07-01 17:11:07');
+(1, 'Khuyến mãi đặc biệt - Giảm 30% học phí', 'Đăng ký ngay hôm nay để nhận ưu đãi đặc biệt giảm 30% học phí cho tất cả các khóa học', 'ielts_basic_illustration.png', '2025-07-02', '2025-07-03', 'active', '2025-07-01 16:40:35');
 
 -- --------------------------------------------------------
 
@@ -103,21 +102,21 @@ INSERT INTO `classes` (`ClassID`, `ClassName`, `SchoolYear`, `TeacherID`, `Start
 (4, 'Lớp Tiếng Anh Trung Cấp B2', 2025, 'GV005', '2025-07-15', '2026-01-15', 'Thứ 3, 5, 7 - 18:30', 'B102', 2200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (5, 'Lớp Tiếng Anh Nâng Cao C1', 2025, 'GV006', '2025-08-01', '2026-02-28', 'Thứ 2, 4, 6 - 17:30', 'C101', 2800000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (6, 'Lớp Tiếng Anh Nâng Cao C2', 2025, 'GV007', '2025-08-01', '2026-02-28', 'Thứ 3, 5, 7 - 17:30', 'C102', 2800000, 'Đang hoạt động', '2025-06-28 15:34:56'),
-(7, 'Lớp Luyện Thi IELTS 5.5+', 2025, 'GV008', '2025-07-01', '2025-10-30', 'Thứ 7, CN - 08:00', 'D101', 3500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
-(8, 'Lớp Luyện Thi IELTS 6.5+', 2025, 'GV009', '2025-07-01', '2025-10-30', 'Thứ 7, CN - 14:00', 'D102', 4000000, 'Đang hoạt động', '2025-06-28 15:34:56'),
-(9, 'Lớp Luyện Thi IELTS 7.0+', 2025, 'GV010', '2025-07-15', '2025-11-15', 'Thứ 7, CN - 09:30', 'D103', 4500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
+(7, 'Lớp Luyện Thi IELTS 5.5+', 2025, 'GV008', '2025-07-01', '2025-10-30', 'Thứ 7, 8 - 08:00', 'D101', 3500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
+(8, 'Lớp Luyện Thi IELTS 6.5+', 2025, 'GV009', '2025-07-01', '2025-10-30', 'Thứ 7, 8 - 14:00', 'D102', 4000000, 'Đang hoạt động', '2025-06-28 15:34:56'),
+(9, 'Lớp Luyện Thi IELTS 7.0+', 2025, 'GV010', '2025-07-15', '2025-11-15', 'Thứ 7, 8 - 09:30', 'D103', 4500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (10, 'Lớp Luyện Thi TOEIC 450+', 2025, 'GV011', '2025-07-01', '2025-10-30', 'Thứ 2, 4, 6 - 20:00', 'E101', 2500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (11, 'Lớp Luyện Thi TOEIC 650+', 2025, 'GV012', '2025-07-01', '2025-10-30', 'Thứ 3, 5, 7 - 20:00', 'P201', 2800000, 'Đã kết thúc', '2025-06-28 15:34:56'),
 (12, 'Lớp Luyện Thi TOEIC 850+', 2025, 'GV013', '2025-07-15', '2025-11-15', 'Thứ 7, CN - 16:00', 'E103', 3200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (13, 'Lớp Tiếng Anh Thiếu Nhi Starter', 2025, 'GV014', '2025-07-01', '2025-12-30', 'Thứ 3, 5, 7 - 17:00', 'F101', 1500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (14, 'Lớp Tiếng Anh Thiếu Nhi Beginner', 2025, 'GV015', '2025-07-01', '2025-12-30', 'Thứ 2, 4, 6 - 17:00', 'F102', 1500000, 'Đang hoạt động', '2025-06-28 15:34:56'),
-(15, 'Lớp Tiếng Anh Thiếu Nhi Elementary', 2025, 'GV016', '2025-07-15', '2026-01-15', 'Thứ 7, CN - 08:30', 'F103', 1600000, 'Đang hoạt động', '2025-06-28 15:34:56'),
+(15, 'Lớp Tiếng Anh Thiếu Nhi Elementary', 2025, 'GV016', '2025-07-15', '2026-01-15', 'Thứ 7, 8 - 08:30', 'F103', 1600000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (16, 'Lớp Giao Tiếp Tiếng Anh Cơ Bản', 2025, 'GV017', '2025-07-01', '2025-10-30', 'Thứ 2, 4 - 19:30', 'G101', 2000000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (17, 'Lớp Giao Tiếp Tiếng Anh Nâng Cao', 2025, 'GV018', '2025-07-01', '2025-10-30', 'Thứ 3, 5 - 19:30', 'G102', 2300000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (18, 'Lớp Tiếng Anh Doanh Nghiệp', 2025, 'GV019', '2025-08-01', '2025-12-30', 'Thứ 7 - 08:00', 'H101', 3000000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (19, 'Lớp Tiếng Anh Chuyên Ngành IT', 2025, 'GV020', '2025-08-01', '2025-12-30', 'CN - 08:00', 'H102', 3200000, 'Đang hoạt động', '2025-06-28 15:34:56'),
 (20, 'Lớp Tiếng Anh Cơ Bản - Khoá 1', 2024, 'GV002', '2024-01-15', '2024-06-15', 'Thứ 2, 4, 6 - 18:00', 'A105', 1600000, 'Đã kết thúc', '2025-06-28 15:34:56'),
-(21, 'Lớp IELTS 6.0 - Khoá 2', 2024, 'GV008', '2024-03-01', '2024-08-30', 'Thứ 7, CN - 09:00', 'D104', 3800000, 'Đã kết thúc', '2025-06-28 15:34:56'),
+(21, 'Lớp IELTS 6.0 - Khoá 2', 2024, 'GV008', '2024-03-01', '2024-08-30', 'Thứ 7, 8 - 09:00', 'D104', 3800000, 'Đã kết thúc', '2025-06-28 15:34:56'),
 (104, 'Lớp Tiếng Anh Cơ Bản', 2000, 'GV006', '2025-06-25', '2025-07-04', 'Thứ 2, 4, 6 - 18:00', 'P203', 34324, 'Đang hoạt động', '2025-06-29 14:48:56'),
 (105, 'Lớp Tiếng Anh Cơ Bản', 2222, 'GV003', '2025-06-10', '2025-06-27', 'Thứ 3, 5, 7 - 20:00', 'P201', 34234, 'Đang hoạt động', '2025-06-29 14:50:49'),
 (106, 'Lớp Tiếng Anh Cơ Bản', 5463, 'GV003', '2025-06-11', '2025-06-24', 'Thứ 2, 4, 6 - 18:00', 'P202', 564645, 'Đang hoạt động', '2025-06-29 15:44:45');
@@ -188,7 +187,7 @@ CREATE TABLE `id_counters` (
 INSERT INTO `id_counters` (`role_prefix`, `next_id`) VALUES
 ('GV', 25),
 ('HV', 55),
-('PH', 32);
+('PH', 33);
 
 -- --------------------------------------------------------
 
@@ -301,7 +300,8 @@ INSERT INTO `parents` (`UserID`, `FullName`, `Gender`, `Email`, `Phone`, `BirthD
 ('PH027', 'Nguyễn Thị Ấm', 'Nữ', 'nguyenthiamph@email.com', '0912345703', '1979-11-15', 'nguyenthiam79', '2025-06-28 15:43:08', 0, 0),
 ('PH028', 'Lê Văn Đức', 'Nam', 'levanducph@email.com', '0912345704', '1974-05-22', 'levanduc74', '2025-06-28 15:43:08', 0, 1),
 ('PH029', 'Phạm Thị Nga', 'Nữ', 'phamthingaph@email.com', '0912345705', '1981-09-18', 'phamthinga81', '2025-06-28 15:43:08', 0, 0),
-('PH030', 'NGUYEN TUAN DUNG', 'Nam', 'dungnguyentuandd582@gmail.com', '0361172245', '2000-12-11', NULL, '2025-06-29 08:25:22', 0, 0);
+('PH030', 'NGUYEN TUAN DUNG', 'Nam', 'dungnguyentuandd582@gmail.com', '0361172245', '2000-12-11', NULL, '2025-06-29 08:25:22', 0, 0),
+('PH032', 'dfsdfs', 'Nam', 'fdsfdsf@ddd.dd', '534535', '2025-07-01', 'sgg', '2025-07-02 12:24:32', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -728,7 +728,8 @@ INSERT INTO `users` (`UserID`, `Username`, `Password`, `Role`, `CreatedAt`) VALU
 ('PH027', 'parent27', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3, '2025-06-28 15:29:46'),
 ('PH028', 'parent28', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3, '2025-06-28 15:29:46'),
 ('PH029', 'parent29', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 3, '2025-06-28 15:29:46'),
-('PH030', 'djjfjk', '$2y$10$PLAxUfnW2wxOCGJFaIJ6TOy8d3Trkee1XqGj5d1lL4G6BHu18LAEa', 3, '2025-06-29 08:25:22');
+('PH030', 'djjfjk', '$2y$10$PLAxUfnW2wxOCGJFaIJ6TOy8d3Trkee1XqGj5d1lL4G6BHu18LAEa', 3, '2025-06-29 08:25:22'),
+('PH032', 'fdsfsdf', '$2y$10$Y1mde0i59SbdTusJKSx3d.6VcI.X6v88T0TqJRJL6L/HGAP/ZehSK', 3, '2025-07-02 12:24:32');
 
 --
 -- Chỉ mục cho các bảng đã đổ
