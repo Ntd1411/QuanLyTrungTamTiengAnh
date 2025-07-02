@@ -1225,7 +1225,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                    // echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
                 }
                 exit;
             case "getStudents":
@@ -1271,7 +1271,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
+                        // echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
                     }
                 } catch (PDOException $e) {
                     error_log("Error in getStudents: " . $e->getMessage());
@@ -1314,7 +1314,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
+                        // echo "<tr><td colspan='11'>Không có dữ liệu</td></tr>";
                     }
                 } catch (PDOException $e) {
                     error_log("Error in getParents: " . $e->getMessage());
@@ -1376,7 +1376,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
+                        // echo "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
                     }
                 } catch (Exception $e) {
                     error_log("Error loading messages: " . $e->getMessage());
