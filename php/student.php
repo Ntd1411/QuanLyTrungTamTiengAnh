@@ -57,7 +57,7 @@ if (
     </nav>
 
     <div class="main-content-student">
-        <!-- Home Section -->
+        <!-- Phần trang chủ -->
         <div id="home-student" class="element active">
             <h2>Chào mừng, <span id="student-name">Học sinh</span></h2>
             <div class="dashboard-summary">
@@ -94,7 +94,7 @@ if (
             </div>
         </div>
 
-        <!-- My Class Section -->
+        <!-- Phần lớp học -->
         <div id="my-class" class="element">
             <div class="class-info-card">
                 <div class="info-group">
@@ -106,7 +106,6 @@ if (
                 <div class="classmates-list">
                     <h3>Danh sách học sinh trong lớp</h3>
 
-                    <!-- LUÔN DÙNG CẤU TRÚC NÀY -->
                     <div class="table-container">
                         <table id="table-classmates" class="display" style="width:100%">
                             <thead>
@@ -125,7 +124,7 @@ if (
             </div>
         </div>
 
-        <!-- Attendance Section -->
+        <!-- Phần điểm danh -->
         <div id="attendance" class="element">
             <div class="attendance-overview">
                 <div class="stats-card">
@@ -171,14 +170,14 @@ if (
             </div>
         </div>
 
-        <!-- Homework Section -->
+        <!-- Phần btvn -->
         <div id="homework" class="element">
             <div class="homework-list" id="homework-list">
                 <!-- Danh sách bài tập sẽ được thêm vào đây bằng JavaScript -->
             </div>
         </div>
 
-        <!-- Profile Section -->
+        <!-- Phần thông tin cá nhân -->
         <div id="profile" class="element">
             <div class="profile-form">
                 <div class="form-group">
@@ -217,12 +216,12 @@ if (
         <p>&copy; 2025 - Bản quyền thuộc về Học Viện Kỹ Thuật Mật Mã</p>
     </footer>
 
-        <!-- Add menu toggle button -->
+        <!-- Nút hiện menu cho màn hình nhỏ -->
     <button class="menu-toggle" onclick="toggleMenu()">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Add menu overlay -->
+    <!-- Lớp phủ menu -->
     <div class="menu-overlay" onclick="toggleMenu()"></div>
 
     <script src="../assets/js/main.js"></script>

@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
             loadAttendance();
             loadHomework();
             loadStudentProfile();
-            loadStudentNotifications();
         })
         .catch(err => {
             alert('Không thể tải dữ liệu học sinh!');
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-// Load dashboard data
+// Tải dữ liệu trang dashboard
 function loadStudentDashboard() {
     document.getElementById('student-name').textContent = studentData.name || 'Học sinh';
     document.getElementById('class-name').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : 'Chưa trong lớp nào';
@@ -43,9 +42,12 @@ function loadStudentDashboard() {
     } else {
         absentCard.classList.remove('green-border');
     }
+
+    // Tải thông báo
+    loadStudentNotifications();
 }
 
-// Load student notifications
+// Tải thông báo cho học sinh (logic giống phụ huynh và giáo viên)
 function loadStudentNotifications() {
     const notificationList = document.querySelector('.notification-list');
     const notificationContent = document.querySelector('.notification-content');
@@ -152,6 +154,7 @@ function loadStudentNotifications() {
     showPage(1);
 }
 
+// Hiển thị thông báo chi tiết
 function showStudentNotificationDetail(msg) {
     const notificationContent = document.querySelector('.notification-content');
     notificationContent.innerHTML = `
@@ -166,7 +169,7 @@ function showStudentNotificationDetail(msg) {
     notificationContent.classList.add('notification-content');
 }
 
-// Load class information
+// Tải thông tin lớp học
 function loadClassInfo() {
     const studentClass = studentData.class || {};
     document.getElementById('current-class').textContent = studentClass.name || '';
@@ -192,7 +195,7 @@ function loadClassInfo() {
     table.draw();
 }
 
-// Load attendance history
+// Tải lịch sử điểm danh
 function loadAttendance() {
     const attendanceData = studentData.attendance || {};
     const attended = attendanceData.attended || 0;
@@ -249,7 +252,7 @@ function updateAttendanceProgress(attended, total) {
         return;
     }
 
-    // Create progress element if it doesn't exist
+    // Tạo vòng tròn quá trình nếu chưa có
     let progressElement = progressCircle.querySelector('.progress');
     if (!progressElement) {
         progressElement = document.createElement('div');
@@ -257,13 +260,13 @@ function updateAttendanceProgress(attended, total) {
         progressCircle.appendChild(progressElement);
     }
 
-    // Update progress circle style
+    // Cập nhật giao diện vòng tròn
     progressCircle.style.setProperty('--progress', progress + 'deg');
 
     // Đặt giá trị cuối cùng ngay lập tức để đảm bảo hiển thị đúng
     progressValue.textContent = Math.round(rate) + '%';
     
-    // Animation (tùy chọn)
+    // Animation
     let currentValue = 0;
     const animationDuration = 500;
     const framesPerSecond = 60;
@@ -286,7 +289,7 @@ function updateAttendanceProgress(attended, total) {
     }
 }
 
-// Load homework
+// Tải btvn
 function loadHomework() {
     const homeworkList = document.getElementById('homework-list');
     homeworkList.innerHTML = '';
@@ -324,7 +327,8 @@ function loadHomework() {
                         submitBtn.classList.add('active');
                     }
                 });
-                // Xử lý sự kiện submit
+
+                // Xử lý sự kiện submit bài tập (chưa phát triển)
             }
 
             homeworkList.appendChild(card);
@@ -335,7 +339,7 @@ function loadHomework() {
     }
 }
 
-// Load student profile
+// Tải thông tin cá nhân học sinh
 function loadStudentProfile() {
     document.getElementById('profile-name').value = studentData.name || '';
     document.getElementById('profile-class').value = (studentData.class && studentData.class.name) ? studentData.class.name : '';
@@ -343,7 +347,7 @@ function loadStudentProfile() {
     document.getElementById('profile-phone').value = studentData.phone || '';
 }
 
-// Update profile
+// Cập nhật thông tin cá nhân
 function updateProfile() {
     const newEmail = document.getElementById('profile-email').value;
     const newPhone = document.getElementById('profile-phone').value;
@@ -403,6 +407,7 @@ function updateProfile() {
         });
 }
 
+// Hàm khởi tạo bảng
 function initializeDataTable(tableId) {
     try {
         if ($.fn.DataTable.isDataTable(tableId)) {
