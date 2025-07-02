@@ -799,6 +799,10 @@ input.error {
   animation: popupFadeIn 0.5s ease;
 }
 
+.ad-popup-content h2 {
+  margin-top: 30px;
+}
+
 @keyframes popupFadeIn {
   from {
     opacity: 0;
