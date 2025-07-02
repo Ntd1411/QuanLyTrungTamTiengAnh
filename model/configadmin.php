@@ -1150,7 +1150,12 @@ function deleteStudent($id)
 
 
         try {
-            // Delete attendance records first
+            // Delete messages first
+            $deleteMessagesSql = "DELETE FROM messages WHERE receiver_id = ?";
+            $stmt = $conn->prepare($deleteMessagesSql);
+            $stmt->execute([$id]);
+
+            // Delete attendance records
             $deleteAttendanceSql = "DELETE FROM attendance WHERE StudentID = ?";
             $stmt = $conn->prepare($deleteAttendanceSql);
             $stmt->execute([$id]);
@@ -1175,8 +1180,10 @@ function deleteStudent($id)
             $stmt = $conn->prepare($deleteUserSql);
             $stmt->execute([$id]);
 
+            $conn->commit();
             return ['status' => 'success', 'message' => 'Xóa học sinh thành công'];
         } catch (Exception $e) {
+            $conn->rollBack();
             throw $e;
         }
     } catch (PDOException $e) {

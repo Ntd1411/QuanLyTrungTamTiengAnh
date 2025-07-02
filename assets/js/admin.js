@@ -776,6 +776,7 @@ function deleteItem(type, id) {
                 loadTeachers();
                 loadMessages();
                 loadNews();
+                loadAds();
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -1264,7 +1265,7 @@ function loadAds() {
                                 <button onclick="showEditAd(${ad.id})" class="edit-btn">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="confirmDelete('ad', ${ad.id})" class="delete-btn">
+                                <button onclick="confirmDelete('Ads', ${ad.id})" class="delete-btn">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -1297,6 +1298,7 @@ function showEditAd(id) {
                 document.getElementById('edit-form').innerHTML = `
                     <div class="ads-edit-form" style="grid-column: span 2;">
                         <input type="hidden" name="action" value="updateAd">
+                        <input type="hidden" name="type" value="Ads">
                         <input type="hidden" name="id" value="${data.ad.id}">
                         <div class="form-group">
                             <label for="edit-subject">Tiêu đề:</label>
