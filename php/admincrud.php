@@ -1166,29 +1166,42 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
     if (isset($_GET['action'])) {  // Kiểm tra GET parameter
         switch ($_GET['action']) {
             case "getClasses":
-                $classes = getDataFromTable("classes");
-                if ($classes != []) {
-                    foreach ($classes as $class) {
-                        $teacher_name = getTeacherName($class['TeacherID']);
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($class['ClassID']) . "</td>";
-                        echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
-                        echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
-                        echo "<td>" . htmlspecialchars($teacher_name ?? 'Chưa phân công') . " (" . $class['TeacherID'] . ")" . "</td>";
-                        echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
-                        echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
-                        echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
-                        echo "<td>" . htmlspecialchars($class['Room']) . "</td>";
-                        echo "<td>" . number_format($class['Tuition'], 0, ',', '.') . " VNĐ</td>";
-                        echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
-                        echo "<td>
-                        <button onclick='showEditPopup(\"Class\" ," . $class['ClassID'] . ")'><i class=\"fa-solid fa-pencil\"></i></button>
-                        <button onclick='confirmDelete(\"Class\" ," . $class['ClassID'] . ")'><i class=\"fa-regular fa-trash-can\"></i></button>
-                      </td>";
-                        echo "</tr>";
+                try {
+                    $conn = connectdb();
+                    $sql = "SELECT c.*, t.FullName as TeacherName,
+                COUNT(DISTINCT s.UserID) as StudentCount
+                FROM classes c
+                LEFT JOIN teachers t ON c.TeacherID = t.UserID 
+                LEFT JOIN students s ON c.ClassID = s.ClassID
+                GROUP BY c.ClassID";
+        
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+                    $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if ($classes) {
+                        foreach ($classes as $class) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($class['ClassID']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['ClassName']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['SchoolYear']) . "</td>";
+                            echo "<td>" . ($class['TeacherName'] ? htmlspecialchars($class['TeacherName']) : 'Chưa phân công') . "</td>";
+                            echo "<td>" . htmlspecialchars($class['StartDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['EndDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['ClassTime']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['Room']) . "</td>";
+                            echo "<td>" . number_format($class['Tuition']) . "đ</td>";
+                            echo "<td>" . htmlspecialchars($class['StudentCount']) . "</td>";
+                            echo "<td>" . htmlspecialchars($class['Status']) . "</td>";
+                            echo "<td>
+                    <button onclick='showEditPopup(\"Class\", \"" . $class['ClassID'] . "\")'><i class=\"fa-solid fa-pencil\"></i></button>
+                    <button onclick='confirmDelete(\"Class\", \"" . $class['ClassID'] . "\")'><i class=\"fa-regular fa-trash-can\"></i></button>
+                    </td>";
+                            echo "</tr>";
+                        }
                     }
-                } else {
-                    echo "<tr><td colspan='9'>Không có dữ liệu</td></tr>";
+                } catch (Exception $e) {
+                    echo "<tr><td colspan='12'>Lỗi: " . $e->getMessage() . "</td></tr>";
                 }
                 exit;
             case "getTeachers":

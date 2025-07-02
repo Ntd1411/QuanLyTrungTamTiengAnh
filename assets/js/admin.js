@@ -160,6 +160,7 @@ function loadClasses() {
                                 <th>Giờ học</th>
                                 <th>Phòng học</th>
                                 <th>Học phí</th>
+                                <th>Số học sinh</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>

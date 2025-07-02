@@ -246,6 +246,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
                                 <th>Giờ học</th>
                                 <th>Phòng học</th>
                                 <th>Học phí</th>
+                                <th>Số học sinh</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
