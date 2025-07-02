@@ -90,3 +90,33 @@ document.addEventListener('click', function (e) {
         }
     }
 });
+
+function loadAd(){
+    fetch("php/manageads.php?action=getAds")
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === "success"){
+                const html = `
+                <div class="ad-popup-content">
+                    <span class="ad-close-btn" onclick="closeAdPopup()">&times;</span>
+                    <h2>${data.data.subject}</h2>
+                    <p>${data.data.content}</p>
+                    <img src="assets/img/${data.data.image}" alt="${data.data.content}">
+                    <button class="ad-cta-btn" onclick="window.location.href='./php/signup.php'">Đăng Ký Ngay</button>
+                </div>
+                `;
+
+                document.getElementById('ad-popup').innerHTML = html;
+                document.getElementById('ad-popup').style.display = "flex";
+            } else {
+                // console.log("Lỗi load quảng cáo: ", data.message);
+            }
+        })
+        .catch(error => {
+            console.log("Lỗi: " , error);
+        })
+}
+
+function closeAdPopup() {
+    document.getElementById('ad-popup').style.display = 'none';
+}

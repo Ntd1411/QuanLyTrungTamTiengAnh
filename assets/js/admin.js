@@ -1,4 +1,3 @@
-
 // Hiển thị danh sách yêu cầu tư vấn
 function loadConsultingList() {
     showLoading();
@@ -20,10 +19,8 @@ function loadConsultingList() {
                         </thead>
                         <tbody id="consulting-table-body"></tbody>`;
             document.getElementById('consulting-table-body').innerHTML = html;
+            initializeDataTable('#consulting-table');
 
-            setTimeout(() => {
-                initializeDataTable('#consulting-table');
-            }, 10);
         })
         .finally(() => setTimeout(hideLoading, 300));
 }
@@ -124,7 +121,7 @@ function initializeDataTable(tableId) {
                     previous: "Trước"
                 }
             },
-            pageLength: -1,
+            pageLength: 50,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tất cả"]],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 },
@@ -172,9 +169,7 @@ function loadClasses() {
                         </tbody>
             `;
             document.getElementById('class-table-body').innerHTML = html;
-            setTimeout(() => {
-                initializeDataTable('#class-table');
-            }, 100);
+            initializeDataTable('#class-table');
         })
         .catch(error => {
             console.error('Error loading classes:', error);
@@ -245,9 +240,7 @@ function loadTeachers() {
                         </tbody>
             `;
             document.getElementById('teacher-table-body').innerHTML = html;
-            setTimeout(() => {
-                initializeDataTable('#teacher-table');
-            }, 100);
+            initializeDataTable('#teacher-table');
         })
         .catch(error => {
             console.error('Error loading teachers:', error);
@@ -321,9 +314,7 @@ function loadStudents() {
                         </tbody>
             `;
             document.getElementById('student-table-body').innerHTML = html;
-            setTimeout(() => {
-                initializeDataTable('#student-table');
-            }, 100);
+            initializeDataTable('#student-table');
         })
         .catch(error => {
             console.error('Error loading students:', error);
@@ -395,9 +386,7 @@ function loadParents() {
                         </tbody>
             `;
             document.getElementById('parent-table-body').innerHTML = html;
-            setTimeout(() => {
-                initializeDataTable('#parent-table');
-            }, 100);
+            initializeDataTable('#parent-table');
         })
         .catch(error => {
             console.error('Error loading parents:', error);
@@ -698,7 +687,7 @@ function fillEditForm(type, data) {
             </div>`;
 
             // Initialize Select2 after form content is set
-            
+
             break;
 
         case 'Parent':
@@ -811,12 +800,12 @@ document.getElementById('edit-form').addEventListener('submit', function (e) {
             if (data.status === 'success') {
                 alert('Cập nhật thành công!');
                 closePopup();
-                // Reload data
                 loadStudents();
                 loadParents();
                 loadClasses();
                 loadTeachers();
                 loadNews();
+                loadAds(); // Changed from loadAd to loadAds
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -836,7 +825,7 @@ document.getElementById('notification-form').addEventListener('submit', function
     formData.append('recipientType', recipientType);
 
     // Handle different recipient types
-    switch(recipientType) {
+    switch (recipientType) {
         case 'individual':
             const receiverId = document.querySelector('select[name="receiverId"]').value;
             if (!receiverId) {
@@ -845,17 +834,17 @@ document.getElementById('notification-form').addEventListener('submit', function
             }
             formData.append('receiverId', receiverId);
             break;
-            
+
         case 'multiple':
             const receiverIds = Array.from(document.querySelector('select[name="receiverIds[]"]').selectedOptions)
-                                    .map(option => option.value);
+                .map(option => option.value);
             if (receiverIds.length === 0) {
                 alert('Vui lòng chọn ít nhất một người nhận');
                 return;
             }
             formData.append('receiverIds', JSON.stringify(receiverIds));
             break;
-            
+
         case 'class':
             const classId = document.querySelector('select[name="classId"]').value;
             if (!classId) {
@@ -863,7 +852,7 @@ document.getElementById('notification-form').addEventListener('submit', function
                 return;
             }
             const classRecipientTypes = Array.from(document.querySelectorAll('input[name="classRecipientTypes[]"]:checked'))
-                                             .map(checkbox => checkbox.value);
+                .map(checkbox => checkbox.value);
             if (classRecipientTypes.length === 0) {
                 alert('Vui lòng chọn ít nhất một loại người nhận trong lớp');
                 return;
@@ -871,14 +860,14 @@ document.getElementById('notification-form').addEventListener('submit', function
             formData.append('classId', classId);
             formData.append('classRecipientTypes', JSON.stringify(classRecipientTypes));
             break;
-            
+
         case 'all-teachers':
         case 'all-parents':
         case 'all-students':
         case 'all-everyone':
             // No additional data needed for these types
             break;
-            
+
         default:
             alert('Vui lòng chọn loại người nhận');
             return;
@@ -942,9 +931,7 @@ function loadMessages() {
             `;
             document.getElementById('message-table-body').innerHTML = html;
 
-            setTimeout(() => {
-                initializeDataTable('#message-table');
-            }, 100);
+            initializeDataTable('#message-table');
 
             // console.log("load message");
         })
@@ -1121,7 +1108,7 @@ function showEditNews(id) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                const overlay = document.querySelector('.popup-overlay-2');
+                const overlay = document.querySelector('.popup-overlay');
                 overlay.classList.add('active');
 
                 // Fill form with news data
@@ -1201,7 +1188,156 @@ function hideLoading() {
     document.querySelector('.loading-screen').style.display = 'none';
 }
 
+document.getElementById('ads-form').addEventListener('submit', function (e) {
+    e.preventDefault();
 
+    const form = new FormData(this);
+    form.append('action', 'setAds');
 
+    showLoading();
+    fetch("../php/manageads.php", {  // Keep this endpoint for adding ads
+        method: 'post',
+        body: form
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                this.reset();
+                document.getElementById('adsImagePreview').innerHTML = '';
+                loadAds(); // Changed from loadAd to loadAds
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(err => console.error(err))
+        .finally(() => setTimeout(hideLoading, 300));
+});
+
+function loadAds() {
+    showLoading();
+    fetch('admincrud.php?action=getAllAds', {  // Changed endpoint
+        method: 'GET',
+        cache: 'no-cache'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+
+                const table = document.getElementById('ads-table');
+                table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tiêu đề</th>
+                                <th>Nội dung</th>
+                                <th>Hình ảnh</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Ngày kết thúc</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ads-table-body">
+                            <!-- Dữ liệu sẽ được load bằng JavaScript -->
+                        </tbody>`;
+                const tbody = document.getElementById('ads-table-body');
+                tbody.innerHTML = '';
+
+                data.ads.forEach(ad => {
+                    const row = `
+                        <tr>
+                            <td>${ad.id}</td>
+                            <td style="max-width: 150px; white-space: normal; word-break: break-word;">
+                                ${ad.subject}
+                            </td>
+                            <td style="max-width: 200px; white-space: normal; word-break: break-word;">
+                                ${ad.content}
+                            </td>
+                            <td>
+                                <img src="../assets/img/${ad.image}" alt="${ad.subject}" style="max-width: 100px;">
+                            </td>
+                            <td>${formatDate(ad.start_date)}</td>
+                            <td>${formatDate(ad.end_date)}</td>
+                            <td>${ad.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</td>
+                            <td>
+                                <button onclick="showEditAd(${ad.id})" class="edit-btn">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="confirmDelete('ad', ${ad.id})" class="delete-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                initializeDataTable('#ads-table');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading ads:', error);
+            document.getElementById('ads-table-body').innerHTML =
+                '<tr><td colspan="8" class="error-message">Lỗi khi tải danh sách quảng cáo</td></tr>';
+        })
+        .finally(() => setTimeout(hideLoading, 300));
+}
+document.addEventListener("DOMContentLoaded", loadAds);
+
+// Add new function to show edit popup for ads
+function showEditAd(id) {
+    showLoading();
+    fetch(`../php/manageads.php?action=getAd&id=${id}`)  // Fix path
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const overlay = document.querySelector('.popup-overlay');
+                overlay.classList.add('active');
+
+                document.getElementById('edit-form').innerHTML = `
+                    <div class="ads-edit-form" style="grid-column: span 2;">
+                        <input type="hidden" name="action" value="updateAd">
+                        <input type="hidden" name="id" value="${data.ad.id}">
+                        <div class="form-group">
+                            <label for="edit-subject">Tiêu đề:</label>
+                            <input type="text" id="edit-subject" name="subject" value="${data.ad.subject}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-content">Nội dung:</label>
+                            <textarea id="edit-content" name="content" required>${data.ad.content}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-image">Hình ảnh mới (để trống nếu không thay đổi):</label>
+                            <input type="file" id="edit-image" name="image" accept="image/*" onchange="previewImage(this, 'edit-image-preview')">
+                            <div id="edit-image-preview" class="image-preview">
+                                <img src="../assets/img/${data.ad.image}" alt="Current ad image">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-start-date">Ngày bắt đầu:</label>
+                            <input type="date" id="edit-start-date" name="start_date" value="${data.ad.start_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-end-date">Ngày kết thúc:</label>
+                            <input type="date" id="edit-end-date" name="end_date" value="${data.ad.end_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-status">Trạng thái:</label>
+                            <select id="edit-status" name="status" required>
+                                <option value="active" ${data.ad.status === 'active' ? 'selected' : ''}>Hoạt động</option>
+                                <option value="inactive" ${data.ad.status === 'inactive' ? 'selected' : ''}>Không hoạt động</option>
+                            </select>
+                        </div>
+                    </div>`;
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi lấy thông tin quảng cáo');
+        })
+        .finally(() => setTimeout(hideLoading, 300));
+}
 
 
