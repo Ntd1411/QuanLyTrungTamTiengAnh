@@ -260,7 +260,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         <div id="notifications" class="element">
             <!-- Nút gửi thông báo -->
             <div class="notifications-header">
-                <button id="send-notification-btn" class="add-log-btn">+ Gửi thông báo cho học sinh</button>
+                <button id="send-notification-btn">+ Gửi thông báo cho học sinh</button>
             </div>
 
             <!-- Bảng thông báo đã nhận -->
