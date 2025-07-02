@@ -74,6 +74,7 @@ foreach ($classes as &$class) {
     foreach ($students as &$st) {
         $total = isset($st['total']) && is_numeric($st['total']) ? (int)$st['total'] : 0;
         $attended = isset($st['attended']) && is_numeric($st['attended']) ? (int)$st['attended'] : 0;
+        $absent = isset($st['absent']) && is_numeric($st['absent']) ? (int)$st['absent'] : 0;
         $st['participation'] = $total > 0 ? round($attended * 100 / $total, 1) : 0;
     }
     unset($st);
