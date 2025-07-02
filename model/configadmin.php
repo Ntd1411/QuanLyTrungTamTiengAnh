@@ -1151,7 +1151,7 @@ function deleteStudent($id)
 
         try {
             // Delete messages first
-            $deleteMessagesSql = "DELETE FROM messages WHERE receiver_id = ?";
+            $deleteMessagesSql = "DELETE FROM messages WHERE ReceiverId = ?";
             $stmt = $conn->prepare($deleteMessagesSql);
             $stmt->execute([$id]);
 
