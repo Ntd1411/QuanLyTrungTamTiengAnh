@@ -18,7 +18,7 @@ if (!$username) {
 $conn = connectdb(); // PDO
 
 // Lấy thông tin học sinh
-$sql = "SELECT s.UserID, s.FullName, s.Email, s.Phone, s.ClassID, c.ClassName, t.FullName AS TeacherName, c.ClassTime
+$sql = "SELECT s.UserID, s.FullName, s.Email, s.Phone, s.ClassID, c.ClassName, c.Status, t.FullName AS TeacherName, c.ClassTime
         FROM students s
         JOIN users u ON s.UserID = u.UserID
         LEFT JOIN classes c ON s.ClassID = c.ClassID
@@ -131,6 +131,7 @@ echo json_encode([
         'name' => $student['ClassName'],
         'teacher' => $student['TeacherName'],
         'schedule' => $student['ClassTime'],
+        'status' => $student['Status'],
         'classmates' => $classmates
     ],
     'attendance' => [
