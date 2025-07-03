@@ -21,131 +21,131 @@ SET time_zone = "+00:00";
 -- Cơ sở dữ liệu: `quanlytrungtamtienganh`
 --
 
-DELIMITER $$
---
--- Thủ tục
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewParent` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE)   BEGIN
-    DECLARE new_user_id VARCHAR(10);
-    START TRANSACTION;
-    INSERT INTO users (Username, Password, Role)
-    VALUES (p_Username, p_Password, 3);
-    SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
-    INSERT INTO parents (UserID, FullName, Gender, Email, Phone, BirthDate)
-    VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate);
-    COMMIT;
-END$$
+-- DELIMITER $$
+-- --
+-- -- Thủ tục
+-- --
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewParent` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE)   BEGIN
+--     DECLARE new_user_id VARCHAR(10);
+--     START TRANSACTION;
+--     INSERT INTO users (Username, Password, Role)
+--     VALUES (p_Username, p_Password, 3);
+--     SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
+--     INSERT INTO parents (UserID, FullName, Gender, Email, Phone, BirthDate)
+--     VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate);
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewStudent` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE)   BEGIN
-    DECLARE new_user_id VARCHAR(10);
-    START TRANSACTION;
-    INSERT INTO users (Username, Password, Role)
-    VALUES (p_Username, p_Password, 2);
-    SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
-    INSERT INTO students (UserID, FullName, Gender, Email, Phone, BirthDate)
-    VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate);
-    COMMIT;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewStudent` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE)   BEGIN
+--     DECLARE new_user_id VARCHAR(10);
+--     START TRANSACTION;
+--     INSERT INTO users (Username, Password, Role)
+--     VALUES (p_Username, p_Password, 2);
+--     SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
+--     INSERT INTO students (UserID, FullName, Gender, Email, Phone, BirthDate)
+--     VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate);
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewTeacher` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_Salary` DECIMAL(12,0))   BEGIN
-    DECLARE new_user_id VARCHAR(10);
-    START TRANSACTION;
-    INSERT INTO users (Username, Password, Role)
-    VALUES (p_Username, p_Password, 1);
-    SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
-    INSERT INTO teachers (UserID, FullName, Gender, Email, Phone, BirthDate, Salary)
-    VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate, p_Salary);
-    COMMIT;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `AddNewTeacher` (IN `p_Username` VARCHAR(50), IN `p_Password` VARCHAR(255), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_Salary` DECIMAL(12,0))   BEGIN
+--     DECLARE new_user_id VARCHAR(10);
+--     START TRANSACTION;
+--     INSERT INTO users (Username, Password, Role)
+--     VALUES (p_Username, p_Password, 1);
+--     SET new_user_id = (SELECT UserID FROM users WHERE Username = p_Username);
+--     INSERT INTO teachers (UserID, FullName, Gender, Email, Phone, BirthDate, Salary)
+--     VALUES (new_user_id, p_FullName, p_Gender, p_Email, p_Phone, p_BirthDate, p_Salary);
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteParent` (IN `p_UserID` VARCHAR(10))   BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Lỗi khi xóa phụ huynh';
-    END;
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteParent` (IN `p_UserID` VARCHAR(10))   BEGIN
+--     DECLARE EXIT HANDLER FOR SQLEXCEPTION
+--     BEGIN
+--         ROLLBACK;
+--         SIGNAL SQLSTATE '45000'
+--         SET MESSAGE_TEXT = 'Lỗi khi xóa phụ huynh';
+--     END;
 
-    START TRANSACTION;
+--     START TRANSACTION;
     
-    -- Xóa các key liên kết với phụ huynh
-    DELETE FROM student_parent_keys 
-    WHERE parent_id = p_UserID;
+--     -- Xóa các key liên kết với phụ huynh
+--     DELETE FROM student_parent_keys 
+--     WHERE parent_id = p_UserID;
     
-    -- Xóa thông tin phụ huynh
-    DELETE FROM parents 
-    WHERE UserID = p_UserID;
+--     -- Xóa thông tin phụ huynh
+--     DELETE FROM parents 
+--     WHERE UserID = p_UserID;
     
-    -- Xóa tài khoản người dùng
-    DELETE FROM users 
-    WHERE UserID = p_UserID;
+--     -- Xóa tài khoản người dùng
+--     DELETE FROM users 
+--     WHERE UserID = p_UserID;
     
-    COMMIT;
-END$$
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteStudent` (IN `p_UserID` VARCHAR(10))   BEGIN
-    START TRANSACTION;
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteStudent` (IN `p_UserID` VARCHAR(10))   BEGIN
+--     START TRANSACTION;
     
-    -- Xóa điểm danh
-    DELETE FROM attendance WHERE StudentID = p_UserID;
+--     -- Xóa điểm danh
+--     DELETE FROM attendance WHERE StudentID = p_UserID;
     
-    -- Xóa học phí
-    DELETE FROM tuition WHERE StudentID = p_UserID;
+--     -- Xóa học phí
+--     DELETE FROM tuition WHERE StudentID = p_UserID;
     
-    -- Xóa liên kết với phụ huynh
-    DELETE FROM student_parent_keys WHERE student_id = p_UserID;
+--     -- Xóa liên kết với phụ huynh
+--     DELETE FROM student_parent_keys WHERE student_id = p_UserID;
     
-    -- Xóa thông tin học sinh
-    DELETE FROM students WHERE UserID = p_UserID;
+--     -- Xóa thông tin học sinh
+--     DELETE FROM students WHERE UserID = p_UserID;
     
-    -- Xóa tài khoản người dùng
-    DELETE FROM users WHERE UserID = p_UserID;
+--     -- Xóa tài khoản người dùng
+--     DELETE FROM users WHERE UserID = p_UserID;
     
-    COMMIT;
-END$$
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteTeacher` (IN `p_UserID` VARCHAR(10))   BEGIN
-    START TRANSACTION;
-    UPDATE classes SET TeacherID = NULL WHERE TeacherID = p_UserID;
-    DELETE FROM teachers WHERE UserID = p_UserID;
-    DELETE FROM users WHERE UserID = p_UserID;
-    COMMIT;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteTeacher` (IN `p_UserID` VARCHAR(10))   BEGIN
+--     START TRANSACTION;
+--     UPDATE classes SET TeacherID = NULL WHERE TeacherID = p_UserID;
+--     DELETE FROM teachers WHERE UserID = p_UserID;
+--     DELETE FROM users WHERE UserID = p_UserID;
+--     COMMIT;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateParent` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_ZaloID` VARCHAR(50))   BEGIN
-    UPDATE parents
-    SET FullName = p_FullName,
-        Gender = p_Gender,
-        Email = p_Email,
-        Phone = p_Phone,
-        BirthDate = p_BirthDate,
-        ZaloID = p_ZaloID
-    WHERE UserID = p_UserID;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateParent` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_ZaloID` VARCHAR(50))   BEGIN
+--     UPDATE parents
+--     SET FullName = p_FullName,
+--         Gender = p_Gender,
+--         Email = p_Email,
+--         Phone = p_Phone,
+--         BirthDate = p_BirthDate,
+--         ZaloID = p_ZaloID
+--     WHERE UserID = p_UserID;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateStudent` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_ClassID` INT)   BEGIN
-    UPDATE students 
-    SET FullName = p_FullName,
-        Gender = p_Gender,
-        Email = p_Email,
-        Phone = p_Phone,
-        BirthDate = p_BirthDate,
-        ClassID = p_ClassID
-    WHERE UserID = p_UserID;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateStudent` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_ClassID` INT)   BEGIN
+--     UPDATE students 
+--     SET FullName = p_FullName,
+--         Gender = p_Gender,
+--         Email = p_Email,
+--         Phone = p_Phone,
+--         BirthDate = p_BirthDate,
+--         ClassID = p_ClassID
+--     WHERE UserID = p_UserID;
+-- END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateTeacher` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_Salary` DECIMAL(12,0))   BEGIN
-    UPDATE teachers 
-    SET FullName = p_FullName,
-        Gender = p_Gender,
-        Email = p_Email,
-        Phone = p_Phone,
-        BirthDate = p_BirthDate,
-        Salary = p_Salary
-    WHERE UserID = p_UserID;
-END$$
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateTeacher` (IN `p_UserID` VARCHAR(10), IN `p_FullName` VARCHAR(100), IN `p_Gender` ENUM('Nam','Nữ'), IN `p_Email` VARCHAR(100), IN `p_Phone` VARCHAR(15), IN `p_BirthDate` DATE, IN `p_Salary` DECIMAL(12,0))   BEGIN
+--     UPDATE teachers 
+--     SET FullName = p_FullName,
+--         Gender = p_Gender,
+--         Email = p_Email,
+--         Phone = p_Phone,
+--         BirthDate = p_BirthDate,
+--         Salary = p_Salary
+--     WHERE UserID = p_UserID;
+-- END$$
 
-DELIMITER ;
+-- DELIMITER ;
 
 -- --------------------------------------------------------
 

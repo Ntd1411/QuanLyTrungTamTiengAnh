@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tạm thời để đây để đảm bảo không bị lỗi reference nếu hàm này chỉ có ở index.html gốc.
     // Nếu hàm này là chung cho nhiều trang, nên đặt nó vào một file script chung (ví dụ: common.js)
     window.showElement = function(elementId) {
-        console.log("Hàm showElement được gọi cho ID:", elementId);
+        // console.log("Hàm showElement được gọi cho ID:", elementId);
         //alert("Chức năng này cần được triển khai để hiển thị các phần tử tương ứng. Hiện tại, nó chỉ là một placeholder.");
         // Ví dụ: Tìm và ẩn/hiện các phần tử
         document.querySelectorAll('.element').forEach(el => {

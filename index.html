@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="./assets/icon/logo_ver3.png">
+    <link rel="stylesheet" href="./assets/css/news.css">
     <link rel="stylesheet" href="./assets/css/style.css">
     <title>KMA English Center - KEC</title>
     <!-- Add Font Awesome for menu icon -->
@@ -137,20 +138,26 @@
                 <!-- Cột phải - Quảng cáo trung tâm -->
                 <aside class="sidebar-right">
                     <div class="ad-banner">
-                        <a href="./php/signup.php">
+                        <!-- <a href="./php/signup.php">
                             <img src="./assets/media/standee1.gif" alt="ad-banner">
-                        </a>
+                        </a> -->
+
+                        <h2>Tin tức mới nhất</h2>
+                        <div class="news-list-grid">
+                            <!-- New post will be add here by JS -->
+                        </div>
+                        <button id="load-more-news" class="load-more-btn">Xem thêm</button>
                     </div>
                 </aside>
             </div>
         </div>
     </div>
-    
+
     <!-- Popup Quảng Cáo -->
     <div id="ad-popup" class="ad-popup">
-        
+
     </div>
-    
+
     <!-- Footer -->
     <footer>
         <p><strong>Email:</strong> contact@actvn.edu.vn | <strong>Website:</strong> www.actvn.edu.vn</p>
@@ -160,12 +167,8 @@
     </footer>
 
     <script type="text/javascript" src="./assets/js/main.js"></script>
-    <script>
-        setTimeout(() => {
-            document.addEventListener("DOMContentLoaded", loadAd());
-        }, 1000);
-        
-    </script>
+    <script src="./assets/js/indexnews.js"></script>
+
 </body>
 
 </html>

@@ -215,8 +215,7 @@ nav {
 /* Cột trái - Quảng cáo */
 .sidebar-left {
   flex: 1;
-  background-color: #ecf0f1;
-  padding: 20px;
+  background-color: #fff;
   border-right: 3px solid #bdc3c7;
 }
 
@@ -229,22 +228,25 @@ nav {
 }
 
 /* Cột phải - Quảng cáo */
+.sidebar-right h2 {
+  border-bottom: 2px solid var(--primary-color);
+}
+
 .sidebar-right {
+  display: block !important;
   flex: 1;
-  background-color: #ecf0f1;
-  padding: 20px;
+  background-color: #fff;
   border-left: 3px solid #bdc3c7;
 }
 
 /* Styling cho quảng cáo */
 .ad-banner {
-  background: linear-gradient(45deg, #c8ff00);
+  /* background: linear-gradient(45deg, #c8ff00); */
   position: sticky;
   top: 55px;
-  padding: 20px;
-  margin-bottom: 20px;
+  margin: 15px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); */
 }
 
 .ad-banner:hover {
@@ -253,9 +255,43 @@ nav {
 
 .ad-banner img {
   max-width: 100%;
-  height: auto;
+  /* height: auto; */
   border-radius: 5px;
   margin-bottom: 10px;
+}
+
+
+/* Lưới hiển thị các bài viết tin tức */
+.news-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Điều chỉnh min-width phù hợp */
+    gap: 30px; /* Khoảng cách giữa các bài viết */
+    padding: 20px 0;
+}
+
+.news-img {
+  height: 200px;
+}
+
+.load-more-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.load-more-btn:hover {
+    opacity: 0.7;
+}
+
+.load-more-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 .ad-link {
@@ -960,6 +996,10 @@ input.error {
   .sidebar-right {
     max-width: 400px;
     margin: 0 auto;
+  }
+
+  .sidebar-left {
+    display: none;
   }
 
   .home {
