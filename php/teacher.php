@@ -165,6 +165,7 @@ if (((isset($_COOKIE['is_login'])) && $_COOKIE['is_login'] == true) ||
         <!-- Phần lớp học -->
         <div id="my-classes" class="element">
             <div class="classes-container">
+                <h2 id="no-teaching-class" style="display: none; margin-top: 20px">Bạn đang không dạy lớp nào.</h2>
                 <!-- Danh sách lớp sẽ được thêm vào đây bằng JavaScript -->
             </div>
 

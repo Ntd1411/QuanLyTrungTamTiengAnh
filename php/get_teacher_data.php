@@ -44,6 +44,7 @@ LEFT JOIN
     AND ts.Status = 'Đã dạy'
 WHERE
     c.TeacherID = ?
+    AND c.Status = 'Đang hoạt động'
 GROUP BY
     c.ClassID,
     c.ClassName,

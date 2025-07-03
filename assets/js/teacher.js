@@ -54,7 +54,7 @@ function loadTeacherDashboard() {
     document.getElementById('monthly-sessions').textContent = teacherData.monthly_sessions || 0;
 
     const classesContainer = document.querySelector('.classes-container');
-    if (classesContainer) {
+    if (classesContainer && teacherData.classes.length != 0) {
         classesContainer.innerHTML = '';
         teacherData.classes.forEach(cls => {
             const classCard = document.createElement('div');
@@ -75,6 +75,8 @@ function loadTeacherDashboard() {
             classCard.onclick = () => showClassStudents(cls.ClassID || cls.id);
             classesContainer.appendChild(classCard);
         });
+    } else {
+        document.getElementById('no-teaching-class').style = 'inline-block';
     }
 }
 
@@ -910,6 +912,9 @@ document.querySelector('.summary-card[onclick*="showElement(\'schedule\')"]').on
         // Set giá trị cho input week
         const weekStr = `${year}-W${weekNo.toString().padStart(2, '0')}`;
         document.getElementById('schedule-week').value = weekStr;
+    } else {
+        alert("Không có lịch dạy để xem!");
+        return;
     }
     showElement('schedule');
     setTimeout(viewSchedule, 0); // Đảm bảo DOM đã chuyển tab
