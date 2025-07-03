@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
 // Tải dữ liệu trang dashboard
 function loadStudentDashboard() {
     document.getElementById('student-name').textContent = studentData.name || 'Học sinh';
-    document.getElementById('class-name').textContent = (studentData.class && studentData.class.name) ? studentData.class.name : 'Chưa trong lớp nào';
-    document.getElementById('attended-sessions').textContent = studentData.attendance ? studentData.attendance.attended : 0;
-    document.getElementById('absent-sessions').textContent = studentData.attendance ? studentData.attendance.absent : 0;
+    document.getElementById('class-name').textContent = (studentData.class && studentData.class.name && studentData.class.status != 'Đã kết thúc') ? studentData.class.name : 'Chưa trong lớp nào';
+    document.getElementById('attended-sessions').textContent = (studentData.attendance && studentData.class.status != 'Đã kết thúc') ? studentData.attendance.attended : 0;
+    document.getElementById('absent-sessions').textContent = (studentData.attendance && studentData.class.status != 'Đã kết thúc') ? studentData.attendance.absent : 0;
 
     // Đếm số bài tập chưa hoàn thành
-    const newHomework = studentData.homework
+    const newHomework = (studentData.homework && studentData.class.status != 'Đã kết thúc')
         ? studentData.homework.filter(hw => hw.status === 'Chưa hoàn thành').length
         : 0;
     document.getElementById('new-homework').textContent = newHomework;
@@ -51,7 +51,7 @@ function loadStudentDashboard() {
 function loadStudentNotifications() {
     const notificationList = document.querySelector('.notification-list');
     const notificationContent = document.querySelector('.notification-content');
-    
+
     notificationContent.innerHTML = '<p style="text-align:center; color:#888;">Chọn một thông báo để xem chi tiết</p>';
 
     const allMessages = studentData.messages || [];
@@ -127,7 +127,7 @@ function loadStudentNotifications() {
                 pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
             }
         }
-        
+
         pageNumbers.forEach(pageNumber => {
             if (pageNumber === '...') {
                 const ellipsisSpan = document.createElement('span');
@@ -172,67 +172,80 @@ function showStudentNotificationDetail(msg) {
 // Tải thông tin lớp học
 function loadClassInfo() {
     const studentClass = studentData.class || {};
-    document.getElementById('current-class').textContent = studentClass.name || '';
-    document.getElementById('teacher-name').textContent = studentClass.teacher || '';
-    document.getElementById('class-schedule').textContent = studentClass.schedule || '';
 
-    const classmates = studentClass.classmates || [];
+    if (studentClass.status != 'Đã kết thúc') {
+        document.getElementById('current-class').textContent = studentClass.name || 'không có dữ liệu';
+        document.getElementById('teacher-name').textContent = studentClass.teacher || 'không có dữ liệu';
+        document.getElementById('class-schedule').textContent = studentClass.schedule || 'không có dữ liệu';
+        document.getElementById('class-status').textContent = studentClass.status || 'không có dữ liệu';
 
-    const dataForTable = classmates.map((mate, index) => {
-        return [
-            index + 1,
-            mate.FullName,
-            mate.BirthDate || '' // Đảm bảo không có giá trị null/undefined
-        ];
-    });
+        const classmates = studentClass.classmates || [];
 
-    // Gọi hàm khởi tạo DataTables
-    const table = initializeDataTable('#table-classmates');
-    
-    // Xóa dữ liệu cũ, thêm dữ liệu mới và vẽ lại bảng
-    table.clear();
-    table.rows.add(dataForTable);
-    table.draw();
+        const dataForTable = classmates.map((mate, index) => {
+            return [
+                index + 1,
+                mate.FullName,
+                mate.BirthDate || '' // Đảm bảo không có giá trị null/undefined
+            ];
+        });
+
+        // Gọi hàm khởi tạo DataTables
+        const table = initializeDataTable('#table-classmates');
+
+        // Xóa dữ liệu cũ, thêm dữ liệu mới và vẽ lại bảng
+        table.clear();
+        table.rows.add(dataForTable);
+        table.draw();
+    } else {
+        document.getElementById('class-information').textContent = 'Bạn đang không trong lớp nào.';
+        document.getElementById('current-class').textContent = 'không có dữ liệu';
+        document.getElementById('teacher-name').textContent = 'không có dữ liệu';
+        document.getElementById('class-schedule').textContent = 'không có dữ liệu';
+        document.getElementById('class-status').textContent = 'không có dữ liệu';
+        document.getElementById('classmates-list-div').style.display = 'none';
+    }
 }
 
 // Tải lịch sử điểm danh
 function loadAttendance() {
-    const attendanceData = studentData.attendance || {};
-    const attended = attendanceData.attended || 0;
-    const absent = attendanceData.absent || 0;
-    const total = attended + absent;
+    if (studentData.class.status != 'Đã kết thúc') {
+        const attendanceData = studentData.attendance || {};
+        const attended = attendanceData.attended || 0;
+        const absent = attendanceData.absent || 0;
+        const total = attended + absent;
 
-    document.getElementById('total-sessions').textContent = total;
-    document.getElementById('attended-count').textContent = attended;
-    document.getElementById('absent-count').textContent = absent;
+        document.getElementById('total-sessions').textContent = total;
+        document.getElementById('attended-count').textContent = attended;
+        document.getElementById('absent-count').textContent = absent;
 
-    updateAttendanceProgress(attended, total);
+        updateAttendanceProgress(attended, total);
 
-    const history = attendanceData.history || [];
-    const teacherName = (studentData.class && studentData.class.teacher) ? studentData.class.teacher : '-';
+        const history = attendanceData.history || [];
+        const teacherName = (studentData.class && studentData.class.teacher) ? studentData.class.teacher : '-';
 
-    const dataForTable = history.map(record => {
-        let statusText = record.Status || '-'; // Mặc định là trạng thái gốc
-        if (statusText === 'present') statusText = 'Có mặt';
-        else if (statusText === 'absent') statusText = 'Vắng mặt';
-        else if (statusText === 'late') statusText = 'Đi muộn';
+        const dataForTable = history.map(record => {
+            let statusText = record.Status || '-'; // Mặc định là trạng thái gốc
+            if (statusText === 'present') statusText = 'Có mặt';
+            else if (statusText === 'absent') statusText = 'Vắng mặt';
+            else if (statusText === 'late') statusText = 'Đi muộn';
 
-        return [
-            record.Date,
-            statusText,
-            record.Note || '-',
-            teacherName
-        ];
-    });
+            return [
+                record.Date,
+                statusText,
+                record.Note || '-',
+                teacherName
+            ];
+        });
 
-    // Gọi hàm khởi tạo DataTables
-    const table = initializeDataTable('#table-attendance-history');
-    
-    // Kiểm tra và cập nhật dữ liệu
-    if (table) {
-        table.clear();
-        table.rows.add(dataForTable);
-        table.draw();
+        // Gọi hàm khởi tạo DataTables
+        const table = initializeDataTable('#table-attendance-history');
+
+        // Kiểm tra và cập nhật dữ liệu
+        if (table) {
+            table.clear();
+            table.rows.add(dataForTable);
+            table.draw();
+        }
     }
 }
 
@@ -265,7 +278,7 @@ function updateAttendanceProgress(attended, total) {
 
     // Đặt giá trị cuối cùng ngay lập tức để đảm bảo hiển thị đúng
     progressValue.textContent = Math.round(rate) + '%';
-    
+
     // Animation
     let currentValue = 0;
     const animationDuration = 500;
@@ -284,7 +297,7 @@ function updateAttendanceProgress(attended, total) {
             progressValue.textContent = Math.round(currentValue) + '%';
             requestAnimationFrame(animateValue);
         };
-        progressValue.textContent = '0%'; 
+        progressValue.textContent = '0%';
         animateValue();
     }
 }
@@ -294,15 +307,16 @@ function loadHomework() {
     const homeworkList = document.getElementById('homework-list');
     homeworkList.innerHTML = '';
 
-    if (Array.isArray(studentData.homework) && studentData.homework.length > 0) {
-        studentData.homework.forEach(hw => {
-            let statusClass = 'new';
-            if (hw.status === 'Đã hoàn thành') statusClass = 'done';
-            else if (hw.status === 'Chưa hoàn thành') statusClass = 'unfinished';
+    if (studentData.class.status != 'Đã kết thúc') {
+        if (Array.isArray(studentData.homework) && studentData.homework.length > 0) {
+            studentData.homework.forEach(hw => {
+                let statusClass = 'new';
+                if (hw.status === 'Đã hoàn thành') statusClass = 'done';
+                else if (hw.status === 'Chưa hoàn thành') statusClass = 'unfinished';
 
-            const card = document.createElement('div');
-            card.className = `homework-card ${statusClass} flex-row`;
-            card.innerHTML = `
+                const card = document.createElement('div');
+                card.className = `homework-card ${statusClass} flex-row`;
+                card.innerHTML = `
                 <div class="homework-info">
                     <h3>${hw.title}</h3>
                     <p>${hw.description}</p>
@@ -315,27 +329,30 @@ function loadHomework() {
                 </div>
             `;
 
-            // Chỉ cho nộp bài nếu bài tập chưa hoàn thành
-            if (hw.status === 'Chưa hoàn thành') {
-                const fileInput = card.querySelector('.homework-file');
-                const submitBtn = card.querySelector('.submit-btn');
-                fileInput.addEventListener('change', function () {
-                    submitBtn.disabled = !fileInput.files.length;
-                    if (submitBtn.disabled) {
-                        submitBtn.classList.remove('active');
-                    } else {
-                        submitBtn.classList.add('active');
-                    }
-                });
+                // Chỉ cho nộp bài nếu bài tập chưa hoàn thành
+                if (hw.status === 'Chưa hoàn thành') {
+                    const fileInput = card.querySelector('.homework-file');
+                    const submitBtn = card.querySelector('.submit-btn');
+                    fileInput.addEventListener('change', function () {
+                        submitBtn.disabled = !fileInput.files.length;
+                        if (submitBtn.disabled) {
+                            submitBtn.classList.remove('active');
+                        } else {
+                            submitBtn.classList.add('active');
+                        }
+                    });
 
-                // Xử lý sự kiện submit bài tập (chưa phát triển)
-            }
+                    // Xử lý sự kiện submit bài tập (chưa phát triển)
+                }
 
-            homeworkList.appendChild(card);
-        });
+                homeworkList.appendChild(card);
+            });
+        } else {
+            // Nếu không có bài tập nào
+            homeworkList.innerHTML = '<h2>Chưa có bài tập nào.<h2>';
+        }
     } else {
-        // Nếu không có bài tập nào
-        homeworkList.innerHTML = '<h2>Không có bài tập nào.<h2>';
+        homeworkList.innerHTML = '<h2>Bạn đang không trong lớp nào.<h2>';
     }
 }
 

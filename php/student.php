@@ -74,7 +74,7 @@ if (
                     <p id="absent-sessions">0</p>
                 </div>
                 <div class="summary-card" onclick="showElement('homework')">
-                    <h3>📝 Bài tập mới</h3>
+                    <h3>📝 Bài tập chưa làm</h3>
                     <p id="new-homework">0</p>
                 </div>
             </div>
@@ -98,12 +98,13 @@ if (
         <div id="my-class" class="element">
             <div class="class-info-card">
                 <div class="info-group">
-                    <h3>Thông tin lớp học</h3>
+                    <h3 id="class-information">Thông tin lớp học</h3>
                     <p>Lớp: <span id="current-class"></span></p>
                     <p>Giảng Viên: <span id="teacher-name"></span></p>
                     <p>Lịch Học: <span id="class-schedule"></span></p>
+                    <p>Trạng thái: <span id="class-status"></span></p>
                 </div>
-                <div class="classmates-list">
+                <div class="classmates-list" id="classmates-list-div">
                     <h3>Danh sách học sinh trong lớp</h3>
 
                     <div class="table-container">
@@ -131,7 +132,7 @@ if (
                     <h3>Tỷ lệ đi học</h3>
                     <div class="progress-circle-container">
                         <div class="progress-circle" id="attendance-rate">
-                            <div class="progress-value"></div>
+                            <div class="progress-value">0%</div>
                         </div>
                         <div class="progress-label">Tỷ lệ tham gia</div>
                     </div>
