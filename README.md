@@ -1,6 +1,8 @@
 # QuanLyTrungTamTiengAnh
 Web quản lý trung tâm tiếng anh
 
+Link demo: https://englishcenterkma.my-board.org
+
 # Hệ thống Quản lý Trung tâm Tiếng Anh KEC
 
 ## Mục lục
@@ -68,6 +70,7 @@ Không cần cài đặt phức tạp. Bạn chỉ cần tải xuống mã ngu�
     Mở file `index.html` trong thư mục gốc của dự án bằng trình duyệt web của bạn.
     Để truy cập Dashboard Giáo viên, bạn có thể mở trực tiếp file `view/teacher.html`.
 
+
 ## Cách sử dụng
 
 ### Đối với Học viên/Khách truy cập
@@ -82,7 +85,7 @@ Không cần cài đặt phức tạp. Bạn chỉ cần tải xuống mã ngu�
 ## Cấu trúc dự án
 Dự án được tổ chức với cấu trúc thư mục sau:
 ```
-WEBSITEQUANLYTRUNGTAMTIENGANH
+WEBSITE QUAN LY TRUNG TAM TIENG ANH KEC
 │   index.html
 │   README.md
 │   test.php
@@ -97,7 +100,9 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
 │   │       english_course.css
 │   │       faq.css
 │   │       kids_english_course.css
+│   │       legal.css
 │   │       news.css
+│   │       news_detail.css
 │   │       parent.css
 │   │       reference.css
 │   │       student.css
@@ -110,6 +115,7 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
 │   │       logo_ver3.png
 │   │
 │   ├───img
+│   │       1750909739_admin.png
 │   │       5.5_illustration.png
 │   │       6.5+_illustration.png
 │   │       6.5_illustration.jpg
@@ -117,6 +123,7 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
 │   │       800_illustration.jpg
 │   │       990_illustration.jpg
 │   │       admin.png
+│   │       ad_6865402d30927.png
 │   │       english-file-icon-intermediate-plus.gif
 │   │       english_for_kids_illustration.jpg
 │   │       hocTA.jpg
@@ -154,6 +161,7 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
 │   │       admin.js
 │   │       all_english_courses.js
 │   │       contact.js
+│   │       indexnews.js
 │   │       main.js
 │   │       news.js
 │   │       parent.js
@@ -167,23 +175,119 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
 │           standee1.gif
 │
 ├───model
-│       config.php
-│       configadmin.php
-│       quanlytrungtamtienganh.sql
-│       user.php
+│   │   config.php
+│   │   configadmin.php
+│   │   quanlytrungtamtienganh.sql
+│   │   sendmail.php
+│   │   user.php
+│   │
+│   └───PHPMailer
+│       │   COMMITMENT
+│       │   composer.json
+│       │   get_oauth_token.php
+│       │   LICENSE
+│       │   README.md
+│       │   SECURITY.md
+│       │   SMTPUTF8.md
+│       │   VERSION
+│       │
+│       ├───language
+│       │       phpmailer.lang-af.php
+│       │       phpmailer.lang-ar.php
+│       │       phpmailer.lang-as.php
+│       │       phpmailer.lang-az.php
+│       │       phpmailer.lang-ba.php
+│       │       phpmailer.lang-be.php
+│       │       phpmailer.lang-bg.php
+│       │       phpmailer.lang-bn.php
+│       │       phpmailer.lang-ca.php
+│       │       phpmailer.lang-cs.php
+│       │       phpmailer.lang-da.php
+│       │       phpmailer.lang-de.php
+│       │       phpmailer.lang-el.php
+│       │       phpmailer.lang-eo.php
+│       │       phpmailer.lang-es.php
+│       │       phpmailer.lang-et.php
+│       │       phpmailer.lang-fa.php
+│       │       phpmailer.lang-fi.php
+│       │       phpmailer.lang-fo.php
+│       │       phpmailer.lang-fr.php
+│       │       phpmailer.lang-gl.php
+│       │       phpmailer.lang-he.php
+│       │       phpmailer.lang-hi.php
+│       │       phpmailer.lang-hr.php
+│       │       phpmailer.lang-hu.php
+│       │       phpmailer.lang-hy.php
+│       │       phpmailer.lang-id.php
+│       │       phpmailer.lang-it.php
+│       │       phpmailer.lang-ja.php
+│       │       phpmailer.lang-ka.php
+│       │       phpmailer.lang-ko.php
+│       │       phpmailer.lang-ku.php
+│       │       phpmailer.lang-lt.php
+│       │       phpmailer.lang-lv.php
+│       │       phpmailer.lang-mg.php
+│       │       phpmailer.lang-mn.php
+│       │       phpmailer.lang-ms.php
+│       │       phpmailer.lang-nb.php
+│       │       phpmailer.lang-nl.php
+│       │       phpmailer.lang-pl.php
+│       │       phpmailer.lang-pt.php
+│       │       phpmailer.lang-pt_br.php
+│       │       phpmailer.lang-ro.php
+│       │       phpmailer.lang-ru.php
+│       │       phpmailer.lang-si.php
+│       │       phpmailer.lang-sk.php
+│       │       phpmailer.lang-sl.php
+│       │       phpmailer.lang-sr.php
+│       │       phpmailer.lang-sr_latn.php
+│       │       phpmailer.lang-sv.php
+│       │       phpmailer.lang-tl.php
+│       │       phpmailer.lang-tr.php
+│       │       phpmailer.lang-uk.php
+│       │       phpmailer.lang-ur.php
+│       │       phpmailer.lang-vi.php
+│       │       phpmailer.lang-zh.php
+│       │       phpmailer.lang-zh_cn.php
+│       │
+│       └───src
+│               DSNConfigurator.php
+│               Exception.php
+│               OAuth.php
+│               OAuthTokenProvider.php
+│               PHPMailer.php
+│               POP3.php
+│               SMTP.php
 │
 ├───php
+│       add_homework.php
+│       add_teaching_log.php
 │       admin.php
+│       admincrud.php
+│       delete_attendance.php
+│       delete_teaching_log.php
+│       forgotpassword.php
+│       getnews.php
+│       get_attendance_history.php
 │       get_parent_data.php
 │       get_student_data.php
+│       get_teacher_data.php
 │       login.php
 │       logout.php
+│       manageads.php
+│       mark_message_read.php
+│       news_detail.php
+│       new_teacher_sent_data.php
 │       parent.php
 │       payfee.php
+│       request_consultation.php
+│       save_attendance.php
+│       send_notification.php
 │       signup.php
 │       student.php
 │       teacher.php
-│       update_parent_data.php
+│       update_attendance.php
+│       update_information.php
 │
 └───view
         contact.html
@@ -194,9 +298,11 @@ WEBSITEQUANLYTRUNGTAMTIENGANH
         ielts_6.5+.html
         ielts_basic.html
         news.html
+        privacy-policy.html
         reference.html
         student_intro.html
         teachter_intro.html
+        terms-of-service.html
         toeic_550_650.html
         toeic_650_800.html
         toeic_800+.html
